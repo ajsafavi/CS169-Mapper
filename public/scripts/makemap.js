@@ -1,5 +1,4 @@
-function makemap() 
-{
+var Mapper = (function () {
   // Ratio of Obese (BMI >= 30) in U.S. Adults, CDC 2008
   var valueById = [
      NaN, .187, .198,  NaN, .133, .175, .151,  NaN, .100, .125,
@@ -16,7 +15,9 @@ function makemap()
       .attr("width", 960)
       .attr("height", 500);
 
-  d3.json("/us.json", function(error, us) {
+  var start = function() {
+    
+    d3.json("/scripts/us.json", function(error, us) {
     if (error) throw error;
 
     svg.append("path")
@@ -34,5 +35,12 @@ function makemap()
           ((valueById[d.id])*0xFF<<0).toString(16) + //green
           ((valueById[d.id])*0xFF<<0).toString(16); //blue
         });
-  });
-}
+    });
+  };
+
+  // PUBLIC METHODS
+  // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
+  return {
+    start: start
+  };
+})();
