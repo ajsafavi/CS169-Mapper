@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 
+  name: MyString
+  filepath: MyString
+  location_column: MyString
+  weight_column: MyString
+  location_type: MyString
+  num_rows: 1
+
+two:
+  user_id: 
+  name: MyString
+  filepath: MyString
+  location_column: MyString
+  weight_column: MyString
+  location_type: MyString
+  num_rows: 1
