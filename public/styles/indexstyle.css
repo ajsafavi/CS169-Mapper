@@ -11,6 +11,10 @@ input[type="range"] {
 	display: block;
 }
 
+body {
+	background-image: url('http://junecong.com/img/mappr/congruent_outline.png');
+}
+
 
 
 /*end of bootstrap fixes*/
@@ -21,7 +25,7 @@ input[type="range"] {
 }
 
 #canvas {
-	background-color: #aaa;
+	background-color: #ccc;
     float: left;
     min-height: 80%;
     border-right: thick solid #000;
@@ -29,25 +33,25 @@ input[type="range"] {
 }
 
 #barcanvas {
-	background-color: #654321;
+	background-color: #8EA86C;
 	min-height: 40%;
 	border-bottom: thick solid #000;
 
 }
 
 #scattercanvas {
-	background-color: #f27f29;
+	background-color: #4D642D;
 	min-height: 40%;
 
 }
 
 
-
+/*
 .row:after {
     content: "";
     clear: both;
     display: block;
-}
+}*/
 [class*="col-"] {
     float: left;
     padding: 15px;
@@ -70,6 +74,8 @@ input[type="range"] {
 .initial-inputs{
     min-height: 100%;
     margin-top: 50px;
+    position: fixed;
+    min-width: 100%;
 }
 
 .var {
@@ -98,6 +104,8 @@ input[type="range"] {
 	display: block;
 }
 
-
+.second{
+	visibility: hidden;
+}
 
 
