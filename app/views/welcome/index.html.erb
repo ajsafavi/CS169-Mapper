@@ -1,20 +1,125 @@
-<h1>Welcome#index</h1>
-June make this look cool pls!
-<p>Find me in app/views/welcome/index.html.erb</p>
+<html lang="en">
 <meta charset="utf-8">
 <title>Non-Contiguous Cartogram</title>
 
 <head>
-<link rel="stylesheet" type"text/css" href="styles/mapstyle.css">
 
-<script src="scripts/jquery.min.js"></script>
-<script src="scripts/d3.min.js"></script>
-<script src="scripts/topojson.min.js"></script>
-<script type="text/javascript" src="scripts/makemap.js"></script>
+<script src="../../../public/scripts/jquery.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+
+<script src="../../../public/scripts/d3.min.js"></script>
+<script src="../../../public/scripts/topojson.min.js"></script>
+<script type="text/javascript" src="../../../public/scripts/makemap.js"></script>
+
+<script src="../../../public/scripts/bootstrap/js/bootstrap.js"></script>
+<link rel="stylesheet" href="../../../public/scripts/bootstrap/css/bootstrap.css"></script>
+<link rel="stylesheet" href="../../../public/styles/indexstyle.css"></script>
+
 <script type="text/javascript">
-  $(function() 
-  {
-    Mapper.start();
-  });
+	$( "#btn" ).click(function()
+	{
+	Mapper.start();
+	});
 </script>
+
 </head>
+
+
+<body>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Brand</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-inputs-afterclick">
+	  	<form class="navbar-form navbar-left" role="search">
+			<div class="form-group">
+				
+			</div>
+		</form>
+    </div>
+  </div>
+</nav>
+
+<!-- <div class="container">
+	<div class="row">
+		<div class="canvas">
+
+			Map goes here
+
+			<script type="text/javascript">
+			  $(function() 
+			  {
+			    Mapper.start();
+			  });
+			</script>
+
+		</div>
+	</div>
+</div> -->
+
+<!-- THE STUFF BELOW IS HIDDEN AFTER CLICK -->
+<div class="initial-inputs container">
+	<div class="row">
+		<input type="text" class="var col-xs-offset-4 col-xs-4" placeholder="Variable">
+	</div>
+
+	<div class="row">
+		<input type="text" class="filter-var col-xs-offset-4 col-xs-4" placeholder="Filtering Variable">
+	</div>
+
+	<div class="row">
+		<input type="range" class="range col-xs-offset-4 col-xs-4"/>
+	</div>
+
+	<div class="row">
+		<input type="text" class="geo col-xs-offset-4 col-xs-4" placeholder="Geography">
+	</div>
+		
+	<div class="row">
+		<button type="submit" class="col-xs-offset-4 btn btn-default submitbutton">Submit</button>
+	</div>
+	
+</div>
+
+
+
+
+<!-- THE STUFF BELOW IS HIDDEN AT FIRST -->
+
+<div class="container second">
+	<div class="row second">
+		<div id="canvas" class="col-9">
+
+			Map goes here
+
+			
+		</div>
+
+		<div class="row second">
+			<div id="barcanvas" class="col-3">
+
+			Bar goes here
+			</div>
+
+			<div id="scattercanvas" class="col-3">
+
+			Scatter goes here	
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+</body>
