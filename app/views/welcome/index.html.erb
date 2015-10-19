@@ -15,21 +15,6 @@
 <link rel="stylesheet" href="../../../public/scripts/bootstrap/css/bootstrap.css"></script>
 <link rel="stylesheet" href="../../../public/styles/indexstyle.css"></script>
 
-<script type="text/javascript">
-	$( "#btn" ).click(function()
-	{
-	Mapper.start();
-	});
-
-	// $( "#secondContainer" ).submit(function(e) {
-	//     // e.preventDefault(); // don't submit multiple times
-	//     // this.submit(); // use the native submit method of the form element
-	//     $(this).removeClass('second');
-
-	    
-	// });
-</script>
-
 </head>
 
 
@@ -92,6 +77,27 @@
 	<div class="row">
 		<button type="submit" class="col-xs-offset-4 btn btn-default submitbutton">Submit</button>
 	</div>
+
+
+	<script type="text/javascript">
+
+
+		$( "div#secondContainer" ).submit(function(e) {
+		    // e.preventDefault(); // don't submit multiple times
+		    // this.submit(); // use the native submit method of the form element
+		    $(this).removeClass('hidden');	    
+		});
+
+		$( "body" ).on( "click", "p", function() {
+			alert( "Handler for .click() called." );
+			Mapper.start();
+		});
+
+	</script>
+
+	<div id="target">
+		<p>First Paragraph</p>
+	</div>
 	
 </div>
 
@@ -100,8 +106,8 @@
 
 <!-- THE STUFF BELOW IS HIDDEN AT FIRST -->
 
-<div class="container second" id="secondContainer">
-	<div class="row second">
+<div class="container second hidden" id="secondContainer">
+	<div class="row">
 		<div id="canvas" class="col-9">
 
 			Map goes here
@@ -109,7 +115,7 @@
 			
 		</div>
 
-		<div class="row second">
+		<div class="row">
 			<div id="barcanvas" class="col-3">
 
 			Bar goes here

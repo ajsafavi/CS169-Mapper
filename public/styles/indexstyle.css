@@ -11,9 +11,9 @@ input[type="range"] {
 	display: block;
 }
 
-body {
+/*body {
 	background-image: url('http://junecong.com/img/mappr/congruent_outline.png');
-}
+}*/
 
 
 
@@ -104,7 +104,8 @@ body {
 	display: block;
 }
 
-.second{
+
+.hidden{
 	visibility: hidden;
 }
 
