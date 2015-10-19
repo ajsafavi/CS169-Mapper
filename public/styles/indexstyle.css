@@ -11,9 +11,13 @@ input[type="range"] {
 	display: block;
 }
 
-/*body {
+.navbar-header {
+	float: none;
+}
+
+body {
 	background-image: url('http://junecong.com/img/mappr/congruent_outline.png');
-}*/
+}
 
 
 
@@ -70,14 +74,14 @@ input[type="range"] {
 .col-12 {width: 100%;}
 
 
-
+/*
 .initial-inputs{
     min-height: 100%;
     margin-top: 50px;
     position: fixed;
     min-width: 100%;
-}
-
+}*/
+/*
 .var {
 	margin-top: 25px;
 
@@ -103,10 +107,20 @@ input[type="range"] {
 	width: 33.3%;
 	display: block;
 }
-
+*/
 
 .hidden{
 	visibility: hidden;
+}
+
+.firstDisplay {
+	margin-top: 25px;
+	width: 33.3%;
+	display: block;
+}
+
+.secondDisplay {
+	max-width: 15%;
 }
 
 

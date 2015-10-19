@@ -23,21 +23,56 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
+    <div class="navbar-header" id="idnavcontainer">
 
-      <a class="navbar-brand" href="#">Mappr</a>
-    </div>
-
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-inputs-afterclick">
-	  	<form class="navbar-form navbar-left" role="search">
-			<div class="form-group">
-				
-			</div>
-		</form>
+    	<a class="navbar-brand" href="#">Mappr</a>
     </div>
   </div>
 </nav>
+
+<script type="text/javascript">
+
+	// $( "form" ).on( "submit", function( event ) {
+
+	// 	Mapper.start();
+	// 	$("div#secondContainer").removeClass('hidden');
+	// 	$("div#firstContainer").addClass('hidden');
+	// });
+
+	// $('#firstContainer').submit(function(){
+	// 	e.preventDefault();
+	// 	alert("Hello! I am an alert box!!");
+	//     $("div#secondContainer").removeClass('hidden');
+	// 	$("div#firstContainer").addClass('hidden');
+		
+	// });
+
+	$( "body" ).on( "click", "#idsubmit", function() {
+		Mapper.start();
+		$("div#secondContainer").removeClass('hidden');
+		$("div#firstContainer").addClass('hidden');
+
+		$("div#idnavcontainer").append($( "#idvar" ));
+		$("div#idnavcontainer").append($( "#idfilteringvar" ));
+		$("div#idnavcontainer").append($( "#idrange" ));
+		$("div#idnavcontainer").append($( "#idgeo" ));
+		$("div#idnavcontainer").append($( "#idsubmit" ));
+
+		$( "#idvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+		$( "#idfilteringvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+		$( "#idrange" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay').css({
+		    display: "inline",
+		    width: "15%"
+		});
+		$( "#idgeo" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+		$( "#idsubmit" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+		Mapper.start();
+		alert("Hello! I am an alert box!!");
+
+	});
+
+</script>
+
 
 <!-- <div class="container">
 	<div class="row">
@@ -57,48 +92,27 @@
 </div> -->
 
 <!-- THE STUFF BELOW IS HIDDEN AFTER CLICK -->
-<div class="initial-inputs container">
+<div class="container initial-inputs" id="firstContainer">
 	<div class="row">
-		<input type="text" class="var col-xs-offset-4 col-xs-4" placeholder="Variable">
+		<input type="text" class="col-xs-offset-4 col-xs-4 firstDisplay" placeholder="Variable" id="idvar">
 	</div>
 
 	<div class="row">
-		<input type="text" class="filter-var col-xs-offset-4 col-xs-4" placeholder="Filtering Variable">
+		<input type="text" class="col-xs-offset-4 col-xs-4 firstDisplay" placeholder="Filtering Variable" id="idfilteringvar">
 	</div>
 
 	<div class="row">
-		<input type="range" class="range col-xs-offset-4 col-xs-4"/>
+		<input type="range" class="col-xs-offset-4 col-xs-4 firstDisplay" id="idrange" />
 	</div>
 
-	<div class="row">
-		<input type="text" class="geo col-xs-offset-4 col-xs-4" placeholder="Geography">
+	<div class="row" >
+		<input type="text" class="col-xs-offset-4 col-xs-4 firstDisplay" placeholder="Geography" id="idgeo">
 	</div>
 		
 	<div class="row">
-		<button type="submit" class="col-xs-offset-4 btn btn-default submitbutton">Submit</button>
+		<button type="submit" class="col-xs-offset-4 btn btn-default firstDisplay" id="idsubmit" >Submit</button>
 	</div>
 
-
-	<script type="text/javascript">
-
-
-		$( "div#secondContainer" ).submit(function(e) {
-		    // e.preventDefault(); // don't submit multiple times
-		    // this.submit(); // use the native submit method of the form element
-		    $(this).removeClass('hidden');	    
-		});
-
-		$( "body" ).on( "click", "p", function() {
-			alert( "Handler for .click() called." );
-			Mapper.start();
-		});
-
-	</script>
-
-	<div id="target">
-		<p>First Paragraph</p>
-	</div>
-	
 </div>
 
 
