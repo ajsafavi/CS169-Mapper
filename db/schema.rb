@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(version: 20151017215654) do
 
   create_table "maps", force: :cascade do |t|
     t.integer  "user_id"
+    t.integer  "dataset_id"
     t.string   "name"
     t.string   "shareable_url"
     t.string   "styling"
@@ -45,6 +46,7 @@ ActiveRecord::Schema.define(version: 20151017215654) do
     t.datetime "updated_at",    null: false
   end
 
+  add_index "maps", ["dataset_id"], name: "index_maps_on_dataset_id"
   add_index "maps", ["user_id"], name: "index_maps_on_user_id"
 
   create_table "users", force: :cascade do |t|

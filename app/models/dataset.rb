@@ -1,7 +1,9 @@
 require 'csv'
 
 class Dataset < ActiveRecord::Base
-  belongs_to :user
+    belongs_to :user
+    has_many :columns
+    has_many :maps
 
     def consume_raw_file(filestream, filename)
         # TODO: Process the file. Condense it. 
