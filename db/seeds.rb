@@ -8,7 +8,7 @@
 
 aryan = User.create({first_name: 'aryan', last_name: 'flappy', email: 'persian_princess242@yahoo.com'})
 
-filepath = '/home/aryan/classes/cs169/CS169-Mapper/datasets/sample.csv'
+filepath = Rails.root.join('datasets','sample.csv').to_s
 col_names = ["HHWT","STATEICP","STATEFIP","COUNTY","COUNTYFIPS","ACREPROP","RENT","COSTFUEL","HHINCOME","PERNUM","PERWT","SEX","AGE","SCHOOL","EMPSTAT","EMPSTATD","INCTOT","INCWELFR"]
 num_rows = 114487
 location_column = "COUNTYFIPS"
