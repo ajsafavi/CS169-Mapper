@@ -24,18 +24,26 @@ class MapsController < ApplicationController
   # POST /maps
   # POST /maps.json
   def create
+    # If they have a shareable link, verify that it is acceptable
     @map = Map.new(map_params)
   end
 
   # PATCH/PUT /maps/1
   # PATCH/PUT /maps/1.json
   def update
+    # If they have a shareable link, verify that it is acceptable
+    # If they change from an existing shareable link, make sure that the old link is freed up
+
+  end
+
+  def shareable
+    # Find map it belongs to and redirect to that
   end
 
   # DELETE /maps/1
   # DELETE /maps/1.json
   def destroy
-
+    # If they have a shareable link, make sure it gets deleted as well
   end
 
   private
