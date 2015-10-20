@@ -2,7 +2,7 @@
 # TODO: Refactor so that columns keep track of whether they're variable, weight, or location columns
 
 class DatasetsController < ApplicationController
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :points]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :points, :column_suggestions]
 
   # GET /datasets
   # GET /datasets.json
@@ -62,6 +62,17 @@ class DatasetsController < ApplicationController
     render json: {'points' => points, 'num_points' => num_points, 'location_type' => location_type}
   end
 
+  def column_suggestions
+    ans = Array.new
+    guess = column_params[:partial_name]
+    @dataset.columns.each do |column|
+      if column.name.starts_with?(guess)
+        ans.push({'name' => column.name, 'id' => column.id})
+      end
+    end
+    render json: ans
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_dataset
@@ -78,7 +89,7 @@ class DatasetsController < ApplicationController
     end
 
     def column_params
-      params.permit(:partial_name)
+      params.permit(:id, :partial_name)
     end
 
 end
