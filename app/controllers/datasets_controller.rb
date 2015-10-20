@@ -44,6 +44,8 @@ class DatasetsController < ApplicationController
   def destroy
     # Delete the dataset file first
     # Delete the datafile
+    @dataset.destroy_file!
+    @dataset.destroy
   end
 
 
@@ -73,6 +75,10 @@ class DatasetsController < ApplicationController
 
     def point_params
       params.permit(:id, :num_points, :display_val, :filter_val)
+    end
+
+    def column_params
+      params.permit(:partial_name)
     end
 
 end

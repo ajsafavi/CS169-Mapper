@@ -12,6 +12,10 @@ class Dataset < ActiveRecord::Base
         # TODO: Return the filepath and the column names
     end
 
+    def destroy_file!
+        File.delete(self.filepath) if File.exist?(self.filepath)
+    end
+
     def generate_points(num_points_wanted, display_val_name, filter_val_name)
         location_column_name = self.location_column
         weight_column_name = self.weight_column
