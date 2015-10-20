@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   get 'welcome/index'
 
   resources 'maps'
-  resources 'dataset'
+  resources 'datasets'
 
   get 'maps/:id/points' => 'maps#points'
   get 'datasets/:id/points' => 'datasets#points'

@@ -5,6 +5,8 @@ class CreateMaps < ActiveRecord::Migration
       t.references :dataset, index: true, foreign_key: true
       t.string :name
       t.string :shareable_url, index: true, unique: true
+      t.string :display_variable
+      t.string :filter_variable
       t.string :styling
       t.timestamps null: false
     end
