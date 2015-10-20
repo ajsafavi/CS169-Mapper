@@ -1,3 +1,6 @@
+# TODO: Refactor so that we can change which one is the location_column
+# TODO: Refactor so that columns keep track of whether they're variable, weight, or location columns
+
 class DatasetsController < ApplicationController
   before_action :set_dataset, only: [:show, :edit, :update, :destroy, :points]
 
@@ -49,7 +52,8 @@ class DatasetsController < ApplicationController
     num_points = params[:num_points]
     display_val = params[:display_val]
     filter_val = params[:filter_val]
-    points = @datapoint.generate_points(1000)
+    points = @dataset.generate_points(1000, display_val, filter_val)
+    render json: points
   end
 
   private
