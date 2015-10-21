@@ -40,10 +40,12 @@ class Dataset < ActiveRecord::Base
 
         display_column = Column.find_by name: display_val_name
         filter_column = Column.find_by name: filter_val_name
-        
+
+        display_null_val = display_column[:null_value]
+        filter_null_val = filter_column[:null_value]
+
         CSV.foreach(filepath, :headers => true) do |row|
             loc = row[location_column_name]
-            puts loc
 
             if not by_location.has_key?(loc)
                 by_location[loc] = Hash.new
@@ -51,6 +53,11 @@ class Dataset < ActiveRecord::Base
 
             display_val = row[display_val_name]
             filter_val = row[filter_val_name] # TODO: or nil if we don't have a filter
+
+            if display_val == display_null_val or filter_val == filter_null_val
+                next
+            end
+
             weight = row[weight_column_name].to_i
             key = [display_val, filter_val]
 
