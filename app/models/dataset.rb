@@ -65,21 +65,28 @@ class Dataset < ActiveRecord::Base
     end
 
     def condense_by_location(by_location, condense_factor)
-        entry_probability = 1.0 / condense_factor
+        
+
         ans = Array.new
         by_location.each do |location, point_dict|
-            point_dict.each do |key, weight|
+            target_size = (point_dict.size / condense_factor).to_i
+            
+            # TODO: figure out a better way to do this than just randomly
+
+            num_to_keep = [1, target_size].max
+            keys_to_keep = point_dict.keys.sample(num_to_keep)
+
+            keys_to_keep.each do |key|
                 display_val = key[0]
                 filter_val = key[1]
-                # TODO: figure out a better way to do this than just randomly
-                if rand() < entry_probability
-                    to_add = {"location" => location,
-                            "display_val" => display_val,
-                            "filter_val" => filter_val,
-                            "weight" => weight}
-                    ans.push(to_add)
-                end
+                weight = point_dict[key]
+                to_add = {"location" => location,
+                        "display_val" => display_val,
+                        "filter_val" => filter_val,
+                        "weight" => weight}
+                ans.push(to_add)
             end
+
         end
         return ans
     end
