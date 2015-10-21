@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   get 'maps/:id/points' => 'maps#points'
   get 'datasets/:id/points' => 'datasets#points'
 
+  get 'datasets/:id/columns' => 'datasets#column_suggestions'
+
   get 'maps/public/:shareable_url' => 'maps#shareable'
 
   #get 'welcome#index'

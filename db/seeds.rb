@@ -9,10 +9,9 @@
 aryan = User.create({first_name: 'aryan', last_name: 'flappy', email: 'persian_princess242@yahoo.com'})
 
 filepath = Rails.root.join('datasets','sample.csv').to_s
-col_names = ["HHWT","STATEICP","STATEFIP","COUNTY","COUNTYFIPS","ACREPROP","RENT","COSTFUEL","HHINCOME","PERNUM","PERWT","SEX","AGE","SCHOOL","EMPSTAT","EMPSTATD","INCTOT","INCWELFR"]
 num_rows = 114487
-location_column = "COUNTYFIPS"
-weight_column = "PERWT"
+location_column = "COUNTY"
+weight_column = "WEIGHT"
 location_type = "COUNTYFIPS"
 name = "DEFAULT DATASET"
 
@@ -26,9 +25,14 @@ dataset = Dataset.create({
 	user_id: aryan.id
 	})
 
-col_names.each do |col_name|
-	dataset.columns.create({name: col_name})
-end
+dataset.columns.create({name: "COUNTY", column_type: "LOCATION", null_value: nil})
+dataset.columns.create({name: "WEIGHT", column_type: "WEIGHT", null_value: nil})
+dataset.columns.create({name: "EMPLOYMENT", column_type: "VARIABLE", null_value: "-1"})
+dataset.columns.create({name: "LABOR_PARTICIPATION", column_type: "VARIABLE", null_value: "-1"})
+dataset.columns.create({name: "INCOME", column_type: "VARIABLE", null_value: "9999999"})
+dataset.columns.create({name: "SEX", column_type: "VARIABLE", null_value: nil})
+dataset.columns.create({name: "AGE", column_type: "VARIABLE", null_value: nil})
+
 
 map = Map.create({
 	name: "test_map",

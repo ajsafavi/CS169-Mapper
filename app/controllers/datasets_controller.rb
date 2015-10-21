@@ -2,8 +2,8 @@
 # TODO: Refactor so that columns keep track of whether they're variable, weight, or location columns
 
 class DatasetsController < ApplicationController
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :points, :column_suggestions]
   skip_before_action :verify_authenticity_token
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :points]
 
   # GET /datasets
   # GET /datasets.json
@@ -45,6 +45,8 @@ class DatasetsController < ApplicationController
   def destroy
     # Delete the dataset file first
     # Delete the datafile
+    @dataset.destroy_file!
+    @dataset.destroy
   end
 
 
@@ -53,8 +55,23 @@ class DatasetsController < ApplicationController
     num_points = params[:num_points]
     display_val = params[:display_val]
     filter_val = params[:filter_val]
+    location_type = @dataset.location_type
+
     points = @dataset.generate_points(1000, display_val, filter_val)
-    render json: points
+    num_points = points.size
+
+    render json: {'points' => points, 'num_points' => num_points, 'location_type' => location_type}
+  end
+
+  def column_suggestions
+    ans = Array.new
+    guess = column_params[:partial_name]
+    @dataset.columns.each do |column|
+      if column.name.starts_with?(guess)
+        ans.push({'name' => column.name, 'id' => column.id})
+      end
+    end
+    render json: ans
   end
 
   private
@@ -70,6 +87,10 @@ class DatasetsController < ApplicationController
 
     def point_params
       params.permit(:id, :num_points, :display_val, :filter_val)
+    end
+
+    def column_params
+      params.permit(:id, :partial_name)
     end
 
 end

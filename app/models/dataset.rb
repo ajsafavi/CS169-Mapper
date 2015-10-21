@@ -12,6 +12,10 @@ class Dataset < ActiveRecord::Base
         # TODO: Return the filepath and the column names
     end
 
+    def destroy_file!
+        File.delete(self.filepath) if File.exist?(self.filepath)
+    end
+
     def generate_points(num_points_wanted, display_val_name, filter_val_name)
         location_column_name = self.location_column
         weight_column_name = self.weight_column
@@ -33,6 +37,13 @@ class Dataset < ActiveRecord::Base
     def merge_repeats(filepath, location_column_name, weight_column_name, display_val_name, filter_val_name)
         line_num = 0
         by_location = Hash.new
+
+        display_column = Column.find_by name: display_val_name
+        filter_column = Column.find_by name: filter_val_name
+
+        display_null_val = display_column[:null_value]
+        filter_null_val = filter_column[:null_value]
+
         CSV.foreach(filepath, :headers => true) do |row|
             loc = row[location_column_name]
 
@@ -42,6 +53,11 @@ class Dataset < ActiveRecord::Base
 
             display_val = row[display_val_name]
             filter_val = row[filter_val_name] # TODO: or nil if we don't have a filter
+
+            if display_val == display_null_val or filter_val == filter_null_val
+                next
+            end
+
             weight = row[weight_column_name].to_i
             key = [display_val, filter_val]
 
@@ -61,21 +77,28 @@ class Dataset < ActiveRecord::Base
     end
 
     def condense_by_location(by_location, condense_factor)
-        entry_probability = 1.0 / condense_factor
+        
+
         ans = Array.new
         by_location.each do |location, point_dict|
-            point_dict.each do |key, weight|
+            target_size = (point_dict.size / condense_factor).to_i
+            
+            # TODO: figure out a better way to do this than just randomly
+
+            num_to_keep = [1, target_size].max
+            keys_to_keep = point_dict.keys.sample(num_to_keep)
+
+            keys_to_keep.each do |key|
                 display_val = key[0]
                 filter_val = key[1]
-                # TODO: figure out a better way to do this than just randomly
-                if rand() < entry_probability
-                    to_add = {"location" => location,
-                            "display_val" => display_val,
-                            "filter_val" => filter_val,
-                            "weight" => weight}
-                    ans.push(to_add)
-                end
+                weight = point_dict[key]
+                to_add = {"location" => location,
+                        "display_val" => display_val,
+                        "filter_val" => filter_val,
+                        "weight" => weight}
+                ans.push(to_add)
             end
+
         end
         return ans
     end
