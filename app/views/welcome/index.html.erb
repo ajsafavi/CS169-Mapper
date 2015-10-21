@@ -49,6 +49,8 @@
 
 	$( "body" ).on( "click", "#idsubmit", function() {
 		Mapper.start();
+		
+		// below is code to move navbar
 		$("div#secondContainer").removeClass('hidden');
 		$("div#firstContainer").addClass('hidden');
 
@@ -66,8 +68,7 @@
 		});
 		$( "#idgeo" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
 		$( "#idsubmit" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
-		Mapper.start();
-		
+		// end code to move navbar
 
 	});
 

@@ -11,7 +11,7 @@ var Mapper = (function () {
 
   var path = d3.geo.path();
 
-  var svg = d3.select("#canvas").append("svg")
+  var svg = d3.select("div#canvas").append("svg")
       .attr("width", 960)
       .attr("height", 500);
 
