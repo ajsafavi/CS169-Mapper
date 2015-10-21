@@ -2,6 +2,7 @@
 # TODO: Refactor so that columns keep track of whether they're variable, weight, or location columns
 
 class DatasetsController < ApplicationController
+  skip_before_action :verify_authenticity_token
   before_action :set_dataset, only: [:show, :edit, :update, :destroy, :points]
 
   # GET /datasets
