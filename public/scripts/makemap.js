@@ -11,13 +11,13 @@ var Mapper = (function () {
 
   var path = d3.geo.path();
 
-  var svg = d3.select("body").append("svg")
+  var svg = d3.select("#canvas").append("svg")
       .attr("width", 960)
       .attr("height", 500);
 
   var start = function() {
     
-    d3.json("/scripts/us.json", function(error, us) {
+    d3.json("http://localhost:8000/../../../public/scripts/us.json", function(error, us) {
     if (error) throw error;
 
     svg.append("path")

@@ -3,6 +3,7 @@
 
 class DatasetsController < ApplicationController
   before_action :set_dataset, only: [:show, :edit, :update, :destroy, :points, :column_suggestions]
+  skip_before_action :verify_authenticity_token
 
   # GET /datasets
   # GET /datasets.json
