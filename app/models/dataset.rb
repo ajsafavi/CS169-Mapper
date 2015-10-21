@@ -27,8 +27,10 @@ class Dataset < ActiveRecord::Base
         by_location.each do |location, point_dict|
             num_condensed += point_dict.size
         end
-
-        condense_factor = num_condensed / num_points_wanted
+        logger.debug "Num condensed: #{num_condensed}"
+        logger.debug "Num Points Wanted : #{num_points_wanted}"
+        condense_factor = num_condensed*1.0 / num_points_wanted
+        logger.debug "Condense Factor: #{condense_factor}"
 
         ans = condense_by_location(by_location, condense_factor)
         return ans
@@ -66,10 +68,6 @@ class Dataset < ActiveRecord::Base
             end
 
             by_location[loc][key] += weight
-
-            if line_num % 10000 == 0
-                puts line_num
-            end
             
             line_num += 1
         end
@@ -82,7 +80,6 @@ class Dataset < ActiveRecord::Base
         ans = Array.new
         by_location.each do |location, point_dict|
             target_size = (point_dict.size / condense_factor).to_i
-            
             # TODO: figure out a better way to do this than just randomly
 
             num_to_keep = [1, target_size].max

@@ -52,12 +52,12 @@ class DatasetsController < ApplicationController
 
   def points
     params = point_params
-    num_points = params[:num_points]
+    num_points = params[:num_points].to_i
     display_val = params[:display_val]
     filter_val = params[:filter_val]
     location_type = @dataset.location_type
 
-    points = @dataset.generate_points(1000, display_val, filter_val)
+    points = @dataset.generate_points(num_points, display_val, filter_val)
     num_points = points.size
 
     render json: {'points' => points, 'num_points' => num_points, 'location_type' => location_type}
