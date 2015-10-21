@@ -1,20 +1,148 @@
-<h1>Welcome#index</h1>
-June make this look cool pls!
-<p>Find me in app/views/welcome/index.html.erb</p>
+<html lang="en">
 <meta charset="utf-8">
 <title>Non-Contiguous Cartogram</title>
 
 <head>
-<link rel="stylesheet" type"text/css" href="styles/mapstyle.css">
 
-<script src="scripts/jquery.min.js"></script>
-<script src="scripts/d3.min.js"></script>
-<script src="scripts/topojson.min.js"></script>
-<script type="text/javascript" src="scripts/makemap.js"></script>
-<script type="text/javascript">
-  $(function() 
-  {
-    Mapper.start();
-  });
-</script>
+<script src="../../../public/scripts/jquery.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+
+<script src="../../../public/scripts/d3.min.js"></script>
+<script src="../../../public/scripts/topojson.min.js"></script>
+<script type="text/javascript" src="../../../public/scripts/makemap.js"></script>
+
+<script src="../../../public/scripts/bootstrap/js/bootstrap.js"></script>
+<link rel="stylesheet" href="../../../public/scripts/bootstrap/css/bootstrap.css"></script>
+<link rel="stylesheet" href="../../../public/styles/indexstyle.css"></script>
+
 </head>
+
+
+<body>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header" id="idnavcontainer">
+
+    	<a class="navbar-brand" href="#">Mappr</a>
+    </div>
+  </div>
+</nav>
+
+<script type="text/javascript">
+
+	// $( "form" ).on( "submit", function( event ) {
+
+	// 	Mapper.start();
+	// 	$("div#secondContainer").removeClass('hidden');
+	// 	$("div#firstContainer").addClass('hidden');
+	// });
+
+	// $('#firstContainer').submit(function(){
+	// 	e.preventDefault();
+	// 	alert("Hello! I am an alert box!!");
+	//     $("div#secondContainer").removeClass('hidden');
+	// 	$("div#firstContainer").addClass('hidden');
+		
+	// });
+
+	$( "body" ).on( "click", "#idsubmit", function() {
+		Mapper.start();
+		$("div#secondContainer").removeClass('hidden');
+		$("div#firstContainer").addClass('hidden');
+
+		$("div#idnavcontainer").append($( "#idvar" ));
+		$("div#idnavcontainer").append($( "#idfilteringvar" ));
+		$("div#idnavcontainer").append($( "#idrange" ));
+		$("div#idnavcontainer").append($( "#idgeo" ));
+		$("div#idnavcontainer").append($( "#idsubmit" ));
+
+		$( "#idvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+		$( "#idfilteringvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+		$( "#idrange" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay').css({
+		    display: "inline",
+		    width: "15%"
+		});
+		$( "#idgeo" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+		$( "#idsubmit" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+		Mapper.start();
+		alert("Hello! I am an alert box!!");
+
+	});
+
+</script>
+
+
+<!-- <div class="container">
+	<div class="row">
+		<div class="canvas">
+
+			Map goes here
+
+			<script type="text/javascript">
+			  $(function() 
+			  {
+			    Mapper.start();
+			  });
+			</script>
+
+		</div>
+	</div>
+</div> -->
+
+<!-- THE STUFF BELOW IS HIDDEN AFTER CLICK -->
+<div class="container initial-inputs" id="firstContainer">
+	<div class="row">
+		<input type="text" class="col-xs-offset-4 col-xs-4 firstDisplay" placeholder="Variable" id="idvar">
+	</div>
+
+	<div class="row">
+		<input type="text" class="col-xs-offset-4 col-xs-4 firstDisplay" placeholder="Filtering Variable" id="idfilteringvar">
+	</div>
+
+	<div class="row">
+		<input type="range" class="col-xs-offset-4 col-xs-4 firstDisplay" id="idrange" />
+	</div>
+
+	<div class="row" >
+		<input type="text" class="col-xs-offset-4 col-xs-4 firstDisplay" placeholder="Geography" id="idgeo">
+	</div>
+		
+	<div class="row">
+		<button type="submit" class="col-xs-offset-4 btn btn-default firstDisplay" id="idsubmit" >Submit</button>
+	</div>
+
+</div>
+
+
+
+
+<!-- THE STUFF BELOW IS HIDDEN AT FIRST -->
+
+<div class="container second hidden" id="secondContainer">
+	<div class="row">
+		<div id="canvas" class="col-9">
+
+			Map goes here
+
+			
+		</div>
+
+		<div class="row">
+			<div id="barcanvas" class="col-3">
+
+			Bar goes here
+			</div>
+
+			<div id="scattercanvas" class="col-3">
+
+			Scatter goes here	
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+</body>
