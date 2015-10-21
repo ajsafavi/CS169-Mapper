@@ -37,8 +37,13 @@ class Dataset < ActiveRecord::Base
     def merge_repeats(filepath, location_column_name, weight_column_name, display_val_name, filter_val_name)
         line_num = 0
         by_location = Hash.new
+
+        display_column = Column.find_by name: display_val_name
+        filter_column = Column.find_by name: filter_val_name
+        
         CSV.foreach(filepath, :headers => true) do |row|
             loc = row[location_column_name]
+            puts loc
 
             if not by_location.has_key?(loc)
                 by_location[loc] = Hash.new
