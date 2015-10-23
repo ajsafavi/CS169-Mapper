@@ -31,31 +31,25 @@ body {
 #canvas {
 	background-color: #ccc;
     float: left;
-    min-height: 80%;
+    min-height: 500px;
     border-right: thick solid #000;
 
 }
 
 #barcanvas {
 	background-color: #8EA86C;
-	min-height: 40%;
+	min-height: 250px;
 	border-bottom: thick solid #000;
 
 }
 
 #scattercanvas {
 	background-color: #4D642D;
-	min-height: 40%;
+	min-height: 250px;
 
 }
 
 
-/*
-.row:after {
-    content: "";
-    clear: both;
-    display: block;
-}*/
 [class*="col-"] {
     float: left;
     padding: 15px;
@@ -74,41 +68,6 @@ body {
 .col-12 {width: 100%;}
 
 
-/*
-.initial-inputs{
-    min-height: 100%;
-    margin-top: 50px;
-    position: fixed;
-    min-width: 100%;
-}*/
-/*
-.var {
-	margin-top: 25px;
-
-}
-
-.filter-var {
-     margin-top: 25px;
-	
-}
-
-
-.geo {
-   margin-top: 25px;
-	
-}
-
-.range {
-	margin-top: 25px;
-}
-
-.submitbutton{
-	margin-top: 25px;
-	width: 33.3%;
-	display: block;
-}
-*/
-
 .hidden{
 	visibility: hidden;
 }
@@ -122,5 +81,6 @@ body {
 .secondDisplay {
 	max-width: 15%;
 }
+
 
 

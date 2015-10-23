@@ -1,4 +1,5 @@
 var Mapper = (function () {
+  console.log('hi');
   // Ratio of Obese (BMI >= 30) in U.S. Adults, CDC 2008
   var valueById = [
      NaN, .187, .198,  NaN, .133, .175, .151,  NaN, .100, .125,
