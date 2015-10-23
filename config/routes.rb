@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   resources 'maps'
   resources 'datasets'
-
+  resources 'users'
   get 'maps/:id/points' => 'maps#points'
   get 'datasets/:id/points' => 'datasets#points'
 
