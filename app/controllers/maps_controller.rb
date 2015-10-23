@@ -72,13 +72,17 @@ class MapsController < ApplicationController
 
   def points
     params = point_params
-    dataset_id = @map.dataset_id
+    @dataset = @map.dataset
 
-    # TODO: later this will be optemized
-    redirect_to :controller => 'datasets', :action => 'points', 
-      :id => dataset_id, :num_points => params[:num_points],
-      :display_val => params[:display_val],
-      :filter_val => params[:filter_val]
+    num_points = params[:num_points].to_i
+    display_val = params[:display_val]
+    filter_val = params[:filter_val]
+    location_type = @dataset.location_type
+    @points = @dataset.generate_points(num_points, display_val, filter_val)
+    num_points = @points.size
+
+    render json: {'points' => @points, 'num_points' => num_points, 'location_type' => location_type}
+
   end
 
   private
