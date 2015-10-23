@@ -1,7 +1,7 @@
 == README
 
-CS169 Mappr \n
-Iteration 1.0 \n
+CS169 Mappr <b>
+Iteration 1.0 <b>
 Amir Safavi, Tony Chen, Prud, Aryan Falahadpisheh, June Cong \n
 
 Running the Program \n
