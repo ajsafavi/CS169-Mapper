@@ -1,2 +1,14 @@
 == README
 
+CS169 Mappr
+Amir Safavi, Tony Chen, Prud, Aryan Falahadpisheh, June Cong
+
+Running the Program
+navigate to the URL of the app and select the data you want to map. 
+
+Testing
+To test the javascript files go to public/QUnitTests and run Tests1.html. By looking at the webpage it generates
+you should be able to tell which javascipt methods work
+
+To test the database navigate to the directory and run navigate "rake test".
+This will run automated tests that verfiy that the database is setup properly
