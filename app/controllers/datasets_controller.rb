@@ -2,17 +2,23 @@
 # TODO: Refactor so that columns keep track of whether they're variable, weight, or location columns
 
 class DatasetsController < ApplicationController
-  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :points]
+  before_action :set_dataset, only: [:show, :edit, :update, :destroy, :points, :column_suggestions]
+  skip_before_action :verify_authenticity_token
 
   # GET /datasets
   # GET /datasets.json
   def index
     @datasets = Dataset.all
+    render json: @datasets
   end
 
   # GET /datasets/1
   # GET /datasets/1.json
   def show
+    @to_render = @dataset.as_json
+    @to_render["columns"] = @dataset.columns
+    render json: @to_render
+
   end
 
   # GET /datasets/new
@@ -28,6 +34,23 @@ class DatasetsController < ApplicationController
   # POST /datasets.json
   def create
     params = dataset_params
+    create_params = Hash.new
+
+    create_params[:name] = params[:name]
+    create_params[:filepath] = (Rails.root + "/datasets/fake.csv").to_s
+    create_params[:location_column] = params[:location_column]
+    create_params[:location_type] = params[:location_type]
+    create_params[:weight_column] = params[:weight_column]
+    create_params[:num_rows] = 1000
+    create_params[:name] = params[:user]
+
+    @dataset = Dataset.new(create_params)
+    if @dataset.save
+      redirect_to @dataset
+    else
+      render json: @dataset.errors, status: :unprocessable_entity
+    end
+
     # TODO: Iteration 2
     # TODO: Validate params
     # TODO: Consume file (validate it, condense it, write it to file, read the columns)
@@ -37,6 +60,18 @@ class DatasetsController < ApplicationController
     # TODO: Create columns
     # Send responses
 
+
+  end
+
+  def update
+    params = dataset_edit_params.except!(:id)
+    @dataset.update(params)
+
+    if @dataset.valid?
+      redirect_to @dataset
+    else
+      render json: @dataset.errors, status: :unprocessable_entity
+    end
   end
 
   # DELETE /datasets/1
@@ -44,16 +79,34 @@ class DatasetsController < ApplicationController
   def destroy
     # Delete the dataset file first
     # Delete the datafile
+    @dataset.destroy_file!
+    @dataset.destroy
+    head :no_content
   end
 
 
   def points
     params = point_params
-    num_points = params[:num_points]
+    num_points = params[:num_points].to_i
     display_val = params[:display_val]
     filter_val = params[:filter_val]
-    points = @dataset.generate_points(1000, display_val, filter_val)
-    render json: points
+    location_type = @dataset.location_type
+
+    points = @dataset.generate_points(num_points, display_val, filter_val)
+    num_points = points.size
+
+    render json: {'points' => points, 'num_points' => num_points, 'location_type' => location_type}
+  end
+
+  def column_suggestions
+    ans = Array.new
+    guess = column_params[:partial_name]
+    @dataset.columns.each do |column|
+      if column.name.starts_with?(guess)
+        ans.push({'name' => column.name, 'id' => column.id})
+      end
+    end
+    render json: ans
   end
 
   private
@@ -67,8 +120,16 @@ class DatasetsController < ApplicationController
       params.permit(:id, :name, :owner, :location_column, :location_type, :weight_column, :datafile)
     end
 
+    def dataset_edit_params
+      params.permit(:id, :name, :owner, :location_column, :location_type, :weight_column, :filepath)
+    end
+
     def point_params
       params.permit(:id, :num_points, :display_val, :filter_val)
+    end
+
+    def column_params
+      params.permit(:id, :partial_name)
     end
 
 end

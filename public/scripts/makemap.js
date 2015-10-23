@@ -1,42 +1,118 @@
 var Mapper = (function () {
-  console.log('hi');
-  // Ratio of Obese (BMI >= 30) in U.S. Adults, CDC 2008
-  var valueById = [
-     NaN, .187, .198,  NaN, .133, .175, .151,  NaN, .100, .125,
-    .171,  NaN, .172, .133,  NaN, .108, .142, .167, .201, .175,
-    .159, .169, .177, .141, .163, .117, .182, .153, .195, .189,
-    .134, .163, .133, .151, .145, .130, .139, .169, .164, .175,
-    .135, .152, .169,  NaN, .132, .167, .139, .184, .159, .140,
-    .146, .157,  NaN, .139, .183, .160, .143
-  ];
 
-  var path = d3.geo.path();
 
-  var svg = d3.select("div#canvas").append("svg")
-      .attr("width", 960)
-      .attr("height", 500);
+  var apiUrl = 'localhost:3000/datasets/1/points?num_points=20000&filter_val=AGE&display_val=EMPLOYMENT'
+  /**
+    * HTTP GET request 
+    * @param  {string}   url       URL path, e.g. "/api/smiles"
+    * @param  {function} onSuccess   callback method to execute upon request success (200 status)
+    * @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
+    * @return {None}
+    */
+  var makeGetRequest = function(url, onSuccess, onFailure) {
+    $.ajax({
+      type: 'GET',
+      url: url,
+      dataType: "json",
+      success: onSuccess,
+      error: onFailure
+    });
+  };
+
+  var processPoints = function(data) {
+    var currCounty = data.points[0].location;
+    var currSum = 0;
+    var nextCounty;
+    var avg;
+    var totalWeight = 0;
+    var nextWeight;
+    var nextDisplay;
+    var newData = []
+
+    for (var i = 0; i < data.points.length; i++) {
+      totalWeight += data.points[i].weight * parseInt(data.points[i].display_val);
+    }
+
+    for (var i = 0; i < data.points.length; i++) {
+      nextCounty = data.points[i].location;
+      nextWeight = data.points[i].weight * parseInt(data.points[i].display_val);
+      if (currCounty != nextCounty) {
+        avg = currSum / totalWeight;
+        newData.push({location: currCounty, value: avg})
+        currCounty = nextCounty;
+        currSum = nextWeight * parseInt(data.points[i].display_val);
+      } else {
+        currSum += nextWeight;
+      }
+    }
+
+    return newData
+  }
+>>>>>>> upstream/master
 
   var start = function() {
     
-    d3.json("http://localhost:8000/../../../public/scripts/us.json", function(error, us) {
-    if (error) throw error;
+    var onSuccess = function(data) {
+      var dataPoints = processPoints(data);
 
-    svg.append("path")
-        .datum(topojson.feature(us, us.objects.land))
-        .attr("class", "land")
-        .attr("d", path);
+      var width = 870,
+          height = 505;
 
-    svg.selectAll(".state")
-        .data(topojson.feature(us, us.objects.states).features)
-      .enter().append("path")
-        .attr("class", "state")
-        .attr("d", path)
-        .style("fill", function(d) {
-          return '#'+((valueById[d.id])*5*0xFF<<0).toString(16)+ //red
-          ((valueById[d.id])*0xFF<<0).toString(16) + //green
-          ((valueById[d.id])*0xFF<<0).toString(16); //blue
-        });
-    });
+      var rateById = d3.map();
+
+      var quantize = d3.scale.quantize()
+          .domain([0, Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
+          .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
+
+      var projection = d3.geo.albersUsa()
+          .scale(900)
+          .translate([width / 2, height / 2]);
+
+      var path = d3.geo.path()
+          .projection(projection);
+
+      var svg = d3.select("#canvas").append("svg")
+          .attr("width", width)
+          .attr("height", height);
+
+      for (var i = 0; i < dataPoints.length; i++) {
+        rateById.set(dataPoints[i].location, dataPoints[i].value);
+      }
+
+      queue()
+          .defer(d3.json, "/scripts/us.json")
+          .await(ready);
+
+      function ready(error, us) {
+        if (error) throw error;
+
+        svg.append("g")
+            .attr("class", "counties")
+          .selectAll("path")
+            .data(topojson.feature(us, us.objects.counties).features)
+          .enter().append("path")
+            .attr("class", function(d) { return quantize(rateById.get(d.id)); })
+            .attr("d", path);
+
+        svg.append("path")
+            .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a == b || a !== b; }))
+            .attr("class", "counties")
+            .attr("d", path);
+
+        svg.append("path")
+            .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
+            .attr("class", "states")
+            .attr("d", path);
+      }
+
+      d3.select(self.frameElement).style("height", height + "px");
+    };
+    var onFailure = function() { 
+      console.error('fail'); 
+    }
+    makeGetRequest('/scripts/points.json', onSuccess, onFailure);
+
+
   };
 
   // PUBLIC METHODS
@@ -45,3 +121,4 @@ var Mapper = (function () {
     start: start
   };
 })();
+
