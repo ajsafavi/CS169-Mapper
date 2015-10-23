@@ -1,6 +1,6 @@
 var Mapper = (function () {
 
-  var apiUrl = 'localhost:3000/datasets/1/points?num_points=20000';
+  var apiUrl;
   var url = window.location.href;//tony use this to get the local url
 
   var varList = ["Employment","Income","Labor Participation","Sex","Age"];
@@ -58,18 +58,19 @@ var Mapper = (function () {
 
   var submitClickHandler = function() {
       $( "body" ).on( "click", "#idsubmit", function() {
+        apiUrl = 'http://mappr169.herokuapp.com/datasets/1/points?num_points=20000';
         displayval = $("#idvar").val();
         filterval = $("#idfilteringvar").val();
-        apiUrl += '&filter_val='+filterval + '&display_val='+displayval;
-        
+        apiUrl += '&display_val=' + displayval.toUpperCase();
+        if (filterval) '&filter_val=' + filterval.toUpperCase();
         $("div#canvas").html('');
         $("div#secondContainer").removeClass('hidden');
         $("div#firstContainer").addClass('hidden');
 
         $("div#idnavcontainer").append($( "#idvar" ));
-        $("div#idnavcontainer").append($( "#idfilteringvar" ));
-        $("div#idnavcontainer").append($( "#idrange" ));
-        $("div#idnavcontainer").append($( "#idgeo" ));
+        //$("div#idnavcontainer").append($( "#idfilteringvar" ));
+        //$("div#idnavcontainer").append($( "#idrange" ));
+        //$("div#idnavcontainer").append($( "#idgeo" ));
         $("div#idnavcontainer").append($( "#idsubmit" ));
 
         $( "#idvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
@@ -147,8 +148,7 @@ var Mapper = (function () {
     var onFailure = function() { 
       console.error('fail'); 
     }
-    makeGetRequest('/scripts/points2.json', onSuccess, onFailure);
-
+    makeGetRequest(apiUrl, onSuccess, onFailure);
 
   };
 
