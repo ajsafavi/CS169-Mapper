@@ -12,7 +12,7 @@ filepath = Rails.root.join('datasets','sample.csv').to_s
 num_rows = 114487
 location_column = "COUNTY"
 weight_column = "WEIGHT"
-location_type = "COUNTYFIPS"
+location_type = "COUNTY"
 name = "DEFAULT DATASET"
 
 dataset = Dataset.create({
