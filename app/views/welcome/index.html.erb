@@ -9,15 +9,14 @@
 
 <script src="/scripts/d3.min.js"></script>
 <script src="/scripts/topojson.min.js"></script>
-<<<<<<< HEAD
+<script src="/scripts/queue.min.js"></script>
 <script type="/javascript" src="/scripts/makemap.js"></script>
-=======
 <script src="/scripts/makemap.js"></script>
->>>>>>> 7185b0e2e1285ac81ba704166f0cf0e4fd2650e3
 
 <script src="/scripts/bootstrap/js/bootstrap.js"></script>
 <link rel="stylesheet" href="/scripts/bootstrap/css/bootstrap.css"></script>
 <link rel="stylesheet" href="/styles/indexstyle.css"></script>
+<link rel="stylesheet" href="/styles/mapstyle.css"></script>
 
 </head>
 
@@ -52,7 +51,7 @@
 	// });
 
 	$( "body" ).on( "click", "#idsubmit", function() {
-		Mapper.start();
+		$("div#canvas").html('');
 		$("div#secondContainer").removeClass('hidden');
 		$("div#firstContainer").addClass('hidden');
 
@@ -127,9 +126,6 @@
 <div class="container second hidden" id="secondContainer">
 	<div class="row">
 		<div id="canvas" class="col-9">
-
-			Map goes here
-
 			
 		</div>
 
