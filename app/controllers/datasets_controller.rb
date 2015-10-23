@@ -9,11 +9,16 @@ class DatasetsController < ApplicationController
   # GET /datasets.json
   def index
     @datasets = Dataset.all
+    render json: @datasets
   end
 
   # GET /datasets/1
   # GET /datasets/1.json
   def show
+    @to_render = @dataset.as_json
+    @to_render["columns"] = @dataset.columns
+    render json: @to_render
+
   end
 
   # GET /datasets/new
