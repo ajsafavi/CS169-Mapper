@@ -58,11 +58,11 @@ var Mapper = (function () {
 
   var submitClickHandler = function() {
       $( "body" ).on( "click", "#idsubmit", function() {
-        apiUrl = 'http://mappr169.herokuapp.com/datasets/1/points?num_points=20000';
+        apiUrl = 'https://mappr169.herokuapp.com/datasets/1/points?num_points=20000';
         displayval = $("#idvar").val();
         filterval = $("#idfilteringvar").val();
-        apiUrl += '&display_val=' + displayval.toUpperCase();
-        if (filterval) '&filter_val=' + filterval.toUpperCase();
+        apiUrl += '&display_val=' + displayval.toUpperCase().replace(' ', '_');
+        if (filterval) '&filter_val=' + filterval.toUpperCase().replace(' ', '_');
         $("div#canvas").html('');
         $("div#secondContainer").removeClass('hidden');
         $("div#firstContainer").addClass('hidden');
@@ -98,7 +98,7 @@ var Mapper = (function () {
       var rateById = d3.map();
 
       var quantize = d3.scale.quantize()
-          .domain([0, Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
+          .domain([Math.min.apply(Math,dataPoints.map(function(o) {return o.value;})), Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
           .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
       var projection = d3.geo.albersUsa()
