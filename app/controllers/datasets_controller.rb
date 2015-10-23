@@ -65,9 +65,13 @@ class DatasetsController < ApplicationController
 
   def update
     params = dataset_edit_params.except!(:id)
+
     @dataset.update(params)
 
+    config.log_level = :debug 
+
     if @dataset.valid?
+      logger.debug(@dataset.inspect)
       redirect_to @dataset
     else
       render json: @dataset.errors, status: :unprocessable_entity
@@ -91,11 +95,15 @@ class DatasetsController < ApplicationController
     display_val = params[:display_val]
     filter_val = params[:filter_val]
     location_type = @dataset.location_type
+    config.log_level = :debug 
+    logger.debug("PARAMS: #{params.inspect}")
+    logger.debug("filter_val : #{filter_val}")
+    logger.debug("ABOUT TO RUN")
+    @points = @dataset.generate_points(num_points, display_val, filter_val)
+    logger.debug("NUMBER OF POINTS : #{@points.size}")
+    num_points = @points.size
 
-    points = @dataset.generate_points(num_points, display_val, filter_val)
-    num_points = points.size
-
-    render json: {'points' => points, 'num_points' => num_points, 'location_type' => location_type}
+    render json: {'points' => @points, 'num_points' => num_points, 'location_type' => location_type}
   end
 
   def column_suggestions
