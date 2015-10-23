@@ -33,7 +33,7 @@ class MapsController < ApplicationController
     params = map_params
     @map = Map.create(map_params)
     if @map.valid?
-      render json: @map
+      redirect_to @map
     else
       @errors = @map.errors.messages
       render json: {'errors' => @errors}
@@ -46,10 +46,12 @@ class MapsController < ApplicationController
     # If they have a shareable link, verify that it is acceptable
     # If they change from an existing shareable link, make sure that the old link is freed up
     @errors = Array.new
-    params = map_params
-    @map = Map.update(map_params)
+    params = map_params.except!(:id)
+
+    
+    @map.update(params)
     if @map.valid?
-      render json: @map
+      redirect_to @map
     else
       @errors = @map.errors.messages
       render json: {'errors' => @errors}
@@ -65,6 +67,7 @@ class MapsController < ApplicationController
   def destroy
     # If they have a shareable link, make sure it gets deleted as well
     @map.destroy 
+    head :no_content
   end
 
   def points
