@@ -29,17 +29,17 @@ var Mapper = (function () {
     var newData = []
 
     for (var i = 0; i < data.points.length; i++) {
-      totalWeight += data.points[i].weight;
+      totalWeight += data.points[i].weight * parseInt(data.points[i].display_val);
     }
 
     for (var i = 0; i < data.points.length; i++) {
       nextCounty = data.points[i].location;
-      nextWeight = data.points[i].weight;
+      nextWeight = data.points[i].weight * parseInt(data.points[i].display_val);
       if (currCounty != nextCounty) {
         avg = currSum / totalWeight;
         newData.push({location: currCounty, value: avg})
         currCounty = nextCounty;
-        currSum = nextWeight;
+        currSum = nextWeight * parseInt(data.points[i].display_val);
       } else {
         currSum += nextWeight;
       }
@@ -49,6 +49,7 @@ var Mapper = (function () {
   }
 
   var start = function() {
+    
     var onSuccess = function(data) {
       var dataPoints = processPoints(data);
 
@@ -89,6 +90,11 @@ var Mapper = (function () {
             .data(topojson.feature(us, us.objects.counties).features)
           .enter().append("path")
             .attr("class", function(d) { return quantize(rateById.get(d.id)); })
+            .attr("d", path);
+
+        svg.append("path")
+            .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a == b || a !== b; }))
+            .attr("class", "counties")
             .attr("d", path);
 
         svg.append("path")
