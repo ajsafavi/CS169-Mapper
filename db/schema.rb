@@ -16,10 +16,8 @@ ActiveRecord::Schema.define(version: 20151017215654) do
   create_table "columns", force: :cascade do |t|
     t.integer  "dataset_id"
     t.string   "name"
-    t.string   "column_type"
-    t.string   "null_value"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_index "columns", ["dataset_id"], name: "index_columns_on_dataset_id"
