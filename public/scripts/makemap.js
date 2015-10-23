@@ -1,7 +1,12 @@
 var Mapper = (function () {
 
-  var apiUrl = 'localhost:3000/datasets/1/points?num_points=20000&filter_val=AGE&display_val=EMPLOYMENT';
+  var apiUrl = 'localhost:3000/datasets/1/points?num_points=20000';
   var url = window.location.href;//tony use this to get the local url
+
+  var varList = ["Employment","Income","Labor Participation","Sex","Age"];
+
+  var displayval;
+  var filterval;
 
 
   
@@ -23,33 +28,66 @@ var Mapper = (function () {
   };
 
   var processPoints = function(data) {
-    var currCounty = data.points[0].location;
-    var currSum = 0;
-    var nextCounty;
-    var avg;
-    var totalWeight = 0;
-    var nextWeight;
-    var nextDisplay;
-    var newData = []
+    var points = data.points; //data points
+    var avgs = []; //associative arry of averages. keys are location codes and values is weighted sum of each location
+    var totalWeights = []; //associative array of total weights. keys are location codes and values are total weight of each location
 
-    for (var i = 0; i < data.points.length; i++) {
-      totalWeight += data.points[i].weight * parseInt(data.points[i].display_val);
-    }
-
-    for (var i = 0; i < data.points.length; i++) {
-      nextCounty = data.points[i].location;
-      nextWeight = data.points[i].weight * parseInt(data.points[i].display_val);
-      if (currCounty != nextCounty) {
-        avg = currSum / totalWeight;
-        newData.push({location: currCounty, value: avg})
-        currCounty = nextCounty;
-        currSum = nextWeight * parseInt(data.points[i].display_val);
-      } else {
-        currSum += nextWeight;
+    for (var i=0;i<points.length;i++) { //iterate through data points
+      var point = points[i]; //the i-th point
+      var loc = point.location; //location code of point
+      if (avgs[loc] == undefined) { //if we haven't seen this location yet, add it to our arrays
+        avgs[loc] = 0;
+        totalWeights[loc] = 0;
       }
+      avgs[loc] += point.weight * point.display_val; //increment this location's weighted sum
+      totalWeights[loc] += point.weight; //increment this location's total weight
     }
+
+    newData = [];
+    for (loc in avgs) { //for each location encountered, add {location, weighted average} to newData
+      newData.push({location: loc, value: avgs[loc]/totalWeights[loc]});
+    }
+
+    console.log(newData)
 
     return newData
+  }
+
+  var startAutocomplete = function() {
+    $("#idvar").autocomplete({source: varList});
+    $("#idfilteringvar").autocomplete({source: varList});
+  }
+
+  var submitClickHandler = function() {
+      $( "body" ).on( "click", "#idsubmit", function() {
+        displayval = $("#idvar").val();
+        filterval = $("#idfilteringvar").val();
+        apiUrl += '&filter_val='+filterval + '&display_val='+displayval;
+        console.log(displayval);
+        console.log(filterval);
+        console.log(apiUrl);
+        $("div#canvas").html('');
+        $("div#secondContainer").removeClass('hidden');
+        $("div#firstContainer").addClass('hidden');
+
+        $("div#idnavcontainer").append($( "#idvar" ));
+        $("div#idnavcontainer").append($( "#idfilteringvar" ));
+        $("div#idnavcontainer").append($( "#idrange" ));
+        $("div#idnavcontainer").append($( "#idgeo" ));
+        $("div#idnavcontainer").append($( "#idsubmit" ));
+
+        $( "#idvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+        $( "#idfilteringvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+        $( "#idrange" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay').css({
+            display: "inline",
+            width: "15%"
+        });
+
+        $( "#idgeo" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+        $( "#idsubmit" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+        start();
+
+    });
   }
 
   var start = function() {
@@ -121,7 +159,9 @@ var Mapper = (function () {
   // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
   return {
     start: start,
-    processPoints: processPoints
+    processPoints: processPoints,
+    submitClickHandler: submitClickHandler,
+    startAutocomplete: startAutocomplete
   };
 })();
 

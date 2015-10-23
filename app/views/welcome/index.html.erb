@@ -10,6 +10,8 @@
 <script src="/scripts/d3.min.js"></script>
 <script src="/scripts/topojson.min.js"></script>
 <script src="/scripts/queue.min.js"></script>
+<script src="/scripts/jquery-ui/jquery-ui.js"></script>
+<link rel="stylesheet" href="/scripts/jquery-ui/jquery-ui.css">
 <script type="/javascript" src="/scripts/makemap.js"></script>
 <script src="/scripts/makemap.js"></script>
 
@@ -17,6 +19,17 @@
 <link rel="stylesheet" href="/scripts/bootstrap/css/bootstrap.css"></script>
 <link rel="stylesheet" href="/styles/indexstyle.css"></script>
 <link rel="stylesheet" href="/styles/mapstyle.css"></script>
+<script type="text/javascript">
+    // This is a jQuery convention to say that once all the files
+    // load, the function Smile.start() should run.
+    // This function is defined in the smiles.js
+    $(function() {
+        Mapper.startAutocomplete();
+    });
+    $(function() {
+        Mapper.submitClickHandler();
+    });
+</script>
 
 </head>
 
@@ -32,49 +45,6 @@
     </div>
   </div>
 </nav>
-
-<script type="text/javascript">
-
-	// $( "form" ).on( "submit", function( event ) {
-
-	// 	Mapper.start();
-	// 	$("div#secondContainer").removeClass('hidden');
-	// 	$("div#firstContainer").addClass('hidden');
-	// });
-
-	// $('#firstContainer').submit(function(){
-	// 	e.preventDefault();
-	// 	alert("Hello! I am an alert box!!");
-	//     $("div#secondContainer").removeClass('hidden');
-	// 	$("div#firstContainer").addClass('hidden');
-		
-	// });
-
-	$( "body" ).on( "click", "#idsubmit", function() {
-		$("div#canvas").html('');
-		$("div#secondContainer").removeClass('hidden');
-		$("div#firstContainer").addClass('hidden');
-
-		$("div#idnavcontainer").append($( "#idvar" ));
-		$("div#idnavcontainer").append($( "#idfilteringvar" ));
-		$("div#idnavcontainer").append($( "#idrange" ));
-		$("div#idnavcontainer").append($( "#idgeo" ));
-		$("div#idnavcontainer").append($( "#idsubmit" ));
-
-		$( "#idvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
-		$( "#idfilteringvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
-		$( "#idrange" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay').css({
-		    display: "inline",
-		    width: "15%"
-		});
-		$( "#idgeo" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
-		$( "#idsubmit" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
-		Mapper.start();
-		
-
-	});
-
-</script>
 
 
 <!-- <div class="container">
