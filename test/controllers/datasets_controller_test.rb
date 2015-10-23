@@ -18,7 +18,7 @@ class DatasetsControllerTest < ActionController::TestCase
 
   test "should create dataset" do
     assert_difference('Dataset.count') do
-      post :create, dataset: {  }
+      post :create, {  }
     end
 
     assert_redirected_to dataset_path(assigns(:dataset))

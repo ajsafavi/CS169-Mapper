@@ -2,6 +2,7 @@
 
 default_map:
   user: aryan
+  dataset: sample
   name: DEFAULT
   shareable_url: default_0001
   styling: '{}'
