@@ -35,7 +35,9 @@ class MapsControllerTest < ActionController::TestCase
   end
 
   test "should update map" do
-    patch :update, id: @map, name: "NEW MAP YO"
+    patch :update, id: @map, name: "NEWNAME", display_variable: "SEX"
+    assert_equal("NEWNAME", assigns(:map).name , "Name of dataset should be updated to NEWNAME")
+    assert_equal("SEX", assigns(:map).display_variable , "display_val should be updated")
     assert_redirected_to map_path(assigns(:map))
   end
 
