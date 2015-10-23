@@ -13,12 +13,16 @@ class Dataset < ActiveRecord::Base
     end
 
     def destroy_file!
-        File.delete(self.filepath) if File.exist?(self.filepath)
+        # File.delete(self.filepath) if File.exist?(self.filepath)
     end
 
     def generate_points(num_points_wanted, display_val_name, filter_val_name)
+        logger.debug "FILTER VAL : #{filter_val_name}"
+        logger.debug "DISPLAY VAL : #{display_val_name}"
         location_column_name = self.location_column
         weight_column_name = self.weight_column
+
+
         filepath = self.filepath
 
         by_location = self.merge_repeats(filepath, location_column_name, weight_column_name, display_val_name, filter_val_name)
@@ -39,12 +43,17 @@ class Dataset < ActiveRecord::Base
     def merge_repeats(filepath, location_column_name, weight_column_name, display_val_name, filter_val_name)
         line_num = 0
         by_location = Hash.new
-
+        
         display_column = Column.find_by name: display_val_name
-        filter_column = Column.find_by name: filter_val_name
-
+        
         display_null_val = display_column[:null_value]
-        filter_null_val = filter_column[:null_value]
+        if not filter_val_name.nil?
+            filter_column = Column.find_by name: filter_val_name
+            filter_null_val = filter_column[:null_value]
+        else
+            filter_null_val = "-1"
+            filter_column = nil
+        end
 
         CSV.foreach(filepath, :headers => true) do |row|
             loc = row[location_column_name]
@@ -54,7 +63,12 @@ class Dataset < ActiveRecord::Base
             end
 
             display_val = row[display_val_name]
-            filter_val = row[filter_val_name] # TODO: or nil if we don't have a filter
+
+            if not filter_val_name.nil?
+                filter_val = row[filter_val_name] # TODO: or nil if we don't have a filter
+            else
+                filter_val = "1"
+            end
 
             if display_val == display_null_val or filter_val == filter_null_val
                 next

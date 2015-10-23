@@ -2,7 +2,7 @@ require 'test_helper'
 
 class MapsControllerTest < ActionController::TestCase
   setup do
-    @map = maps(:one)
+    @map = maps(:default_map)
   end
 
   test "should get index" do
@@ -18,9 +18,9 @@ class MapsControllerTest < ActionController::TestCase
 
   test "should create map" do
     assert_difference('Map.count') do
-      post :create, map: {  }
+      post :create, { }
     end
-
+    
     assert_redirected_to map_path(assigns(:map))
   end
 
@@ -35,7 +35,9 @@ class MapsControllerTest < ActionController::TestCase
   end
 
   test "should update map" do
-    patch :update, id: @map, map: {  }
+    patch :update, id: @map, name: "NEWNAME", display_variable: "SEX"
+    assert_equal("NEWNAME", assigns(:map).name , "Name of dataset should be updated to NEWNAME")
+    assert_equal("SEX", assigns(:map).display_variable , "display_val should be updated")
     assert_redirected_to map_path(assigns(:map))
   end
 
@@ -46,4 +48,12 @@ class MapsControllerTest < ActionController::TestCase
 
     # assert_redirected_to maps_path
   end
+
+  test "should return points" do
+    dataset = @map.dataset
+    get :points, {:id => @map, :display_val => "INCOME", :num_points => 10000}
+    assert assigns(:points), "Points should be returned"
+    assert assigns(:points).size > 0, "Points should not be empty"
+  end
+
 end
