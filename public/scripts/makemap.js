@@ -1,6 +1,10 @@
 var Mapper = (function () {
 
   var apiUrl = 'localhost:3000/datasets/1/points?num_points=20000&filter_val=AGE&display_val=EMPLOYMENT'
+  var url = window.location.href;//tony use this to get the local url
+
+
+  var
   /**
     * HTTP GET request 
     * @param  {string}   url       URL path, e.g. "/api/smiles"
@@ -116,7 +120,8 @@ var Mapper = (function () {
   // PUBLIC METHODS
   // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
   return {
-    start: start
+    start: start,
+    processPoints: processPoints
   };
 })();
 

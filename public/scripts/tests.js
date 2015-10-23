@@ -7,6 +7,6 @@ QUnit.test( "processed test", function( assert ) {
 	  "location_type":"COUNTYFIPS"};
   var correctData = [{"location": "44007", "value":1}];
   var processed = Mapper.processPoints(sampleData);
-  assert.ok(correctData == processed, "passed");
+  assert.equal(processed, correctData , "passed");
 
 });
