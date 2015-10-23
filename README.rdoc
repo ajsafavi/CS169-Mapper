@@ -4,7 +4,7 @@ CS169 Mappr
 
 Iteration 1.0
 
-Amir Safavi, Tony Chen, Prud, Aryan Falahadpisheh, June Cong \n
+Amir Safavi, Tony Chen, Prud, Aryan Falahadpisheh, June Cong
 
 Running the Program 
 

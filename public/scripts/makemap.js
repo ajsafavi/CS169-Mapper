@@ -48,8 +48,6 @@ var Mapper = (function () {
       newData.push({location: loc, value: avgs[loc]/totalWeights[loc]});
     }
 
-    console.log(newData)
-
     return newData
   }
 
@@ -65,9 +63,6 @@ var Mapper = (function () {
         filterval = $("#idfilteringvar").val();
         apiUrl += '&display_val=' + displayval.toUpperCase();
         if (filterval) '&filter_val=' + filterval.toUpperCase();
-        console.log(displayval);
-        console.log(filterval);
-        console.log(apiUrl);
         $("div#canvas").html('');
         $("div#secondContainer").removeClass('hidden');
         $("div#firstContainer").addClass('hidden');
@@ -118,7 +113,7 @@ var Mapper = (function () {
           .attr("height", height);
 
       for (var i = 0; i < dataPoints.length; i++) {
-        var location = dataPoints[i].location / 1000;
+        var location = parseInt(dataPoints[i].location) / 1000
         rateById.set(location, dataPoints[i].value);
       }
 
@@ -154,7 +149,6 @@ var Mapper = (function () {
       console.error('fail'); 
     }
     makeGetRequest(apiUrl, onSuccess, onFailure);
-
 
   };
 
