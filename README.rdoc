@@ -1,8 +1,8 @@
 == README
 
-CS169 Mappr
-Iteration 1.0
-Amir Safavi, Tony Chen, Prud, Aryan Falahadpisheh, June Cong
+CS169 Mappr \n
+Iteration 1.0 \n
+Amir Safavi, Tony Chen, Prud, Aryan Falahadpisheh, June Cong \n
 
 Running the Program \n
 navigate to the URL of the app and select the data you want to map. 
