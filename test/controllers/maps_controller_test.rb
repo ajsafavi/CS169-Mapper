@@ -2,7 +2,7 @@ require 'test_helper'
 
 class MapsControllerTest < ActionController::TestCase
   setup do
-    @map = maps(:one)
+    @map = maps(:default_map)
   end
 
   test "should get index" do
@@ -18,9 +18,9 @@ class MapsControllerTest < ActionController::TestCase
 
   test "should create map" do
     assert_difference('Map.count') do
-      post :create, map: {  }
+      post :create, { }
     end
-
+    
     assert_redirected_to map_path(assigns(:map))
   end
 
@@ -35,7 +35,7 @@ class MapsControllerTest < ActionController::TestCase
   end
 
   test "should update map" do
-    patch :update, id: @map, map: {  }
+    patch :update, id: @map, name: "NEW MAP YO"
     assert_redirected_to map_path(assigns(:map))
   end
 

@@ -65,9 +65,13 @@ class DatasetsController < ApplicationController
 
   def update
     params = dataset_edit_params.except!(:id)
+
     @dataset.update(params)
 
+    config.log_level = :debug 
+
     if @dataset.valid?
+      logger.debug(@dataset.inspect)
       redirect_to @dataset
     else
       render json: @dataset.errors, status: :unprocessable_entity

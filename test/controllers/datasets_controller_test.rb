@@ -2,7 +2,7 @@ require 'test_helper'
 
 class DatasetsControllerTest < ActionController::TestCase
   setup do
-    @dataset = datasets(:one)
+    @dataset = datasets(:sample)
   end
 
   test "should get index" do
@@ -35,8 +35,11 @@ class DatasetsControllerTest < ActionController::TestCase
   end
 
   test "should update dataset" do
-    patch :update, id: @dataset, dataset: {  }
+    patch :update, id: @dataset, name: 'NEWNAME'
+    assert assigns(:dataset), "dataset not created"
+    assert_equal("NEWNAME", assigns(:dataset).name , "Name of dataset should be updated to NEWNAME")
     assert_redirected_to dataset_path(assigns(:dataset))
+    
   end
 
   test "should destroy dataset" do
@@ -46,4 +49,7 @@ class DatasetsControllerTest < ActionController::TestCase
 
     # assert_redirected_to datasets_path
   end
+
+  # Other Custom Methods
+
 end
