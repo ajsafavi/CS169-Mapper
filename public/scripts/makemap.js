@@ -1,6 +1,6 @@
 var Mapper = (function () {
 
-  var apiUrl = 'localhost:3000/datasets/1/points?num_points=20000';
+  var apiUrl;
   var url = window.location.href;//tony use this to get the local url
 
   var varList = ["Employment","Income","Labor Participation","Sex","Age"];
@@ -60,9 +60,11 @@ var Mapper = (function () {
 
   var submitClickHandler = function() {
       $( "body" ).on( "click", "#idsubmit", function() {
+        apiUrl = 'http://mappr169.herokuapp.com/datasets/1/points?num_points=20000';
         displayval = $("#idvar").val();
         filterval = $("#idfilteringvar").val();
-        apiUrl += '&filter_val='+filterval + '&display_val='+displayval;
+        apiUrl += '&display_val=' + displayval.toUpperCase();
+        if (filterval) '&filter_val=' + filterval.toUpperCase();
         console.log(displayval);
         console.log(filterval);
         console.log(apiUrl);
@@ -71,9 +73,9 @@ var Mapper = (function () {
         $("div#firstContainer").addClass('hidden');
 
         $("div#idnavcontainer").append($( "#idvar" ));
-        $("div#idnavcontainer").append($( "#idfilteringvar" ));
-        $("div#idnavcontainer").append($( "#idrange" ));
-        $("div#idnavcontainer").append($( "#idgeo" ));
+        //$("div#idnavcontainer").append($( "#idfilteringvar" ));
+        //$("div#idnavcontainer").append($( "#idrange" ));
+        //$("div#idnavcontainer").append($( "#idgeo" ));
         $("div#idnavcontainer").append($( "#idsubmit" ));
 
         $( "#idvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
@@ -116,7 +118,8 @@ var Mapper = (function () {
           .attr("height", height);
 
       for (var i = 0; i < dataPoints.length; i++) {
-        rateById.set(dataPoints[i].location, dataPoints[i].value);
+        var location = dataPoints[i].location / 1000;
+        rateById.set(location, dataPoints[i].value);
       }
 
       queue()
@@ -127,17 +130,17 @@ var Mapper = (function () {
         if (error) throw error;
 
         svg.append("g")
-            .attr("class", "counties")
+            .attr("class", "states")
           .selectAll("path")
-            .data(topojson.feature(us, us.objects.counties).features)
+            .data(topojson.feature(us, us.objects.states).features)
           .enter().append("path")
             .attr("class", function(d) { return quantize(rateById.get(d.id)); })
             .attr("d", path);
 
-        svg.append("path")
-            .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a == b || a !== b; }))
-            .attr("class", "counties")
-            .attr("d", path);
+        // svg.append("path")
+        //     .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a == b || a !== b; }))
+        //     .attr("class", "counties")
+        //     .attr("d", path);
 
         svg.append("path")
             .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
@@ -150,7 +153,7 @@ var Mapper = (function () {
     var onFailure = function() { 
       console.error('fail'); 
     }
-    makeGetRequest('/scripts/points.json', onSuccess, onFailure);
+    makeGetRequest(apiUrl, onSuccess, onFailure);
 
 
   };
