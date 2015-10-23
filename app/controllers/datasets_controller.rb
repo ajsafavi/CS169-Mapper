@@ -29,6 +29,23 @@ class DatasetsController < ApplicationController
   # POST /datasets.json
   def create
     params = dataset_params
+    create_params = Hash.new
+
+    create_params[:name] = params[:name]
+    create_params[:filepath] = (Rails.root + "/datasets/fake.csv").to_s
+    create_params[:location_column] = params[:location_column]
+    create_params[:location_type] = params[:location_type]
+    create_params[:weight_column] = params[:weight_column]
+    create_params[:num_rows] = 1000
+    create_params[:name] = params[:user]
+
+    @dataset = Dataset.new(create_params)
+    if @dataset.save
+      redirect_to @dataset
+    else
+      render json: @dataset.errors, status: :unprocessable_entity
+    end
+
     # TODO: Iteration 2
     # TODO: Validate params
     # TODO: Consume file (validate it, condense it, write it to file, read the columns)
@@ -38,6 +55,18 @@ class DatasetsController < ApplicationController
     # TODO: Create columns
     # Send responses
 
+
+  end
+
+  def update
+    params = dataset_edit_params.except!(:id)
+    @dataset.update(params)
+
+    if @dataset.valid?
+      redirect_to @dataset
+    else
+      render json: @dataset.errors, status: :unprocessable_entity
+    end
   end
 
   # DELETE /datasets/1
@@ -47,6 +76,7 @@ class DatasetsController < ApplicationController
     # Delete the datafile
     @dataset.destroy_file!
     @dataset.destroy
+    head :no_content
   end
 
 
@@ -83,6 +113,10 @@ class DatasetsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def dataset_params
       params.permit(:id, :name, :owner, :location_column, :location_type, :weight_column, :datafile)
+    end
+
+    def dataset_edit_params
+      params.permit(:id, :name, :owner, :location_column, :location_type, :weight_column, :filepath)
     end
 
     def point_params
