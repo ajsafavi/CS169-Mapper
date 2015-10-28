@@ -12,7 +12,13 @@ class MapsController < ApplicationController
   # GET /maps/1
   # GET /maps/1.json
   def show
-    render json: @map
+    respond_to do |format|
+      format.html { } # TODO: Render the map page!
+      format.json {
+        render json: @map
+      }
+    end
+    
   end
 
   # GET /maps/new
@@ -22,21 +28,35 @@ class MapsController < ApplicationController
 
   # GET /maps/1/edit
   def edit
-
   end
 
   # POST /maps
   # POST /maps.json
   def create
-    # If they have a shareable link, verify that it is acceptable
+    # TODO: If they have a shareable link, verify that it is acceptable
     @errors = Array.new
     params = map_params
     @map = Map.create(map_params)
-    if @map.valid?
-      redirect_to @map
-    else
-      @errors = @map.errors.messages
-      render json: {'errors' => @errors}
+
+    @okay = @map.valid?
+
+    respond_to do |format|
+      format.html { 
+        if !@okay
+          # It's not chill! Show some error
+        else
+          # Redirect to viewing that map?
+        end
+      }
+      
+      format.json {
+        if @okay
+          redirect_to @map, format: :json
+        else
+          render json: @map.errors, status: :unprocessable_entity
+        end
+      }
+
     end
   end
 
@@ -48,13 +68,27 @@ class MapsController < ApplicationController
     @errors = Array.new
     params = map_params.except!(:id)
 
-    
     @map.update(params)
-    if @map.valid?
-      redirect_to @map
-    else
-      @errors = @map.errors.messages
-      render json: {'errors' => @errors}
+
+    @okay = @map.valid?
+    
+    respond_to do |format|
+      format.html { 
+        if !@okay
+          # It's not chill! Show some error
+        else
+          # Redirect to viewing that map?
+        end
+      }
+      
+      format.json {
+        if @okay
+          redirect_to @map, format: :json
+        else
+          render json: @map.errors, status: :unprocessable_entity
+        end
+      }
+
     end
   end
 
