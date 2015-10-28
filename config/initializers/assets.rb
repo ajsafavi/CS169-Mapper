@@ -9,3 +9,13 @@ Rails.application.config.assets.version = '1.0'
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
 # Rails.application.config.assets.precompile += %w( search.js )
+
+Rails.application.config.assets.precompile += %w( jquery.min.js )
+Rails.application.config.assets.precompile += %w( d3.min.js )
+Rails.application.config.assets.precompile += %w( makemap.js )
+Rails.application.config.assets.precompile += %w( points.js )
+Rails.application.config.assets.precompile += %w( queue.min.js )
+Rails.application.config.assets.precompile += %w( topojson.min.js )
+
+Rails.application.config.assets.precompile += %w( us.json.js )
+Rails.application.config.assets.precompile += %w( indexstyle.css )
