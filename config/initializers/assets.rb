@@ -19,3 +19,4 @@ Rails.application.config.assets.precompile += %w( topojson.min.js )
 
 Rails.application.config.assets.precompile += %w( us.json.js )
 Rails.application.config.assets.precompile += %w( indexstyle.css )
+Rails.application.config.assets.precompile += %w( mapstyle.css )
