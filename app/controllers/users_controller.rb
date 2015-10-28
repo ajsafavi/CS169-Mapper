@@ -1,4 +1,4 @@
-class UsersController < ApplicationController
+ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   # GET /users
@@ -26,10 +26,25 @@ class UsersController < ApplicationController
   # POST /users.json
   def create
     @user = User.new(user_params)
-    if @user.save
-      redirect_to @user
-    else
-      render json: @user.errors
+    @okay = @user.save
+
+    respond_to do |format|
+      format.html { 
+        if !@okay
+          # It's not chill! Show some error
+        else
+          # Redirect to viewing that map?
+        end
+      } # TODO: Render a "You're not supposed to be here"
+      
+      format.json {
+        if @okay
+          redirect_to @user, format: :json
+        else
+          render json: @user.errors, status: :unprocessable_entity
+        end
+      }
+
     end
   end
 
@@ -38,10 +53,26 @@ class UsersController < ApplicationController
   def update
     params = user_params.except!(:id)
     @user.update(params)
-    if @user.valid?
-      redirect_to @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
+
+    @okay = @user.valid?
+
+    respond_to do |format|
+      format.html { 
+        if !@okay
+          # It's not chill! Show some error
+        else
+          # Redirect to viewing that map?
+        end
+      } # TODO: Render a "You're not supposed to be here"
+      
+      format.json {
+        if @okay
+          redirect_to @user, format: :json
+        else
+          render json: @user.errors, status: :unprocessable_entity
+        end
+      }
+
     end
   end
 
