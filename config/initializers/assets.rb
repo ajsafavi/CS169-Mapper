@@ -3,7 +3,6 @@
 # Version of your assets, change this if you want to expire all your assets.
 Rails.application.config.assets.version = '1.0'
 
-
 # Add additional assets to the asset load path
 # Rails.application.config.assets.paths << Emoji.images_path
 
@@ -17,5 +16,6 @@ Rails.application.config.assets.precompile += %w( makemap.js )
 Rails.application.config.assets.precompile += %w( points.js )
 Rails.application.config.assets.precompile += %w( queue.min.js )
 Rails.application.config.assets.precompile += %w( topojson.min.js )
-Rails.application.config.assets.precompile += %w( us.json )
+
+Rails.application.config.assets.precompile += %w( us.json.js )
 Rails.application.config.assets.precompile += %w( indexstyle.css )

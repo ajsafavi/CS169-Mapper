@@ -4,19 +4,19 @@
 
 <head>
 
-<!-- <script src="/scripts/jquery.min.js"></script>
-<script src="/scripts/d3.min.js"></script>
-<script src="/scripts/topojson.min.js"></script>
-<script src="/scripts/queue.min.js"></script>
-<script src="/scripts/jquery-ui/jquery-ui.js"></script>
-<link rel="stylesheet" href="/scripts/jquery-ui/jquery-ui.css">
-<script type="/javascript" src="/scripts/makemap.js"></script>
-<script src="/scripts/makemap.js"></script>
+<%= 
+javascript_include_tag "jquery.min"
+javascript_include_tag "d3.min"
+javascript_include_tag "makemap"
+javascript_include_tag "points"
+javascript_include_tag "queue.min"
 
-<script src="/scripts/bootstrap/js/bootstrap.js"></script>
-<link rel="stylesheet" href="/scripts/bootstrap/css/bootstrap.css"></script>
-<link rel="stylesheet" href="/styles/indexstyle.css"></script>
-<link rel="stylesheet" href="/styles/mapstyle.css"></script>
+javascript_include_tag "topojson.min"
+javascript_include_tag "us.json"
+stylesheet_link_tag "indexstyle.css" 
+%>
+
+
 <script type="text/javascript">
     // This is a jQuery convention to say that once all the files
     // load, the function Smile.start() should run.
@@ -28,6 +28,8 @@
         Mapper.submitClickHandler();
     });
 </script>
+
+
 
 </head>
 
