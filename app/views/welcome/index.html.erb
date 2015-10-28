@@ -8,25 +8,26 @@
 <script src="/scripts/d3.min.js"></script>
 <script src="/scripts/topojson.min.js"></script>
 <script src="/scripts/queue.min.js"></script>
+<script src="/scripts/jquery-ui/jquery-ui.js"></script>
+<link rel="stylesheet" href="/scripts/jquery-ui/jquery-ui.css">
 <script type="/javascript" src="/scripts/makemap.js"></script>
 <script src="/scripts/makemap.js"></script>
 
 <script src="/scripts/bootstrap/js/bootstrap.js"></script>
 <link rel="stylesheet" href="/scripts/bootstrap/css/bootstrap.css"></script>
 <link rel="stylesheet" href="/styles/indexstyle.css"></script>
-<link rel="stylesheet" href="/styles/mapstyle.css"></script> -->
-
-<%= 
-# javascript_include_tag "jquery.min"
-# javascript_include_tag "d3.min"
-# javascript_include_tag "makemap"
-# javascript_include_tag "points"
-# javascript_include_tag "queue.min"
-
-# javascript_include_tag "topojson.min"
-# javascript_include_tag "us.json"
-# stylesheet_link_tag "indexstyle.css" 
-%>
+<link rel="stylesheet" href="/styles/mapstyle.css"></script>
+<script type="text/javascript">
+    // This is a jQuery convention to say that once all the files
+    // load, the function Smile.start() should run.
+    // This function is defined in the smiles.js
+    $(function() {
+        Mapper.startAutocomplete();
+    });
+    $(function() {
+        Mapper.submitClickHandler();
+    });
+</script>
 
 </head>
 
@@ -43,35 +44,6 @@
   </div>
 </nav>
 
-<script type="text/javascript">
-
-	$( "body" ).on( "click", "#idsubmit", function() {
-
-		$("div#canvas").html('');
-
-		$("div#secondContainer").removeClass('hidden');
-		$("div#firstContainer").addClass('hidden');
-
-		$("div#idnavcontainer").append($( "#idvar" ));
-		$("div#idnavcontainer").append($( "#idfilteringvar" ));
-		$("div#idnavcontainer").append($( "#idrange" ));
-		$("div#idnavcontainer").append($( "#idgeo" ));
-		$("div#idnavcontainer").append($( "#idsubmit" ));
-
-		$( "#idvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
-		$( "#idfilteringvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
-		$( "#idrange" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay').css({
-		    display: "inline",
-		    width: "15%"
-		});
-		$( "#idgeo" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
-		$( "#idsubmit" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
-		// end code to move navbar
-
-	});
-
-</script>
-
 
 <!-- THE STUFF BELOW IS HIDDEN AFTER CLICK -->
 <div class="container initial-inputs" id="firstContainer">
@@ -79,15 +51,15 @@
 		<input type="text" class="col-xs-offset-4 col-xs-4 firstDisplay" placeholder="Variable" id="idvar">
 	</div>
 
-	<div class="row">
+	<div class="row" hidden>
 		<input type="text" class="col-xs-offset-4 col-xs-4 firstDisplay" placeholder="Filtering Variable" id="idfilteringvar">
 	</div>
 
-	<div class="row">
+	<!-- <div class="row">
 		<input type="range" class="col-xs-offset-4 col-xs-4 firstDisplay" id="idrange" />
-	</div>
+	</div> -->
 
-	<div class="row" >
+	<div class="row" hidden>
 		<input type="text" class="col-xs-offset-4 col-xs-4 firstDisplay" placeholder="Geography" id="idgeo">
 	</div>
 		
@@ -109,12 +81,12 @@
 		</div>
 
 		<div class="row">
-			<div id="barcanvas" class="col-3">
+			<div id="barcanvas" class="col-3" hidden>
 
 			Bar goes here
 			</div>
 
-			<div id="scattercanvas" class="col-3">
+			<div id="scattercanvas" class="col-3" hidden>
 
 			Scatter goes here	
 			</div>

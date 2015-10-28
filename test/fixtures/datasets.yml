@@ -1,19 +1,11 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  user_id: 
-  name: MyString
-  filepath: MyString
-  location_column: MyString
-  weight_column: MyString
-  location_type: MyString
-  num_rows: 1
+sample:
+  user: aryan
+  name: DEFAULT
+  filepath: <%= Rails.root.join('datasets','sample.csv').to_s %>
+  location_column: COUNTY
+  weight_column: WEIGHT
+  location_type: COUNTY
+  num_rows: 114487
 
-two:
-  user_id: 
-  name: MyString
-  filepath: MyString
-  location_column: MyString
-  weight_column: MyString
-  location_type: MyString
-  num_rows: 1

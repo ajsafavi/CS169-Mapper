@@ -1,9 +1,19 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  dataset_id: 
-  name: MyString
+income:
+  dataset: sample
+  name: INCOME
+  column_type: VARIABLE
+  null_value: '9999999'
 
-two:
-  dataset_id: 
-  name: MyString
+employment:
+  dataset: sample
+  name: EMPLOYMENT
+  column_type: VARIABLE
+  null_value: '-1'
+
+weight:
+  dataset: sample
+  name: WEIGHT
+  column_type: WEIGHT
+  null_value: !!null

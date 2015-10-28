@@ -1,7 +1,15 @@
 var Mapper = (function () {
 
+  var apiUrl;
+  var url = window.location.href;//tony use this to get the local url
 
-  var apiUrl = 'localhost:3000/datasets/1/points?num_points=20000&filter_val=AGE&display_val=EMPLOYMENT'
+  var varList = ["Employment","Income","Labor Participation","Sex","Age"];
+
+  var displayval;
+  var filterval;
+
+
+  
   /**
     * HTTP GET request 
     * @param  {string}   url       URL path, e.g. "/api/smiles"
@@ -20,35 +28,65 @@ var Mapper = (function () {
   };
 
   var processPoints = function(data) {
-    var currCounty = data.points[0].location;
-    var currSum = 0;
-    var nextCounty;
-    var avg;
-    var totalWeight = 0;
-    var nextWeight;
-    var nextDisplay;
-    var newData = []
+    var points = data.points; //data points
+    var avgs = []; //associative arry of averages. keys are location codes and values is weighted sum of each location
+    var totalWeights = []; //associative array of total weights. keys are location codes and values are total weight of each location
 
-    for (var i = 0; i < data.points.length; i++) {
-      totalWeight += data.points[i].weight * parseInt(data.points[i].display_val);
+    for (var i=0;i<points.length;i++) { //iterate through data points
+      var point = points[i]; //the i-th point
+      var loc = point.location; //location code of point
+      if (avgs[loc] == undefined) { //if we haven't seen this location yet, add it to our arrays
+        avgs[loc] = 0;
+        totalWeights[loc] = 0;
+      }
+      avgs[loc] += point.weight * point.display_val; //increment this location's weighted sum
+      totalWeights[loc] += point.weight; //increment this location's total weight
     }
 
-    for (var i = 0; i < data.points.length; i++) {
-      nextCounty = data.points[i].location;
-      nextWeight = data.points[i].weight * parseInt(data.points[i].display_val);
-      if (currCounty != nextCounty) {
-        avg = currSum / totalWeight;
-        newData.push({location: currCounty, value: avg})
-        currCounty = nextCounty;
-        currSum = nextWeight * parseInt(data.points[i].display_val);
-      } else {
-        currSum += nextWeight;
-      }
+    newData = [];
+    for (loc in avgs) { //for each location encountered, add {location, weighted average} to newData
+      newData.push({location: loc, value: avgs[loc]/totalWeights[loc]});
     }
 
     return newData
   }
 >>>>>>> upstream/master
+
+  var startAutocomplete = function() {
+    $("#idvar").autocomplete({source: varList});
+    $("#idfilteringvar").autocomplete({source: varList});
+  }
+
+  var submitClickHandler = function() {
+      $( "body" ).on( "click", "#idsubmit", function() {
+        apiUrl = 'https://mappr169.herokuapp.com/datasets/1/points?num_points=20000';
+        displayval = $("#idvar").val();
+        filterval = $("#idfilteringvar").val();
+        apiUrl += '&display_val=' + displayval.toUpperCase().replace(' ', '_');
+        if (filterval) '&filter_val=' + filterval.toUpperCase().replace(' ', '_');
+        $("div#canvas").html('');
+        $("div#secondContainer").removeClass('hidden');
+        $("div#firstContainer").addClass('hidden');
+
+        $("div#idnavcontainer").append($( "#idvar" ));
+        //$("div#idnavcontainer").append($( "#idfilteringvar" ));
+        //$("div#idnavcontainer").append($( "#idrange" ));
+        //$("div#idnavcontainer").append($( "#idgeo" ));
+        $("div#idnavcontainer").append($( "#idsubmit" ));
+
+        $( "#idvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+        $( "#idfilteringvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+        $( "#idrange" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay').css({
+            display: "inline",
+            width: "15%"
+        });
+
+        $( "#idgeo" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+        $( "#idsubmit" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
+        start();
+
+    });
+  }
 
   var start = function() {
     
@@ -61,7 +99,7 @@ var Mapper = (function () {
       var rateById = d3.map();
 
       var quantize = d3.scale.quantize()
-          .domain([0, Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
+          .domain([Math.min.apply(Math,dataPoints.map(function(o) {return o.value;})), Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
           .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
       var projection = d3.geo.albersUsa()
@@ -76,7 +114,8 @@ var Mapper = (function () {
           .attr("height", height);
 
       for (var i = 0; i < dataPoints.length; i++) {
-        rateById.set(dataPoints[i].location, dataPoints[i].value);
+        var location = parseInt(dataPoints[i].location) / 1000
+        rateById.set(location, dataPoints[i].value);
       }
 
       queue()
@@ -87,17 +126,17 @@ var Mapper = (function () {
         if (error) throw error;
 
         svg.append("g")
-            .attr("class", "counties")
+            .attr("class", "states")
           .selectAll("path")
-            .data(topojson.feature(us, us.objects.counties).features)
+            .data(topojson.feature(us, us.objects.states).features)
           .enter().append("path")
             .attr("class", function(d) { return quantize(rateById.get(d.id)); })
             .attr("d", path);
 
-        svg.append("path")
-            .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a == b || a !== b; }))
-            .attr("class", "counties")
-            .attr("d", path);
+        // svg.append("path")
+        //     .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a == b || a !== b; }))
+        //     .attr("class", "counties")
+        //     .attr("d", path);
 
         svg.append("path")
             .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
@@ -110,15 +149,17 @@ var Mapper = (function () {
     var onFailure = function() { 
       console.error('fail'); 
     }
-    makeGetRequest('/scripts/points.json', onSuccess, onFailure);
-
+    makeGetRequest(apiUrl, onSuccess, onFailure);
 
   };
 
   // PUBLIC METHODS
   // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
   return {
-    start: start
+    start: start,
+    processPoints: processPoints,
+    submitClickHandler: submitClickHandler,
+    startAutocomplete: startAutocomplete
   };
 })();
 
