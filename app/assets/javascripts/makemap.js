@@ -48,7 +48,6 @@ var Mapper = (function () {
 
     return newData
   }
->>>>>>> upstream/master
 
   var start = function() {
     
