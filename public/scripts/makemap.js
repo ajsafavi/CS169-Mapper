@@ -50,6 +50,7 @@ var Mapper = (function () {
 
     return newData
   }
+>>>>>>> upstream/master
 
   var startAutocomplete = function() {
     $("#idvar").autocomplete({source: varList});

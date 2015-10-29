@@ -4,21 +4,20 @@
 
 <head>
 
-<script src="/scripts/jquery.min.js"></script>
-<!-- Latest compiled and minified CSS -->
+<%= 
+javascript_include_tag "jquery.min"
+javascript_include_tag "d3.min"
+javascript_include_tag "makemap"
+javascript_include_tag "points"
+javascript_include_tag "queue.min"
 
-<script src="/scripts/d3.min.js"></script>
-<script src="/scripts/topojson.min.js"></script>
-<script src="/scripts/queue.min.js"></script>
-<script src="/scripts/jquery-ui/jquery-ui.js"></script>
-<link rel="stylesheet" href="/scripts/jquery-ui/jquery-ui.css">
-<script type="/javascript" src="/scripts/makemap.js"></script>
-<script src="/scripts/makemap.js"></script>
+javascript_include_tag "topojson.min"
+javascript_include_tag "us.json"
+stylesheet_link_tag "indexstyle.css" 
+stylesheet_link_tag "mapstyle.css" 
+%>
 
-<script src="/scripts/bootstrap/js/bootstrap.js"></script>
-<link rel="stylesheet" href="/scripts/bootstrap/css/bootstrap.css"></script>
-<link rel="stylesheet" href="/styles/indexstyle.css"></script>
-<link rel="stylesheet" href="/styles/mapstyle.css"></script>
+
 <script type="text/javascript">
     // This is a jQuery convention to say that once all the files
     // load, the function Smile.start() should run.
@@ -30,6 +29,8 @@
         Mapper.submitClickHandler();
     });
 </script>
+
+
 
 </head>
 
@@ -47,38 +48,21 @@
 </nav>
 
 
-<!-- <div class="container">
-	<div class="row">
-		<div class="canvas">
-
-			Map goes here
-
-			<script type="text/javascript">
-			  $(function() 
-			  {
-			    Mapper.start();
-			  });
-			</script>
-
-		</div>
-	</div>
-</div> -->
-
 <!-- THE STUFF BELOW IS HIDDEN AFTER CLICK -->
 <div class="container initial-inputs" id="firstContainer">
 	<div class="row">
 		<input type="text" class="col-xs-offset-4 col-xs-4 firstDisplay" placeholder="Variable" id="idvar">
 	</div>
 
-	<div class="row" hidden>
+	<div class="row">
 		<input type="text" class="col-xs-offset-4 col-xs-4 firstDisplay" placeholder="Filtering Variable" id="idfilteringvar">
 	</div>
 
-	<!-- <div class="row">
+	<div class="row">
 		<input type="range" class="col-xs-offset-4 col-xs-4 firstDisplay" id="idrange" />
-	</div> -->
+	</div>
 
-	<div class="row" hidden>
+	<div class="row">
 		<input type="text" class="col-xs-offset-4 col-xs-4 firstDisplay" placeholder="Geography" id="idgeo">
 	</div>
 		
