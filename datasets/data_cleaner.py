@@ -6,6 +6,7 @@ original["EMPLOYMENT"] = ""
 original["LABOR_PARTICIPATION"] = ""
 original["WEIGHT"] = original["PERWT"]
 original["INCOME"] = original["INCTOT"]
+
 def filter_row(row):
 	state = str(row["STATEFIP"]).zfill(2)
 	# county = str(row["COUNTYFIPS"]).zfill(3)

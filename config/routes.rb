@@ -1,16 +1,18 @@
 Rails.application.routes.draw do
+  devise_for :users
   root 'welcome#index'
   get 'welcome/index'
 
   resources 'maps'
   resources 'datasets'
-  resources 'users'
+
   get 'maps/:id/points' => 'maps#points'
   get 'datasets/:id/points' => 'datasets#points'
 
   get 'datasets/:id/columns' => 'datasets#column_suggestions'
 
   get 'maps/public/:shareable_url' => 'maps#shareable'
+
   get 'javascripttest' => 'javascripttester#test'
 
   #get 'welcome#index'

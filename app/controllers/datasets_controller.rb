@@ -9,15 +9,25 @@ class DatasetsController < ApplicationController
   # GET /datasets.json
   def index
     @datasets = Dataset.all
-    render json: @datasets
+    
+    respond_to do |format|
+      format.html { }
+      format.json { render json: @datasets }
+    end
   end
 
   # GET /datasets/1
   # GET /datasets/1.json
   def show
-    @to_render = @dataset.as_json
-    @to_render["columns"] = @dataset.columns
-    render json: @to_render
+    @columns =  @dataset.columns
+    respond_to do |format|
+      format.html { } # TODO: Render a "You're not supposed to be here"
+      format.json {
+        @to_render["columns"] = @columns
+        @to_render = @dataset.as_json
+        render json: @to_render
+      }
+    end
 
   end
 
@@ -45,21 +55,27 @@ class DatasetsController < ApplicationController
     create_params[:name] = params[:user]
 
     @dataset = Dataset.new(create_params)
-    if @dataset.save
-      redirect_to @dataset
-    else
-      render json: @dataset.errors, status: :unprocessable_entity
-    end
-
-    # TODO: Iteration 2
-    # TODO: Validate params
-    # TODO: Consume file (validate it, condense it, write it to file, read the columns)
+    @okay = @dataset.save
     
-    # TODO: Create dataset creation params
-    # TODO: Create dataset
-    # TODO: Create columns
-    # Send responses
 
+    respond_to do |format|
+      format.html { 
+        if !@okay
+          # It's not chill! Show some error
+        else
+          # Redirect to viewing that map?
+        end
+      } # TODO: Render a "You're not supposed to be here"
+      
+      format.json {
+        if @okay
+          redirect_to @dataset, format: :json
+        else
+          render json: @dataset.errors, status: :unprocessable_entity
+        end
+      }
+
+    end
 
   end
 
@@ -70,11 +86,25 @@ class DatasetsController < ApplicationController
 
     config.log_level = :debug 
 
-    if @dataset.valid?
-      logger.debug(@dataset.inspect)
-      redirect_to @dataset
-    else
-      render json: @dataset.errors, status: :unprocessable_entity
+    @okay = @dataset.valid?
+
+    respond_to do |format|
+      format.html { 
+        if !@okay
+          # It's not chill! Show some error
+        else
+          # Redirect to viewing that map?
+        end
+      } # TODO: Render a "You're not supposed to be here"
+      
+      format.json {
+        if @okay
+          redirect_to @dataset, format: :json
+        else
+          render json: @dataset.errors, status: :unprocessable_entity
+        end
+      }
+
     end
   end
 

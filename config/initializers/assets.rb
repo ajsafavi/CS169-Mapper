@@ -20,6 +20,12 @@ Rails.application.config.assets.precompile += %w( tests.js )
 Rails.application.config.assets.precompile += %w( qunit-1.19.0.js)
 Rails.application.config.assets.precompile += %w( us.json.js )
 
+Rails.application.config.assets.precompile += %w( bootstrap.css)
+Rails.application.config.assets.precompile += %w( bootstrap.js)
+
+Rails.application.config.assets.precompile += %w(jquery-ui.js)
+Rails.application.config.assets.precompile += %w(jquery-ui.css)
+
 Rails.application.config.assets.precompile += %w( indexstyle.css )
 Rails.application.config.assets.precompile += %w( mapstyle.css )
 Rails.application.config.assets.precompile += %w( qunit-1.19.0.css)
