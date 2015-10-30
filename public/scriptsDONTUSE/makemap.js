@@ -8,6 +8,10 @@ var Mapper = (function () {
   var displayval;
   var filterval;
 
+  var getEnvironment = function() 
+  {
+    return <%= ENV['key'] %>;
+  }
 
   
   /**
@@ -50,7 +54,6 @@ var Mapper = (function () {
 
     return newData
   }
->>>>>>> upstream/master
 
   var startAutocomplete = function() {
     $("#idvar").autocomplete({source: varList});
@@ -159,7 +162,8 @@ var Mapper = (function () {
     start: start,
     processPoints: processPoints,
     submitClickHandler: submitClickHandler,
-    startAutocomplete: startAutocomplete
+    startAutocomplete: startAutocomplete,
+    getEnvironment: getEnvironment
   };
 })();
 
