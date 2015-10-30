@@ -1,17 +1,18 @@
 Rails.application.routes.draw do
+  devise_for :users
   root 'welcome#index'
   get 'welcome/index'
 
   resources 'maps'
   resources 'datasets'
-  resources 'users'
+
   get 'maps/:id/points' => 'maps#points'
   get 'datasets/:id/points' => 'datasets#points'
 
   get 'datasets/:id/columns' => 'datasets#column_suggestions'
 
   get 'maps/public/:shareable_url' => 'maps#shareable'
-
+  
   #get 'welcome#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
