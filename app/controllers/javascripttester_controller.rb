@@ -1,0 +1,2 @@
+class JavascripttesterController < ApplicationController
+end

@@ -12,7 +12,9 @@ Rails.application.routes.draw do
   get 'datasets/:id/columns' => 'datasets#column_suggestions'
 
   get 'maps/public/:shareable_url' => 'maps#shareable'
-  
+
+  get 'javascripttest' => 'javascripttester#test'
+
   #get 'welcome#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
