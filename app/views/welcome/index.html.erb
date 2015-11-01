@@ -4,18 +4,19 @@
 
 <head>
 
-<%= 
-javascript_include_tag "jquery.min"
-javascript_include_tag "d3.min"
-javascript_include_tag "makemap"
-javascript_include_tag "points"
-javascript_include_tag "queue.min"
+<%= javascript_include_tag "jquery.min" %>
+<%= javascript_include_tag "jquery-ui"%>
+<%= javascript_include_tag "bootstrap.js"%>
+<%= javascript_include_tag "d3.min"%>
+<%= javascript_include_tag "queue.min"%>
 
-javascript_include_tag "topojson.min"
-javascript_include_tag "us.json"
-stylesheet_link_tag "indexstyle.css" 
-stylesheet_link_tag "mapstyle.css" 
-%>
+
+<%= javascript_include_tag "makemap"%>
+
+<%= stylesheet_link_tag "jquery-ui.css" %> 
+<%= stylesheet_link_tag "bootstrap.css" %> 
+<%= stylesheet_link_tag "indexstyle.css" %> 
+<%= stylesheet_link_tag "mapstyle.css" %>
 
 
 <script type="text/javascript">

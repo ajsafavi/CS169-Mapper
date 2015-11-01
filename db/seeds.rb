@@ -6,7 +6,7 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-# aryan = User.create({first_name: 'aryan', last_name: 'flappy', email: 'persian_princess242@yahoo.com'})
+aryan = User.create({email: 'persian_princess242@yahoo.com', password: "password123", password_confirmation: "password123"})
 
 filepath = Rails.root.join('datasets','sample.csv').to_s
 num_rows = 114487
