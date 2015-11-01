@@ -22,12 +22,13 @@ module CS169Mapper
 
     # Do not swallow errors in after_commit/after_rollback callbacks.
     #cors shit
-    config.middleware.insert_before 0, "Rack::Cors" do
-      allow do
-        origins '*'
-        resource '*', :headers => :any, :methods => :any
-      end
+    config.middleware.insert_before(0, "Rack::Cors", logger: (-> { Rails.logger })) do
+        allow do
+            origins 'locahost:3000'
+            resource '*', headers: :any, methods: [:get, :post, :patch, :options]
+        end
     end
+
     config.active_record.raise_in_transactional_callbacks = true
   end
 end
