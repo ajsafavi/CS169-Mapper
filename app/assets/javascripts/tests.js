@@ -38,6 +38,15 @@ QUnit.test( "Filter Points test", function( assert ) {
   var filtered = MapperBack.filterPoints(sampleData, 10,20);
   var correctData = [{"location": "44008", "value":1}];
   //console.log(processed);
-  assert.equal(filtered, correctData,  "filter points first test");
+  assert.deepEqual(filtered, correctData,  "filter points first test");
+
+});
+
+QUnit.test( "Get colors test (", function( assert ) {
+  //feel free to change this
+  var colors = MapperBack.colorDivs([255,127,0], 3);
+  var correctColors = [[0,0,0],[255/2, 127/2, 0], [255,127,0]];
+  //console.log(processed);
+  assert.deepEqual(colors, correctColors,  "make sure correct color divs are created");
 
 });

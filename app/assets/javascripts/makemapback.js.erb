@@ -1,6 +1,26 @@
 var MapperBack = (function () {
 //any method here should be TESTABLE
-  
+  /** color divs
+    * @param {list} baseColor   base rgb color [r,g,b]
+    * @param {number} divisions  color divisions
+    * @return {list} return a list of colors from bot quartile to top
+    */
+  var colorDivs = function(baseColor, divisions)
+  {
+    //improve me
+    var colors = [];
+    n = divisions - 1;
+    rdelta = baseColor[0]/n;
+    gdelta = baseColor[1]/n;
+    bdelta = baseColor[2]/n;
+    for(var i=0; i<divisions;i++)
+    {
+      colors.push([rdelta * i, gdelta * i, bdelta * i])
+    }
+    return colors;
+  }
+
+
   /**
     * filter points
     * @param  {json} data data in json format,
@@ -70,7 +90,8 @@ var MapperBack = (function () {
     filterPoints: filterPoints,
     getapiUrl: getapiUrl,
     getEnvironment: getEnvironment,
-    processPoints: processPoints
+    processPoints: processPoints,
+    colorDivs: colorDivs
   };
 })();
 
