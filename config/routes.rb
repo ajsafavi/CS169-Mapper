@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
+
   devise_for :users
   root 'welcome#index'
   get 'welcome/index'
-
+  
   resources 'maps'
   resources 'datasets'
 
@@ -12,8 +13,8 @@ Rails.application.routes.draw do
   get 'datasets/:id/columns' => 'datasets#column_suggestions'
 
   get 'maps/public/:shareable_url' => 'maps#shareable'
-
   get 'javascripttest' => 'javascripttester#test'
+  
 
   #get 'welcome#index'
   # The priority is based upon order of creation: first created -> highest priority.

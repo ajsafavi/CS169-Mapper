@@ -14,13 +14,13 @@ var Mapper = (function () {
   }
 
   var env = getEnvironment();
-  if(env = 'production')
+  if(env == 'production')
   {
     apiUrl = 'https://mappr169.herokuapp.com/datasets/1/points?num_points=20000';
   }
-  if(env = 'development')
+  if(env == 'development')
   {
-    apiUrl = 'localhost:3000/datasets/1/points?num_points=20000';
+    apiUrl = 'http://localhost:3000/datasets/1/points?num_points=20000';
   }
 
   
