@@ -112,13 +112,37 @@ var Mapper = (function () {
 
     });
   }
+  //adds title to our graph
+  var addTitle = function(svg)
+  {
+    svg.append("text")
+        .attr("x", 100)             
+        .attr("y", 50)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Make me a pretty title");
+  }
+  //add the legend to the plot
+  var addLegend = function (svg) 
+  {
+    //improve this 
+    //legend should show each color and what range its for
+    // heres an example http://bl.ocks.org/ZJONSSON/3918369
+    var legend = svg.append("g")
+    .attr("class", "legend")
+    .attr("x", 65)
+    .attr("y", 25)
+    .attr("height", 100)
+    .attr("width", 100);
+  }
 
   var start = function() {
     
     var onSuccess = function(data) {
       var dataPoints = MapperBack.processPoints(data);
 
-      //may what to abstract this into another method (createQuantize or something)
+      //may want to abstract this into another method (createQuantize or something)
       var quantize = d3.scale.quantize()
         .domain([Math.min.apply(Math,dataPoints.map(function(o) {return o.value;})), 
           Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
@@ -129,6 +153,7 @@ var Mapper = (function () {
 
       var rateById = d3.map();
 
+      //draw either the whole US or the selected state
       var projection = d3.geo.albersUsa()
           .scale(900)
           .translate([width / 2, height / 2]);
@@ -140,7 +165,7 @@ var Mapper = (function () {
           .attr("width", width)
           .attr("height", height);
 
-
+      
       for (var i = 0; i < dataPoints.length; i++) {
         var location = parseInt(dataPoints[i].location) / 1000 //why is 1000 hardcoded in
         rateById.set(location, dataPoints[i].value);
@@ -165,6 +190,8 @@ var Mapper = (function () {
             .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
             .attr("class", "states")
             .attr("d", path);
+        addLegend(svg);
+        addTitle(svg);
       }
 
       d3.select(self.frameElement).style("height", height + "px");

@@ -29,3 +29,13 @@ QUnit.test( "Dev environment test", function( assert ) {
   assert.equal(env, "development", "determine environment");
 
 });
+
+QUnit.test( "Filter Points test", function( assert ) {
+  var sampleData = {"points":[{"location":"44007","display_val":"1","filter_val":"23","weight":2349},
+      {"location":"44008","display_val":"1","filter_val":"18","weight":9150}],
+  var filtered = MapperBack.filterPoints(sampleData, 10,20);
+  var correctData = [{"location": "44007", "value":1}];
+  //console.log(processed);
+  assert.equal(filtered, correctData,  "filter points first test");
+
+});

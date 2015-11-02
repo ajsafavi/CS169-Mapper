@@ -1,5 +1,19 @@
 var MapperBack = (function () {
 //any method here should be TESTABLE
+  
+  /**
+    * filter points
+    * @param  {json} data data in json format,
+    * @param  {number} filtermin  
+    * @param  {number} filtermax
+    * @return {list} data processed into a list
+    */
+  var filterPoints = function(data, filtermin, filtermax)
+  {
+    //write me
+    return [{location: 1, value: 1}];
+  } 
+
   /**
     * process points
     * @param  {json} data in json format, shrek is love shrek is life
@@ -27,31 +41,36 @@ var MapperBack = (function () {
     }
     return newData
   }
-    var getEnvironment = function()
-    {
-      return '<%=Rails.env%>';
-    }
-    var getapiUrl = function()
-    {
-      var env = getEnvironment();
+  /**
+    * getEnvironment
+    * @return {string} the environment
+    */
+  var getEnvironment = function()
+  {
+    return '<%=Rails.env%>';
+  }
+  var getapiUrl = function()
+  {
+    var env = getEnvironment();
 
-      if(env === 'production')
-      {
-        apiUrl = 'https://mappr169.herokuapp.com/datasets/1/points?num_points=20000';
-      }
-
-      else if(env === 'development')
-      {
-        apiUrl = 'http://localhost:3000/datasets/1/points?num_points=20000';
-      }
-      return apiUrl
+    if(env === 'production')
+    {
+      apiUrl = 'https://mappr169.herokuapp.com/datasets/1/points?num_points=20000';
     }
+
+    else if(env === 'development')
+    {
+      apiUrl = 'http://localhost:3000/datasets/1/points?num_points=20000';
+    }
+    return apiUrl
+  }
     // PUBLIC METHODS
     // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
-    return {
-      getapiUrl: getapiUrl,
-      getEnvironment: getEnvironment,
-      processPoints: processPoints
-    };
+  return {
+    filterPoints: filterPoints,
+    getapiUrl: getapiUrl,
+    getEnvironment: getEnvironment,
+    processPoints: processPoints
+  };
 })();
 
