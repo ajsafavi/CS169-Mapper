@@ -1,0 +1,57 @@
+var MapperBack = (function () {
+//any method here should be TESTABLE
+  /**
+    * process points
+    * @param  {json} data in json format, shrek is love shrek is life
+    * @return {list} data processed into a list
+    */
+  var processPoints = function(data) {
+    var points = data.points; //data points
+    var avgs = []; //associative arry of averages. keys are location codes and values is weighted sum of each location
+    var totalWeights = []; //associative array of total weights. keys are location codes and values are total weight of each location
+
+    for (var i=0;i<points.length;i++) { //iterate through data points
+      var point = points[i]; //the i-th point
+      var loc = point.location; //location code of point
+      if (avgs[loc] == undefined) { //if we haven't seen this location yet, add it to our arrays
+        avgs[loc] = 0;
+        totalWeights[loc] = 0;
+      }
+      avgs[loc] += point.weight * point.display_val; //increment this location's weighted sum
+      totalWeights[loc] += point.weight; //increment this location's total weight
+    }
+
+    newData = [];
+    for (loc in avgs) { //for each location encountered, add {location, weighted average} to newData
+      newData.push({location: loc, value: avgs[loc]/totalWeights[loc]});
+    }
+    return newData
+  }
+    var getEnvironment = function()
+    {
+      return '<%=Rails.env%>';
+    }
+    var getapiUrl = function()
+    {
+      var env = getEnvironment();
+
+      if(env === 'production')
+      {
+        apiUrl = 'https://mappr169.herokuapp.com/datasets/1/points?num_points=20000';
+      }
+
+      else if(env === 'development')
+      {
+        apiUrl = 'http://localhost:3000/datasets/1/points?num_points=20000';
+      }
+      return apiUrl
+    }
+    // PUBLIC METHODS
+    // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
+    return {
+      getapiUrl: getapiUrl,
+      getEnvironment: getEnvironment,
+      processPoints: processPoints
+    };
+})();
+

@@ -6,7 +6,7 @@ QUnit.test( "processed test", function( assert ) {
 	  "num_points":1,
 	  "location_type":"COUNTYFIPS"};
   var correctData = [{"location": "44007", "value":1}];
-  var processed = Mapper.processPoints(sampleData);
+  var processed = MapperBack.processPoints(sampleData);
   //console.log(processed);
   assert.deepEqual(processed, correctData , "Make sure process points puts out the correct amount of points");
 
@@ -17,14 +17,14 @@ QUnit.test( "2 location codes", function( assert ) {
 	  "num_points":2,
 	  "location_type":"COUNTYFIPS"};
   
-  var processed = Mapper.processPoints(sampleData);
+  var processed = MapperBack.processPoints(sampleData);
   //console.log(processed);
   assert.deepEqual(processed.length, 2, "Test with 2 counties different locations");
 
 });
-QUnit.test( "2 location codes", function( assert ) {
+QUnit.test( "Dev environment test", function( assert ) {
   
-  var env = Mapper.getEnvironment();
+  var env = MapperBack.getEnvironment();
   //console.log(processed);
   assert.equal(env, "development", "determine environment");
 

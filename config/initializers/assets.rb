@@ -12,7 +12,10 @@ Rails.application.config.assets.version = '1.0'
 
 Rails.application.config.assets.precompile += %w( jquery.min.js )
 Rails.application.config.assets.precompile += %w( d3.min.js )
+
 Rails.application.config.assets.precompile += %w( makemap.js )
+Rails.application.config.assets.precompile += %w( makemapback.js )
+
 Rails.application.config.assets.precompile += %w( points.js )
 Rails.application.config.assets.precompile += %w( queue.min.js )
 Rails.application.config.assets.precompile += %w( topojson.min.js )

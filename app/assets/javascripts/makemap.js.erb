@@ -1,30 +1,59 @@
 var Mapper = (function () {
-
-  var apiUrl;
-  var url = window.location.href;//tony use this to get the local url
+// nothing here can be tested, keep it simple
+  var apiUrl = ""
 
   var varList = ["Employment","Income","Labor Participation","Sex","Age"];
+  var geoList = ["USA", "Alabama", 
+                  "Alaska", 
+                  "Arizona",
+                  "Arkansas", 
+                  "California", 
+                  "Colorado", 
+                  "Connecticut", 
+                  "Delaware",
+                  "Florida", 
+                  "Georgia", 
+                  "Hawaii", 
+                  "Idaho", 
+                  "Illinois Indiana", 
+                  "Iowa", 
+                  "Kansas", 
+                  "Kentucky", 
+                  "Louisiana", 
+                  "Maine", 
+                  "Maryland", 
+                  "Massachusetts", 
+                  "Michigan", 
+                  "Minnesota", 
+                  "Mississippi", 
+                  "Missouri", 
+                  "Montana Nebraska", 
+                  "Nevada", 
+                  "New Hampshire", 
+                  "New Jersey", 
+                  "New Mexico", 
+                  "New York", 
+                  "North Carolina", 
+                  "North Dakota", 
+                  "Ohio", 
+                  "Oklahoma", 
+                  "Oregon", 
+                  "Pennsylvania Rhode Island", 
+                  "South Carolina", 
+                  "South Dakota", 
+                  "Tennessee", 
+                  "Texas", 
+                  "Utah", 
+                  "Vermont", 
+                  "Virginia", 
+                  "Washington", 
+                  "West Virginia", 
+                  "Wisconsin", 
+                  "Wyoming"]
 
-  var displayval;
-  var filterval;
-
-  var getEnvironment = function()
-  {
-    return '<%=Rails.env%>';
-  }
-
-  var env = getEnvironment();
-
-  if(env === 'production')
-  {
-    apiUrl = 'https://mappr169.herokuapp.com/datasets/1/points?num_points=20000';
-  }
-
-  if(env === 'development')
-  {
-    apiUrl = 'http://localhost:3000/datasets/1/points?num_points=20000';
-  }
-
+  var displayval; //string
+  var filterval; //string
+  var geoval; //string
 
   
   /**
@@ -44,59 +73,39 @@ var Mapper = (function () {
     });
   };
 
-  var processPoints = function(data) {
-    var points = data.points; //data points
-    var avgs = []; //associative arry of averages. keys are location codes and values is weighted sum of each location
-    var totalWeights = []; //associative array of total weights. keys are location codes and values are total weight of each location
-
-    for (var i=0;i<points.length;i++) { //iterate through data points
-      var point = points[i]; //the i-th point
-      var loc = point.location; //location code of point
-      if (avgs[loc] == undefined) { //if we haven't seen this location yet, add it to our arrays
-        avgs[loc] = 0;
-        totalWeights[loc] = 0;
-      }
-      avgs[loc] += point.weight * point.display_val; //increment this location's weighted sum
-      totalWeights[loc] += point.weight; //increment this location's total weight
-    }
-
-    newData = [];
-    for (loc in avgs) { //for each location encountered, add {location, weighted average} to newData
-      newData.push({location: loc, value: avgs[loc]/totalWeights[loc]});
-    }
-
-    return newData
-  }
-
   var startAutocomplete = function() {
     $("#idvar").autocomplete({source: varList});
     $("#idfilteringvar").autocomplete({source: varList});
+    $("#idgeo").autocomplete({source: geoList});
   }
 
   var submitClickHandler = function() {
       $( "body" ).on( "click", "#idsubmit", function() {
-        //apiUrl = 'https://mappr169.herokuapp.com/datasets/1/points?num_points=20000';
+        //set values
+        apiUrl = MapperBack.getapiUrl();
         displayval = $("#idvar").val();
         filterval = $("#idfilteringvar").val();
+        geoval = $("#idfilteringvar").val();
+
+        //set URL
         apiUrl += '&display_val=' + displayval.toUpperCase().replace(' ', '_');
         if (filterval) '&filter_val=' + filterval.toUpperCase().replace(' ', '_');
+
+        //hide stuff
         $("div#canvas").html('');
         $("div#secondContainer").removeClass('hidden');
         $("div#firstContainer").addClass('hidden');
-
         $("div#idnavcontainer").append($( "#idvar" ));
         //$("div#idnavcontainer").append($( "#idfilteringvar" ));
         //$("div#idnavcontainer").append($( "#idrange" ));
         //$("div#idnavcontainer").append($( "#idgeo" ));
         $("div#idnavcontainer").append($( "#idsubmit" ));
-
         $( "#idvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
         $( "#idfilteringvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
         $( "#idrange" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay').css({
             display: "inline",
             width: "15%"
         });
-
         $( "#idgeo" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
         $( "#idsubmit" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
         start();
@@ -107,16 +116,18 @@ var Mapper = (function () {
   var start = function() {
     
     var onSuccess = function(data) {
-      var dataPoints = processPoints(data);
+      var dataPoints = MapperBack.processPoints(data);
+
+      //may what to abstract this into another method (createQuantize or something)
+      var quantize = d3.scale.quantize()
+        .domain([Math.min.apply(Math,dataPoints.map(function(o) {return o.value;})), 
+          Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
+        .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
       var width = 870,
-          height = 505;
+        height = 505;
 
       var rateById = d3.map();
-
-      var quantize = d3.scale.quantize()
-          .domain([Math.min.apply(Math,dataPoints.map(function(o) {return o.value;})), Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
-          .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
 
       var projection = d3.geo.albersUsa()
           .scale(900)
@@ -129,8 +140,9 @@ var Mapper = (function () {
           .attr("width", width)
           .attr("height", height);
 
+
       for (var i = 0; i < dataPoints.length; i++) {
-        var location = parseInt(dataPoints[i].location) / 1000
+        var location = parseInt(dataPoints[i].location) / 1000 //why is 1000 hardcoded in
         rateById.set(location, dataPoints[i].value);
       }
 
@@ -148,11 +160,6 @@ var Mapper = (function () {
           .enter().append("path")
             .attr("class", function(d) { return quantize(rateById.get(d.id)); })
             .attr("d", path);
-
-        // svg.append("path")
-        //     .datum(topojson.mesh(us, us.objects.counties, function(a, b) { return a == b || a !== b; }))
-        //     .attr("class", "counties")
-        //     .attr("d", path);
 
         svg.append("path")
             .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
@@ -173,10 +180,8 @@ var Mapper = (function () {
   // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
   return {
     start: start,
-    processPoints: processPoints,
     submitClickHandler: submitClickHandler,
     startAutocomplete: startAutocomplete,
-    getEnvironment: getEnvironment
   };
 })();
 
