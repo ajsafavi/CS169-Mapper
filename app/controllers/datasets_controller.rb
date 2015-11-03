@@ -9,7 +9,6 @@ class DatasetsController < ApplicationController
   # GET /datasets.json
   def index
     @datasets = Dataset.all
-    
     respond_to do |format|
       format.html { }
       format.json { render json: @datasets }
@@ -20,15 +19,9 @@ class DatasetsController < ApplicationController
   # GET /datasets/1.json
   def show
     @columns =  @dataset.columns
-    respond_to do |format|
-      format.html { } # TODO: Render a "You're not supposed to be here"
-      format.json {
-        @to_render["columns"] = @columns
-        @to_render = @dataset.as_json
-        render json: @to_render
-      }
-    end
-
+    @to_render = @dataset.as_json
+    @to_render["columns"] = @columns
+    render json: @to_render
   end
 
   # GET /datasets/new
@@ -58,23 +51,10 @@ class DatasetsController < ApplicationController
     @okay = @dataset.save
     
 
-    respond_to do |format|
-      format.html { 
-        if !@okay
-          # It's not chill! Show some error
-        else
-          # Redirect to viewing that map?
-        end
-      } # TODO: Render a "You're not supposed to be here"
-      
-      format.json {
-        if @okay
-          redirect_to @dataset, format: :json
-        else
-          render json: @dataset.errors, status: :unprocessable_entity
-        end
-      }
-
+    if @okay
+      redirect_to @dataset, format: :json
+    else
+      render json: @dataset.errors, status: :unprocessable_entity
     end
 
   end
@@ -88,24 +68,12 @@ class DatasetsController < ApplicationController
 
     @okay = @dataset.valid?
 
-    respond_to do |format|
-      format.html { 
-        if !@okay
-          # It's not chill! Show some error
-        else
-          # Redirect to viewing that map?
-        end
-      } # TODO: Render a "You're not supposed to be here"
-      
-      format.json {
-        if @okay
-          redirect_to @dataset, format: :json
-        else
-          render json: @dataset.errors, status: :unprocessable_entity
-        end
-      }
-
+    if @okay
+      redirect_to @dataset, format: :json
+    else
+      render json: @dataset.errors, status: :unprocessable_entity
     end
+
   end
 
   # DELETE /datasets/1
@@ -136,16 +104,16 @@ class DatasetsController < ApplicationController
     render json: {'points' => @points, 'num_points' => num_points, 'location_type' => location_type}
   end
 
-  def column_suggestions
-    ans = Array.new
-    guess = column_params[:partial_name]
-    @dataset.columns.each do |column|
-      if column.name.starts_with?(guess)
-        ans.push({'name' => column.name, 'id' => column.id})
-      end
-    end
-    render json: ans
-  end
+  # def column_suggestions
+  #   ans = Array.new
+  #   guess = column_params[:partial_name]
+  #   @dataset.columns.each do |column|
+  #     if column.name.starts_with?(guess)
+  #       ans.push({'name' => column.name, 'id' => column.id})
+  #     end
+  #   end
+  #   render json: ans
+  # end
 
   private
     # Use callbacks to share common setup or constraints between actions.

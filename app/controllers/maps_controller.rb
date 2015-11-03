@@ -39,25 +39,12 @@ class MapsController < ApplicationController
     @map = Map.create(map_params)
 
     @okay = @map.valid?
-
-    respond_to do |format|
-      format.html { 
-        if !@okay
-          # It's not chill! Show some error
-        else
-          # Redirect to viewing that map?
-        end
-      }
-      
-      format.json {
-        if @okay
-          redirect_to @map, format: :json
-        else
-          render json: @map.errors, status: :unprocessable_entity
-        end
-      }
-
+    if @okay
+      redirect_to @map, format: :json
+    else
+      render json: @map.errors, status: :unprocessable_entity
     end
+
   end
 
   # PATCH/PUT /maps/1
@@ -72,24 +59,12 @@ class MapsController < ApplicationController
 
     @okay = @map.valid?
     
-    respond_to do |format|
-      format.html { 
-        if !@okay
-          # It's not chill! Show some error
-        else
-          # Redirect to viewing that map?
-        end
-      }
-      
-      format.json {
-        if @okay
-          redirect_to @map, format: :json
-        else
-          render json: @map.errors, status: :unprocessable_entity
-        end
-      }
-
+    if @okay
+      redirect_to @map, format: :json
+    else
+      render json: @map.errors, status: :unprocessable_entity
     end
+    
   end
 
   def shareable
