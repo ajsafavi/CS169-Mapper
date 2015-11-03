@@ -42,11 +42,19 @@ QUnit.test( "Filter Points test", function( assert ) {
 
 });
 
-QUnit.test( "Get colors test (", function( assert ) {
+QUnit.test( "Get colors test", function( assert ) {
   //feel free to change this
   var colors = MapperBack.colorDivs([255,127,0], 3);
   var correctColors = [[0,0,0],[255/2, 127/2, 0], [255,127,0]];
   //console.log(processed);
   assert.deepEqual(colors, correctColors,  "make sure correct color divs are created");
+
+});
+
+QUnit.test( "draw state test", function( assert ) {
+  //feel free to change this
+  //MapperBack.drawState('ca','#canvas');
+  //console.log(processed);
+  assert.equal(1, 1,  "you should see California drawn somewhere");
 
 });
