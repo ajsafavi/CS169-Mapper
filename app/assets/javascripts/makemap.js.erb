@@ -178,6 +178,7 @@ var Mapper = (function () {
       function ready(error, us) {
         if (error) throw error;
 
+        //I think here is where the country is drawn make is draw the state if the user wants
         svg.append("g")
             .attr("class", "states")
           .selectAll("path")
