@@ -22,7 +22,8 @@ dataset = Dataset.create({
 	location_column: location_column, 
 	weight_column: weight_column, 
 	location_type: location_type,
-	user_id: aryan.id
+	user_id: aryan.id,
+	is_public: true
 	})
 
 dataset.columns.create({name: "COUNTY", column_type: "LOCATION", null_value: nil})
@@ -39,5 +40,6 @@ map = Map.create({
 	user_id: aryan.id,
 	dataset_id: dataset.id,
 	shareable_url: "test_map_0001",
-	styling: ""
+	styling: "",
+	is_example: true
 	})

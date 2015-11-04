@@ -26,8 +26,10 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'd3-rails'
 
 # devise for user authentication and stuff
+gem 'omniauth'
 gem 'devise'
-gem 'simple_token_authentication', '~> 1.0'
+# gem 'simple_token_authentication', '~> 1.0'
+gem 'devise_token_auth'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

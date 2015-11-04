@@ -9,7 +9,6 @@ class DatasetsController < ApplicationController
   # GET /datasets.json
   def index
     @datasets = Dataset.all
-    
     respond_to do |format|
       format.html { }
       format.json { render json: @datasets }
@@ -20,15 +19,9 @@ class DatasetsController < ApplicationController
   # GET /datasets/1.json
   def show
     @columns =  @dataset.columns
-    respond_to do |format|
-      format.html { } # TODO: Render a "You're not supposed to be here"
-      format.json {
-        @to_render["columns"] = @columns
-        @to_render = @dataset.as_json
-        render json: @to_render
-      }
-    end
-
+    @to_render = @dataset.as_json
+    @to_render["columns"] = @columns
+    render json: @to_render
   end
 
   # GET /datasets/new
@@ -43,7 +36,16 @@ class DatasetsController < ApplicationController
   # POST /datasets
   # POST /datasets.json
   def create
+    if (current_user.nil? or current_user.id !== @dataset.user_id)
+      render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
+    end
+
     params = dataset_params
+
+    if params[:owner] !== current_user.id
+      render json: {"errors" => ["Currently authorized user's ID must be the same as the user ID for the dataset!"]}, status: :unauthorized
+    end
+
     create_params = Hash.new
 
     create_params[:name] = params[:name]
@@ -58,59 +60,41 @@ class DatasetsController < ApplicationController
     @okay = @dataset.save
     
 
-    respond_to do |format|
-      format.html { 
-        if !@okay
-          # It's not chill! Show some error
-        else
-          # Redirect to viewing that map?
-        end
-      } # TODO: Render a "You're not supposed to be here"
-      
-      format.json {
-        if @okay
-          redirect_to @dataset, format: :json
-        else
-          render json: @dataset.errors, status: :unprocessable_entity
-        end
-      }
-
+    if @okay
+      redirect_to @dataset, format: :json
+    else
+      render json: @dataset.errors, status: :unprocessable_entity
     end
 
   end
 
   def update
+
+    if (current_user.nil? or current_user.id !== @dataset.user_id)
+      render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
+    end
+
     params = dataset_edit_params.except!(:id)
 
     @dataset.update(params)
 
-    config.log_level = :debug 
-
     @okay = @dataset.valid?
 
-    respond_to do |format|
-      format.html { 
-        if !@okay
-          # It's not chill! Show some error
-        else
-          # Redirect to viewing that map?
-        end
-      } # TODO: Render a "You're not supposed to be here"
-      
-      format.json {
-        if @okay
-          redirect_to @dataset, format: :json
-        else
-          render json: @dataset.errors, status: :unprocessable_entity
-        end
-      }
-
+    if @okay
+      redirect_to @dataset, format: :json
+    else
+      render json: @dataset.errors, status: :unprocessable_entity
     end
+
   end
 
   # DELETE /datasets/1
   # DELETE /datasets/1.json
   def destroy
+
+    if (current_user.nil? or current_user.id !== @dataset.user_id)
+      render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
+    end
     # Delete the dataset file first
     # Delete the datafile
     @dataset.destroy_file!
@@ -120,32 +104,32 @@ class DatasetsController < ApplicationController
 
 
   def points
+    if !@dataset.is_public? and (current_user.nil? or current_user.id !== @dataset.user_id)
+      render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
+    end
+
     params = point_params
     num_points = params[:num_points].to_i
     display_val = params[:display_val]
     filter_val = params[:filter_val]
     location_type = @dataset.location_type
     config.log_level = :debug 
-    logger.debug("PARAMS: #{params.inspect}")
-    logger.debug("filter_val : #{filter_val}")
-    logger.debug("ABOUT TO RUN")
     @points = @dataset.generate_points(num_points, display_val, filter_val)
-    logger.debug("NUMBER OF POINTS : #{@points.size}")
     num_points = @points.size
 
     render json: {'points' => @points, 'num_points' => num_points, 'location_type' => location_type}
   end
 
-  def column_suggestions
-    ans = Array.new
-    guess = column_params[:partial_name]
-    @dataset.columns.each do |column|
-      if column.name.starts_with?(guess)
-        ans.push({'name' => column.name, 'id' => column.id})
-      end
-    end
-    render json: ans
-  end
+  # def column_suggestions
+  #   ans = Array.new
+  #   guess = column_params[:partial_name]
+  #   @dataset.columns.each do |column|
+  #     if column.name.starts_with?(guess)
+  #       ans.push({'name' => column.name, 'id' => column.id})
+  #     end
+  #   end
+  #   render json: ans
+  # end
 
   private
     # Use callbacks to share common setup or constraints between actions.
