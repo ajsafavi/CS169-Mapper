@@ -2,14 +2,14 @@ var MapperBack = (function () {
 //any method here should be TESTABLE
 
   /** drawState
-    * @param {string} state   state to draw
+    * @param {string} res   draw land, states, or counties
     * @param {canvas} canvas  id of element ot draw on ('#canvas')
     * @return {svg} return the svg var we draw with
     */
 
-  var drawState = function(state, canvas)
+  var drawUSA = function(res, canvas)
   {
-    //debugger;
+    //let me draw states, counties or just the whole country
     var width = 960,
     height = 500;
 
@@ -29,7 +29,7 @@ var MapperBack = (function () {
       svg.append("g")
           .attr("class", "states")
         .selectAll("path")
-          .data(topojson.feature(us, us.objects.states.geometries[0]).features)
+          .data(topojson.feature(us, us.objects.states).features)
 
       svg.append("path")
           .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
@@ -128,7 +128,7 @@ var MapperBack = (function () {
     // PUBLIC METHODS
     // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
   return {
-    drawState: drawState,
+    drawUSA: drawUSA,
     filterPoints: filterPoints,
     getapiUrl: getapiUrl,
     getEnvironment: getEnvironment,
