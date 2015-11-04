@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151103075409) do
+ActiveRecord::Schema.define(version: 20151104094402) do
 
   create_table "columns", force: :cascade do |t|
     t.integer  "dataset_id"
@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 20151103075409) do
     t.integer  "num_rows"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.boolean  "is_public"
   end
 
   add_index "datasets", ["user_id"], name: "index_datasets_on_user_id"
@@ -48,6 +49,7 @@ ActiveRecord::Schema.define(version: 20151103075409) do
     t.string   "styling"
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
+    t.boolean  "is_example"
   end
 
   add_index "maps", ["dataset_id"], name: "index_maps_on_dataset_id"
