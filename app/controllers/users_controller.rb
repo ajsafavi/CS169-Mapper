@@ -8,7 +8,7 @@ class UsersController < ApplicationController
 		if @user.eql? current_user
 			render json: @resource
 		else
-			render json: {"errors":["unauthorized!!!"]}, status: :unauthorized
+			render json: {"errors" => ["unauthorized!!!"], "current_user" => current_user, "user" => @user}, status: :unauthorized
 		end
 	end
 
