@@ -53,7 +53,7 @@ QUnit.test( "Get colors test", function( assert ) {
 
 QUnit.test( "draw state test", function( assert ) {
   //feel free to change this
-  //MapperBack.drawState('ca','#canvas');
+  MapperBack.drawState('ca','#canvas');
   //console.log(processed);
   assert.equal(1, 1,  "you should see California drawn somewhere");
 
