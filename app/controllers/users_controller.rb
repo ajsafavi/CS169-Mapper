@@ -2,11 +2,14 @@ class UsersController < ApplicationController
 
 	before_action :set_user, only: [:show, :edit, :update, :destroy, :points, :column_suggestions]
 
-
 	def show
-		# TODO: Authenticate
-		params = user_params
+		logger.debug current_user
 
+		if @user.eql? current_user
+			render json: @resource
+		else
+			render json: {"errors":["unauthorized!!!"]}, status: :unauthorized
+		end
 	end
 
 	def maps
@@ -14,7 +17,12 @@ class UsersController < ApplicationController
 	end
 
 private
-	
+
+	def set_user
+
+      @user = User.find(params[:id])
+    end
+
 	def user_params
 		params.permit("id")
 	end
