@@ -1,5 +1,45 @@
 var MapperBack = (function () {
 //any method here should be TESTABLE
+
+  /** drawState
+    * @param {string} res   draw land, states, or counties
+    * @param {canvas} canvas  id of element ot draw on ('#canvas')
+    * @return {svg} return the svg var we draw with
+    */
+
+  var drawUSA = function(res, canvas)
+  {
+    //let me draw states, counties or just the whole country
+    var width = 960,
+    height = 500;
+
+    var projection = d3.geo.albersUsa()
+        .scale(1000)
+        .translate([width / 2, height / 2]);
+
+    var path = d3.geo.path()
+        .projection(projection);
+
+    var svg = d3.select(canvas).append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    d3.json("/scripts/us.json", function(error, us) {
+      if (error) throw error;
+      svg.append("g")
+          .attr("class", "states")
+        .selectAll("path")
+          .data(topojson.feature(us, us.objects.states).features)
+
+      svg.append("path")
+          .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
+          .attr("class", "states")
+          .attr("d", path);
+    });
+
+    d3.select(self.frameElement).style("height", height + "px");
+    return svg
+  }
   /** color divs
     * @param {list} baseColor   base rgb color [r,g,b]
     * @param {number} divisions  color divisions
@@ -8,6 +48,7 @@ var MapperBack = (function () {
   var colorDivs = function(baseColor, divisions)
   {
     //improve me
+    // also feel free to improve the tests
     var colors = [];
     n = divisions - 1;
     rdelta = baseColor[0]/n;
@@ -87,6 +128,7 @@ var MapperBack = (function () {
     // PUBLIC METHODS
     // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
   return {
+    drawUSA: drawUSA,
     filterPoints: filterPoints,
     getapiUrl: getapiUrl,
     getEnvironment: getEnvironment,
