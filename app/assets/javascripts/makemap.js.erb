@@ -146,12 +146,16 @@ var Mapper = (function () {
   //apply the colors to the map
   var applyColors = function(svg, color, divs)
   {
+    debugger;
     var colors = MapperBack.colorDivs(color, divs);
     for (var i = colors.length - 1; i >= 0; i--) 
     {
-      d3.selectAll("q" + i + "-" + divs).style("fill", "rgb("+colors[i][0] + "," +
-                                                colors[i][1] + "," +
-                                                colors[i][2] + ")");
+      //debugger;
+      var quart = ".q" + i + "-" + divs;
+      var c = colors[i];
+      var colorString = "rgb("+c[0] + "," +c[1] + "," +c[2] + ")";
+      
+      d3.selectAll(quart).style("fill", colorString);
 
     }
   }
@@ -178,11 +182,10 @@ var Mapper = (function () {
     * @return {svg} return the svg var we draw with
     */
 
-  var drawUSA = function(res, canvas, quantize)
+  var drawUSA = function(res, canvas, quantize, rateById)
   {
     //let me draw states, counties or just the whole country
-    var rateById = d3.map();
-    
+
     var width = 960,
     height = 500;
 
@@ -205,12 +208,13 @@ var Mapper = (function () {
           .data(topojson.feature(us, us.objects.states).features)
         .enter().append("path")
           .attr("class", function(d) { return quantize(rateById.get(d.id)); })
-          .attr("d", path);
+          .attr("d", path)
 
       svg.append("path")
           .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
           .attr("class", "states")
-          .attr("d", path);
+          .attr("d", path)
+      applyColors(null,[10,10,100], 10);
     });
 
     d3.select(self.frameElement).style("height", height + "px");
@@ -234,17 +238,22 @@ var Mapper = (function () {
         rateById.set(location, dataPoints[i].value);
       }
 
-      var svg = drawUSA("state", "#canvas", quantize)
+      var svg = drawUSA("state", "#canvas", quantize, rateById)
       addLegend(svg);
       addTitle(svg);
-      applyColors(svg,[10,10,100], 10);
+
+      
 
       d3.select(self.frameElement).style("height", height + "px");
+      //svg.exit();
+      
+
     };
     var onFailure = function() { 
       console.error('fail'); 
     }
     makeGetRequest(apiUrl, onSuccess, onFailure);
+
 
   };
 

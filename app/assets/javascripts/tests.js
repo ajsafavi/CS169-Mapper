@@ -51,6 +51,15 @@ QUnit.test( "Get colors test", function( assert ) {
 
 });
 
+QUnit.test( "Colors length", function( assert ) {
+  //feel free to change this
+  var colors = MapperBack.colorDivs([255,127,0], 10);
+  var len = colors.length;
+  //console.log(processed);
+  assert.deepEqual(len, 10,  "make sure correct num of colors are created");
+
+});
+
 QUnit.test( "draw USA test", function( assert ) {
   //feel free to change this
   Mapper.drawUSA('states','#canvas');

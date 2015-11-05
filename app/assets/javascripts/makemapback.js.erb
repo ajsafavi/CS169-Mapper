@@ -17,7 +17,9 @@ var MapperBack = (function () {
     bdelta = baseColor[2]/n;
     for(var i=0; i<divisions;i++)
     {
-      colors.push([rdelta * i, gdelta * i, bdelta * i])
+      colors.push([Math.floor(rdelta * i),
+                   Math.floor(gdelta * i),
+                   Math.floor(bdelta * i)])
     }
     return colors;
   }
