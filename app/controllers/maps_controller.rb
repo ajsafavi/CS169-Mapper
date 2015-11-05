@@ -12,7 +12,13 @@ class MapsController < ApplicationController
   # GET /maps/1
   # GET /maps/1.json
   def show
-    render json: @map
+    respond_to do |format|
+      format.html { } # TODO: Render the map page!
+      format.json {
+        render json: @map
+      }
+    end
+    
   end
 
   # GET /maps/new
@@ -22,22 +28,23 @@ class MapsController < ApplicationController
 
   # GET /maps/1/edit
   def edit
-
   end
 
   # POST /maps
   # POST /maps.json
   def create
-    # If they have a shareable link, verify that it is acceptable
+    # TODO: If they have a shareable link, verify that it is acceptable
     @errors = Array.new
     params = map_params
     @map = Map.create(map_params)
-    if @map.valid?
-      redirect_to @map
+
+    @okay = @map.valid?
+    if @okay
+      redirect_to @map, format: :json
     else
-      @errors = @map.errors.messages
-      render json: {'errors' => @errors}
+      render json: @map.errors, status: :unprocessable_entity
     end
+
   end
 
   # PATCH/PUT /maps/1
@@ -48,14 +55,20 @@ class MapsController < ApplicationController
     @errors = Array.new
     params = map_params.except!(:id)
 
-    
-    @map.update(params)
-    if @map.valid?
-      redirect_to @map
-    else
-      @errors = @map.errors.messages
-      render json: {'errors' => @errors}
+    if !@map.is_example? and (current_user.nil? or current_user.id != @map.user_id)
+      render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
     end
+
+    @map.update(params)
+
+    @okay = @map.valid?
+    
+    if @okay
+      redirect_to @map, format: :json
+    else
+      render json: @map.errors, status: :unprocessable_entity
+    end
+    
   end
 
   def shareable
@@ -66,6 +79,9 @@ class MapsController < ApplicationController
   # DELETE /maps/1.json
   def destroy
     # If they have a shareable link, make sure it gets deleted as well
+    if !@map.is_example? and (current_user.nil? or current_user.id != @map.user_id)
+      render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
+    end
     @map.destroy 
     head :no_content
   end
@@ -73,6 +89,14 @@ class MapsController < ApplicationController
   def points
     params = point_params
     @dataset = @map.dataset
+
+    if !@map.is_example? and (current_user.nil? or current_user.id != @map.user_id)
+      render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
+    end
+
+    if !@dataset.is_public? and (current_user.nil? or current_user.id != @dataset.user_id)
+      render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
+    end
 
     num_points = params[:num_points].to_i
     display_val = params[:display_val]

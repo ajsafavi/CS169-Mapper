@@ -1,17 +1,27 @@
 Rails.application.routes.draw do
+
+  devise_for :users
+  
+  namespace :api do
+    mount_devise_token_auth_for 'User', at: 'auth'
+  end
+
+  get 'users/auth_example' => 'users#auth_example'
+  get 'users/:id' => 'users#show'
   root 'welcome#index'
   get 'welcome/index'
-
+  
   resources 'maps'
   resources 'datasets'
-  resources 'users'
+
   get 'maps/:id/points' => 'maps#points'
   get 'datasets/:id/points' => 'datasets#points'
 
   get 'datasets/:id/columns' => 'datasets#column_suggestions'
 
   get 'maps/public/:shareable_url' => 'maps#shareable'
-
+  get 'javascripttest' => 'javascripttester#test'
+  
   #get 'welcome#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

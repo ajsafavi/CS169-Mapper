@@ -6,7 +6,7 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-aryan = User.create({first_name: 'aryan', last_name: 'flappy', email: 'persian_princess242@yahoo.com'})
+aryan = User.create({email: 'persian_princess242@yahoo.com', password: "password123", password_confirmation: "password123"})
 
 filepath = Rails.root.join('datasets','sample.csv').to_s
 num_rows = 114487
@@ -22,7 +22,8 @@ dataset = Dataset.create({
 	location_column: location_column, 
 	weight_column: weight_column, 
 	location_type: location_type,
-	user_id: aryan.id
+	user_id: aryan.id,
+	is_public: true
 	})
 
 dataset.columns.create({name: "COUNTY", column_type: "LOCATION", null_value: nil})
@@ -39,5 +40,6 @@ map = Map.create({
 	user_id: aryan.id,
 	dataset_id: dataset.id,
 	shareable_url: "test_map_0001",
-	styling: ""
+	styling: "",
+	is_example: true
 	})

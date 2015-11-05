@@ -1,0 +1,99 @@
+var MapperBack = (function () {
+//any method here should be TESTABLE
+
+  /** color divs
+    * @param {list} baseColor   base rgb color [r,g,b]
+    * @param {number} divisions  color divisions
+    * @return {list} return a list of colors from bot quartile to top
+    */
+  var colorDivs = function(baseColor, divisions)
+  {
+    //improve me
+    // also feel free to improve the tests
+    var colors = [];
+    n = divisions - 1;
+    rdelta = baseColor[0]/n;
+    gdelta = baseColor[1]/n;
+    bdelta = baseColor[2]/n;
+    for(var i=0; i<divisions;i++)
+    {
+      colors.push([rdelta * i, gdelta * i, bdelta * i])
+    }
+    return colors;
+  }
+
+
+  /**
+    * filter points
+    * @param  {json} data data in json format,
+    * @param  {number} filtermin  
+    * @param  {number} filtermax
+    * @return {list} data processed into a list
+    */
+  var filterPoints = function(data, filtermin, filtermax)
+  {
+    //write me
+    return [{location: 1, value: 1}];
+  } 
+
+  /**
+    * process points
+    * @param  {json} data in json format, shrek is love shrek is life
+    * @return {list} data processed into a list
+    */
+  var processPoints = function(data) {
+    var points = data.points; //data points
+    var avgs = []; //associative arry of averages. keys are location codes and values is weighted sum of each location
+    var totalWeights = []; //associative array of total weights. keys are location codes and values are total weight of each location
+
+    for (var i=0;i<points.length;i++) { //iterate through data points
+      var point = points[i]; //the i-th point
+      var loc = point.location; //location code of point
+      if (avgs[loc] == undefined) { //if we haven't seen this location yet, add it to our arrays
+        avgs[loc] = 0;
+        totalWeights[loc] = 0;
+      }
+      avgs[loc] += point.weight * point.display_val; //increment this location's weighted sum
+      totalWeights[loc] += point.weight; //increment this location's total weight
+    }
+
+    newData = [];
+    for (loc in avgs) { //for each location encountered, add {location, weighted average} to newData
+      newData.push({location: loc, value: avgs[loc]/totalWeights[loc]});
+    }
+    return newData
+  }
+  /**
+    * getEnvironment
+    * @return {string} the environment
+    */
+  var getEnvironment = function()
+  {
+    return '<%=Rails.env%>';
+  }
+  var getapiUrl = function()
+  {
+    var env = getEnvironment();
+
+    if(env === 'production')
+    {
+      apiUrl = 'https://mappr169.herokuapp.com/datasets/1/points?num_points=20000';
+    }
+
+    else if(env === 'development')
+    {
+      apiUrl = 'http://localhost:3000/datasets/1/points?num_points=20000';
+    }
+    return apiUrl
+  }
+    // PUBLIC METHODS
+    // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
+  return {
+    filterPoints: filterPoints,
+    getapiUrl: getapiUrl,
+    getEnvironment: getEnvironment,
+    processPoints: processPoints,
+    colorDivs: colorDivs
+  };
+})();
+
