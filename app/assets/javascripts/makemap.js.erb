@@ -15,7 +15,8 @@ var Mapper = (function () {
                   "Georgia", 
                   "Hawaii", 
                   "Idaho", 
-                  "Illinois Indiana", 
+                  "Illinois", 
+                  "Indiana", 
                   "Iowa", 
                   "Kansas", 
                   "Kentucky", 
@@ -56,27 +57,12 @@ var Mapper = (function () {
   var geoval; //string
 
   
-  /**
-    * HTTP GET request 
-    * @param  {string}   url       URL path, e.g. "/api/smiles"
-    * @param  {function} onSuccess   callback method to execute upon request success (200 status)
-    * @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
-    * @return {None}
-    */
-  var makeGetRequest = function(url, onSuccess, onFailure) {
-    $.ajax({
-      type: 'GET',
-      url: url,
-      dataType: "json",
-      success: onSuccess,
-      error: onFailure
-    });
-  };
+  //methods dealing with front end
 
   var startAutocomplete = function() {
     $("#idvar").autocomplete({source: varList});
     $("#idfilteringvar").autocomplete({source: varList});
-    $("#idgeo").autocomplete({source: geoList});
+    //$("#idgeo").autocomplete({source: geoList});
   }
 
   var submitClickHandler = function() {
@@ -112,6 +98,25 @@ var Mapper = (function () {
 
     });
   }
+
+      /**
+    * HTTP GET request 
+    * @param  {string}   url       URL path, e.g. "/api/smiles"
+    * @param  {function} onSuccess   callback method to execute upon request success (200 status)
+    * @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
+    * @return {None}
+    */
+  var makeGetRequest = function(url, onSuccess, onFailure) {
+    $.ajax({
+      type: 'GET',
+      url: url,
+      dataType: "json",
+      success: onSuccess,
+      error: onFailure
+    });
+  };
+
+  //Methods dealing with the map
   //adds title to our graph
   var addTitle = function(svg)
   {
@@ -123,6 +128,7 @@ var Mapper = (function () {
         .style("text-decoration", "underline")  
         .text("Make me a pretty title");
   }
+
   //add the legend to the plot
   var addLegend = function (svg) 
   {
@@ -137,63 +143,40 @@ var Mapper = (function () {
     .attr("width", 100);
   }
 
+  //apply the colors to the map
+  var applyColors = function(svg, color, divs)
+  {
+    var colors = colorDivs(color, divs);
+    for (var i = colors.length - 1; i >= 0; i--) 
+    {
+      d3.selectAll("q" + i + "-" + div).style("fill", "rgb("+colors[i][0] + "," +
+                                                colors[i][1] + "," +
+                                                colors[i][2] + ")");
+
+    }
+  }
   var start = function() {
     
     var onSuccess = function(data) {
       var dataPoints = MapperBack.processPoints(data);
 
       //may want to abstract this into another method (createQuantize or something)
-      var quantize = d3.scale.quantize()
-        .domain([Math.min.apply(Math,dataPoints.map(function(o) {return o.value;})), 
-          Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
-        .range(d3.range(9).map(function(i) { return "q" + i + "-9"; }));
+      var quantize = MapperBack.createQuanitize([10,10,100], 10, dataPoints);
 
       var width = 870,
         height = 505;
 
       var rateById = d3.map();
-
-      //draw either the whole US or the selected state
-      var projection = d3.geo.albersUsa()
-          .scale(900)
-          .translate([width / 2, height / 2]);
-
-      var path = d3.geo.path()
-          .projection(projection);
-
-      var svg = d3.select("#canvas").append("svg")
-          .attr("width", width)
-          .attr("height", height);
-
       
       for (var i = 0; i < dataPoints.length; i++) {
         var location = parseInt(dataPoints[i].location) / 1000 //why is 1000 hardcoded in
         rateById.set(location, dataPoints[i].value);
       }
 
-      queue()
-          .defer(d3.json, "/scripts/us.json")
-          .await(ready);
-
-      function ready(error, us) {
-        if (error) throw error;
-
-        //I think here is where the country is drawn make is draw the state if the user wants
-        svg.append("g")
-            .attr("class", "states")
-          .selectAll("path")
-            .data(topojson.feature(us, us.objects.states).features)
-          .enter().append("path")
-            .attr("class", function(d) { return quantize(rateById.get(d.id)); })
-            .attr("d", path);
-
-        svg.append("path")
-            .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
-            .attr("class", "states")
-            .attr("d", path);
-        addLegend(svg);
-        addTitle(svg);
-      }
+      var svg = MapperBack.drawUSA("state", "#canvas")
+      addLegend(svg);
+      addTitle(svg);
+      applyColors(svg,[10,10,100], 10);
 
       d3.select(self.frameElement).style("height", height + "px");
     };
