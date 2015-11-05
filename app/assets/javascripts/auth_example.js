@@ -11,4 +11,5 @@ $.ajax({
    xhrFields: {
       withCredentials: true
    }
+   
 });
