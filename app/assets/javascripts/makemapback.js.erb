@@ -1,6 +1,22 @@
 var MapperBack = (function () {
 //any method here should be TESTABLE
 
+  /** createQuantize
+    * @param {list} color   base color to start with
+    * @param {number} divs  number of divisions
+    * @return {quantize} return the quantization var we draw with
+    */
+  var createQuantize = function(color, divs, dataPoints)
+  {
+    var quantize = d3.scale.quantize()
+        .domain([Math.min.apply(Math,dataPoints.map(function(o) {return o.value;})), 
+          Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
+        .range(d3.range(div).map(function(i) { return "q" + i + "-" + div; }));
+
+    return quantize;
+
+  }
+
   /** drawState
     * @param {string} res   draw land, states, or counties
     * @param {canvas} canvas  id of element ot draw on ('#canvas')
@@ -128,6 +144,7 @@ var MapperBack = (function () {
     // PUBLIC METHODS
     // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
   return {
+    createQuantize: createQuantize,
     drawUSA: drawUSA,
     filterPoints: filterPoints,
     getapiUrl: getapiUrl,
