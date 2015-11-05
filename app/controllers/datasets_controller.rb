@@ -36,13 +36,13 @@ class DatasetsController < ApplicationController
   # POST /datasets
   # POST /datasets.json
   def create
-    if (current_user.nil? or current_user.id !== @dataset.user_id)
+    if (current_user.nil? or current_user.id != @dataset.user_id)
       render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
     end
 
     params = dataset_params
 
-    if params[:owner] !== current_user.id
+    if params[:owner] != current_user.id
       render json: {"errors" => ["Currently authorized user's ID must be the same as the user ID for the dataset!"]}, status: :unauthorized
     end
 
@@ -70,7 +70,7 @@ class DatasetsController < ApplicationController
 
   def update
 
-    if (current_user.nil? or current_user.id !== @dataset.user_id)
+    if (current_user.nil? or current_user.id != @dataset.user_id)
       render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
     end
 
@@ -92,7 +92,7 @@ class DatasetsController < ApplicationController
   # DELETE /datasets/1.json
   def destroy
 
-    if (current_user.nil? or current_user.id !== @dataset.user_id)
+    if (current_user.nil? or current_user.id != @dataset.user_id)
       render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
     end
     # Delete the dataset file first
@@ -104,7 +104,7 @@ class DatasetsController < ApplicationController
 
 
   def points
-    if !@dataset.is_public? and (current_user.nil? or current_user.id !== @dataset.user_id)
+    if !@dataset.is_public? and (current_user.nil? or current_user.id != @dataset.user_id)
       render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
     end
 
