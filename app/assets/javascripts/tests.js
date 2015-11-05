@@ -51,10 +51,10 @@ QUnit.test( "Get colors test", function( assert ) {
 
 });
 
-QUnit.test( "draw state test", function( assert ) {
+QUnit.test( "draw USA test", function( assert ) {
   //feel free to change this
-  MapperBack.drawState('ca','#canvas');
+  Mapper.drawUSA('states','#canvas');
   //console.log(processed);
-  assert.equal(1, 1,  "you should see California drawn somewhere");
+  assert.equal(1, 1,  "you should see the USA drawn somewhere, with states");
 
 });
