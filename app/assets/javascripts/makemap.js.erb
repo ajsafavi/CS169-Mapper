@@ -62,7 +62,7 @@ var Mapper = (function () {
   var startAutocomplete = function() {
     $("#idvar").autocomplete({source: varList});
     $("#idfilteringvar").autocomplete({source: varList});
-    //$("#idgeo").autocomplete({source: geoList});
+    $("#idgeo").autocomplete({source: geoList});
   }
 
   var submitClickHandler = function() {
@@ -126,7 +126,7 @@ var Mapper = (function () {
         .attr("text-anchor", "middle")  
         .style("font-size", "16px") 
         .style("text-decoration", "underline")  
-        .text("Make me a pretty title");
+        // .text("Make me a pretty title");
   }
 
   //add the legend to the plot
@@ -172,9 +172,28 @@ var Mapper = (function () {
 
   }
 
+
+  var resize = function (){
+    // get width/height with container selector (body also works)
+    // or use other method of calculating desired values
+    var width = $('#canvas').width(); 
+
+    var height = $('#canvas').height(); 
+    console.log(width, height)
+
+    // set attrs and 'resume' force 
+    svg = $('#svgMap')
+    svg.attr('width', width);
+    svg.attr('height', height);
+    svg.attr('max-width', width);
+    svg.attr('max-height', height);
+  }
+
+  
+
   /** drawState
     * @param {string} res   draw land, states, or counties
-    * @param {canvas} canvas  id of element ot draw on ('#canvas')
+    * @param {string} canvas  id of element ot draw on ('#canvas')
     * @return {svg} return the svg var we draw with
     */
 
@@ -182,9 +201,10 @@ var Mapper = (function () {
   {
     //let me draw states, counties or just the whole country
     var rateById = d3.map();
-    
-    var width = 960,
-    height = 500;
+   
+    var background = $(canvas);
+    var width = background.width();
+    var height = background.height();
 
     var projection = d3.geo.albersUsa()
         .scale(1000)
@@ -216,7 +236,9 @@ var Mapper = (function () {
     d3.select(self.frameElement).style("height", height + "px");
     return svg
   }
+
   var start = function() {
+
     
     var onSuccess = function(data) {
       var dataPoints = MapperBack.processPoints(data);
@@ -238,8 +260,9 @@ var Mapper = (function () {
       addLegend(svg);
       addTitle(svg);
       applyColors(svg,[10,10,100], 10);
+      document.getElementsByTagName('svg')[0].id = 'svgMap';   
+      
 
-      d3.select(self.frameElement).style("height", height + "px");
     };
     var onFailure = function() { 
       console.error('fail'); 
@@ -250,12 +273,20 @@ var Mapper = (function () {
 
   // PUBLIC METHODS
   // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
+  $(document).ready(function() {
+    $(window).resize(function () {
+      $(window).on('resize', resize);
+    });
+  });
+  
+
   return {
     createQuantize: createQuantize,
     drawUSA: drawUSA,
     start: start,
     submitClickHandler: submitClickHandler,
     startAutocomplete: startAutocomplete,
+    resize: resize,
   };
 })();
 
