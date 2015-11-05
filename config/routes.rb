@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     mount_devise_token_auth_for 'User', at: 'auth'
   end
 
+  get 'users/auth_example' => 'users#auth_example'
   get 'users/:id' => 'users#show'
   root 'welcome#index'
   get 'welcome/index'
@@ -21,7 +22,6 @@ Rails.application.routes.draw do
   get 'maps/public/:shareable_url' => 'maps#shareable'
   get 'javascripttest' => 'javascripttester#test'
   
-
   #get 'welcome#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -32,3 +32,5 @@ Rails.application.config.assets.precompile += %w(jquery-ui.css)
 Rails.application.config.assets.precompile += %w( indexstyle.css )
 Rails.application.config.assets.precompile += %w( mapstyle.css )
 Rails.application.config.assets.precompile += %w( qunit-1.19.0.css)
+
+Rails.application.config.assets.precompile += %w( auth_example.js )
