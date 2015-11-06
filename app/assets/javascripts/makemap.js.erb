@@ -1,7 +1,7 @@
 var Mapper = (function () {
 // nothing here can be tested, keep it simple
   var apiUrl = ""
-
+  var mapId = null
   var varList = ["Employment","Income","Labor Participation","Sex","Age"];
   var geoList = ["USA", "Alabama", 
                   "Alaska", 
@@ -56,7 +56,6 @@ var Mapper = (function () {
   var filterval; //string
   var geoval; //string
 
-  
   //methods dealing with front end
 
   var startAutocomplete = function() {
@@ -100,20 +99,58 @@ var Mapper = (function () {
     });
   }
 
-      /**
-    * HTTP GET request 
-    * @param  {string}   url       URL path, e.g. "/api/smiles"
-    * @param  {function} onSuccess   callback method to execute upon request success (200 status)
-    * @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
-    * @return {None}
-    */
-  var makeGetRequest = function(url, onSuccess, onFailure) {
+    /**
+  * HTTP GET request 
+  * @param  {string}   url       URL path, e.g. "/api/smiles"
+  * @param  {function} onSuccess   callback method to execute upon request success (200 status)
+  * @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
+  * @return {None}
+  */
+  var makeGetRequest = function(url, params, onSuccess, onFailure) {
+    makeAjaxRequest(url, "GET", params, onSuccess, onFailure)
+  };
+
+
+    /**
+  * HTTP GET request 
+  * @param  {string}   url       URL path, e.g. "/api/smiles"
+  * @param  {function} onSuccess   callback method to execute upon request success (200 status)
+  * @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
+  * @return {None}
+  */
+  var makePutRequest = function(url, params, onSuccess, onFailure) {
+    makeAjaxRequest(url, "PUT", params, onSuccess, onFailure)
+  };
+
+  /**
+  * HTTP GET request 
+  * @param  {string}   url       URL path, e.g. "/api/smiles"
+  * @param  {function} onSuccess   callback method to execute upon request success (200 status)
+  * @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
+  * @return {None}
+  */
+  var makePostRequest = function(url, params, onSuccess, onFailure) {
+    makeAjaxRequest(url, "POST", params, onSuccess, onFailure)
+  };
+
+  /**
+  * HTTP request 
+  * @param  {string}   url       URL path, e.g. "/api/smiles"
+  * @param  {function} onSuccess   callback method to execute upon request success (200 status)
+  * @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
+  * @return {None}
+  */
+  var makeAjaxRequest = function(url, http_method, params, onSuccess, onFailure) {
     $.ajax({
-      type: 'GET',
+      type: http_method,
       url: url,
+      params: params,
       dataType: "json",
       success: onSuccess,
-      error: onFailure
+      error: onFailure,
+      xhrFields: {
+        withCredentials: true
+      }
     });
   };
 
@@ -209,7 +246,6 @@ var Mapper = (function () {
 
   }
 
-
   var resize = function (){
     // get width/height with container selector (body also works)
     // or use other method of calculating desired values
@@ -224,7 +260,6 @@ var Mapper = (function () {
     mapSvg.attr('height', height);
     mapSvg.attr('max-width', width);
     mapSvg.attr('max-height', height);
-
   }
 
   // var resize = function() {
@@ -298,9 +333,7 @@ var Mapper = (function () {
     return svg;
   }
 
-  var start = function() {
-
-    
+  var start = function() {   
     var onSuccess = function(data) {
       var dataPoints = MapperBack.processPoints(data);
 
@@ -323,15 +356,43 @@ var Mapper = (function () {
       addTitle(svg);
 
       d3.select(self.frameElement).style("height", height + "px");
-
     };
     var onFailure = function() { 
-      console.error('fail'); 
+      console.error('failed to fetch points'); 
     }
-    makeGetRequest(apiUrl, onSuccess, onFailure);
 
+    params = gatherPointVariables()
+    var pointUrl = apiUrl + "maps/" + mapId + "/points"
+    makeGetRequest(apiUrl, params,  onSuccess, onFailure);
 
   };
+
+  var gatherPointVariables = function() {
+    // TODO: Do me
+  }
+
+  var gatherMapVariables = function() {
+    // TODO: Do me
+  }
+
+  var setMapId = function(newMapId) {
+    mapId = newMapId
+  }
+
+  var saveMap = function() {
+    
+    var onSuccess = function(data) {
+      // TODO: Do something?
+    }
+
+    var onFailure = function(data) {
+      // TODO: Do something?
+    }
+
+    params = gatherMapVariables()
+    var updateUrl = apiUrl + "/maps/" + mapId + "/"
+    makePutRequest()
+  }
 
   d3.select(window).on('resize', resize);
 
@@ -346,5 +407,6 @@ var Mapper = (function () {
     submitClickHandler: submitClickHandler,
     startAutocomplete: startAutocomplete,
     resize: resize,
+    saveMap: saveMap,
   };
 })();
