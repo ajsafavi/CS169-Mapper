@@ -67,6 +67,8 @@ GEM
     execjs (2.6.0)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
+    google-webfonts-rails (0.0.4)
+      activesupport (> 3.2.0, < 5.0)
     hashie (3.4.3)
     i18n (0.7.0)
     jbuilder (2.3.2)
@@ -174,6 +176,7 @@ DEPENDENCIES
   d3-rails
   devise
   devise_token_auth
+  google-webfonts-rails (~> 0.0.4)
   jbuilder (~> 2.0)
   jquery-rails
   omniauth
