@@ -356,6 +356,7 @@ var Mapper = (function () {
 
 	var start = function() {   
 		var onSuccess = function(data) {
+
 			var dataPoints = MapperBack.processPoints(data);
 
 			//may want to abstract this into another method (createQuantize or something)
@@ -377,6 +378,9 @@ var Mapper = (function () {
 			addTitle(svg);
 
 			d3.select(self.frameElement).style("height", height + "px");
+
+      // debugger
+      // $('input[type=text]').minicolors()
 		};
 		var onFailure = function() {
 

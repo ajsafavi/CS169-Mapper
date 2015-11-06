@@ -32,6 +32,10 @@ gem 'devise'
 gem 'devise_token_auth'
 
 gem 'simplecov', :require => false, :group => :test
+
+# gem color picker
+gem 'jquery-minicolors-rails'
+
 # gem google fonts
 gem 'google-webfonts-rails', '~> 0.0.4'
 
