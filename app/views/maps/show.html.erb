@@ -3,7 +3,7 @@
 <title> Mappr </title>
 
 <head>
-<%= javascript_include_tag "jquery.min" %>
+<!--<%= javascript_include_tag "jquery.min" %>-->
 <%= javascript_include_tag "jquery-ui"%>
 <%= javascript_include_tag "bootstrap.js"%>
 <%= javascript_include_tag "d3.min"%>
@@ -66,6 +66,12 @@
 			<div id="scattercanvas" class="col-3">
 				<div class="row">
 					<input type="text" class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Color" id="colorvar">
+					<script>
+						$('input[type=text]').minicolors();
+						$('input[type=text]').on('input', function() {
+							Mapper.changeColor($(this).val());
+						})
+					</script>
 				</div>
 			Scatter goes here	
 			</div>
