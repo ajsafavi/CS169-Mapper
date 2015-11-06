@@ -37,7 +37,13 @@
 
     $(document).ready(function() {
     	Mapper.start()
-    })
+    	
+    	$( "#shareButton" ).click(function() {
+		  	Mapper.saveMap()
+		});
+    });
+
+   
 </script>
 
 
@@ -53,8 +59,11 @@
 
 <div class="container secondContainer">
 	<div class="row">
-		<div  class='col-12'>
+		<div class='col-10'>
 			<h2 id='graphTitle'>WORDS</h2>
+		</div>
+		<div class="col-2" id="shareCol">
+			<i class="fa fa-share fa-3x" id="shareButton"></i>
 		</div>
 	</div>
 	<div class="row">
@@ -80,9 +89,6 @@
 			<h5 id='graphTitle'>Legend</h5>
 			<div id="legend"></div>
 		</div>
-		<!-- <div class="row">
-			<div id="legend" class="col-12"></div>
-		</div> -->
 	</div>
 </div>
 
