@@ -78,7 +78,11 @@ var Mapper = (function () {
         if (filterval) '&filter_val=' + filterval.toUpperCase().replace(' ', '_');
 
         //hide stuff
+
+        // Clear the D3 Map and Legend
         $("div#canvas").html('');
+        $("#legend").html('')
+
         $("div#secondContainer").removeClass('hidden');
         $("div#firstContainer").addClass('hidden');
         $("div#idnavcontainer").append($( "#idvar" ));
@@ -95,7 +99,6 @@ var Mapper = (function () {
         $( "#idgeo" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
         $( "#idsubmit" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
         start();
-
     });
   }
 
@@ -112,7 +115,10 @@ var Mapper = (function () {
       url: url,
       dataType: "json",
       success: onSuccess,
-      error: onFailure
+      error: onFailure,
+      xhrFields: {
+        withCredentials: true
+      }
     });
   };
 
@@ -300,8 +306,8 @@ var Mapper = (function () {
         var location = parseInt(dataPoints[i].location) / 1000 //why is 1000 hardcoded in
         rateById.set(location, dataPoints[i].value);
       }
-      var svg = drawUSA("state", "#canvas", quantize, rateById);
       
+      var svg = drawUSA("state", "#canvas", quantize, rateById);
       document.getElementsByTagName('svg')[0].id = 'svgMap';   
       addLegend(svg);
       addTitle(svg);
