@@ -31,7 +31,6 @@ gem 'devise'
 # gem 'simple_token_authentication', '~> 1.0'
 gem 'devise_token_auth'
 
-gem 'simplecov', :require => false, :group => :test
 # gem google fonts
 gem 'google-webfonts-rails', '~> 0.0.4'
 

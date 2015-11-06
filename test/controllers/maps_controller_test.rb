@@ -3,8 +3,6 @@ require 'test_helper'
 class MapsControllerTest < ActionController::TestCase
   setup do
     @map = maps(:default_map)
-    @user = users(:aryan)
-    sign_in @user
   end
 
   test "should get index" do
@@ -53,8 +51,7 @@ class MapsControllerTest < ActionController::TestCase
 
   test "should return points" do
     dataset = @map.dataset
-    get :points, {:id => @map, :display_val => "INCOME", :num_points => 5000}
-
+    get :points, {:id => @map, :display_val => "INCOME", :num_points => 10000}
     assert assigns(:points), "Points should be returned"
     assert assigns(:points).size > 0, "Points should not be empty"
   end
