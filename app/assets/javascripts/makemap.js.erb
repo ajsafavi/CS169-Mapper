@@ -1,5 +1,6 @@
 var Mapper = (function () {
 // nothing here can be tested, keep it simple
+
 	var apiUrl = ""
 	var varList = ["Employment","Income","Labor Participation","Sex","Age"];
 	var geoList = ["USA", "Alabama", 
@@ -60,6 +61,7 @@ var Mapper = (function () {
 
 	//methods dealing with front end
 
+
 	var startAutocomplete = function() {
 		$("#idvar").autocomplete({
 			source: varList,
@@ -104,6 +106,23 @@ var Mapper = (function () {
 				$(".secondContainer").removeClass('hidden');
 				$(".firstContainer").addClass('hidden');
 				start();
+
+		});
+	}
+
+
+	var submitHomeClickHandler = function() {
+			$( "body" ).on( "click", "#idsubmit", function() {
+				//set values
+				apiUrl = MapperBack.getapiUrl();
+				displayval = $("#idvar").val();
+				filterval = $("#idfilteringvar").val();
+				geoval = $("#idfilteringvar").val();
+
+				params = gatherMapVariables()
+				saveUrl = apiUrl + "maps/"
+
+				$.redirect(saveUrl, params, "POST")
 
 		});
 	}
@@ -335,8 +354,15 @@ var Mapper = (function () {
 		return svg;
 	}
 
+	var initialize = function(display_variable, filter_variable) {
+		displayval = display_variable
+		filterval = filter_variable
+		apiUrl = MapperBack.getapiUrl();
+	}
+
 	var start = function() {   
 		var onSuccess = function(data) {
+
 			var dataPoints = MapperBack.processPoints(data);
 
 			//may want to abstract this into another method (createQuantize or something)
@@ -358,6 +384,9 @@ var Mapper = (function () {
 			addTitle(svg);
 
 			d3.select(self.frameElement).style("height", height + "px");
+
+      // debugger
+      // $('input[type=text]').minicolors()
 		};
 		var onFailure = function() {
 
@@ -429,7 +458,9 @@ var Mapper = (function () {
 		createQuantize: createQuantize,
 		drawUSA: drawUSA,
 		start: start,
+		initialize: initialize,
 		submitClickHandler: submitClickHandler,
+		submitHomeClickHandler: submitHomeClickHandler,
 		startAutocomplete: startAutocomplete,
 		resize: resize,
 		saveMap: saveMap,

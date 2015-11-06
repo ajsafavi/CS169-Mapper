@@ -5,9 +5,11 @@
 <head>
 <%= javascript_include_tag "jquery.min" %>
 <%= javascript_include_tag "jquery-ui"%>
+<%= javascript_include_tag "jquery.redirect" %>
 <%= javascript_include_tag "bootstrap.js"%>
 <%= javascript_include_tag "d3.min"%>
 <%= javascript_include_tag "queue.min"%>
+
 
 <%= javascript_include_tag "topojson.min"%>
 <%= javascript_include_tag "tooltip"%>
@@ -28,9 +30,10 @@
     // This function is defined in the smiles.js
     $(function() {
         Mapper.startAutocomplete();
+
     });
     $(function() {
-        Mapper.submitClickHandler();
+        Mapper.submitHomeClickHandler();
     });
 </script>
 
@@ -50,6 +53,7 @@
 	</div>
 </div>
 <div class="container firstContainer">
+
 	<div class="row">
 		<input type="text" class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Variable" id="idvar">
 	</div>
@@ -71,36 +75,5 @@
 	</div>
 
 </div>
-
-
-
-
-<!-- THE STUFF BELOW IS HIDDEN AT FIRST -->
-
-<div class="container secondContainer hidden">
-	<div class="row">
-		
-		<div id="canvas" class="col-9">
-			
-		</div>
-
-		<div class="row">
-			<div id="barcanvas" class="col-3">
-
-			Bar goes here
-			</div>
-
-			<div id="scattercanvas" class="col-3">
-
-			Scatter goes here	
-			</div>
-		</div>
-		<div class="row">
-			<div id="legend" class="col-12"></div>
-		</div>
-	</div>
-</div>
-
-
 
 </body>

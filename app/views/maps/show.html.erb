@@ -1,4 +1,3 @@
-
 <html lang="en">
 <meta charset="utf-8">
 <title> Mappr </title>
@@ -25,15 +24,18 @@
 
 
 <script type="text/javascript">
-    // This is a jQuery convention to say that once all the files
-    // load, the function Smile.start() should run.
-    // This function is defined in the smiles.js
+
     $(function() {
+    	Mapper.initialize('<%= @display_variable.to_s %>', '<%= @filter_variable.to_s %>')
         Mapper.startAutocomplete();
     });
     $(function() {
         Mapper.submitClickHandler();
     });
+
+    $(document).ready(function() {
+    	Mapper.start()
+    })
 </script>
 
 
@@ -45,7 +47,9 @@
 
 <%= render 'welcome/header' %>
 
-<div class="container secondContainer hidden">
+<!-- THE STUFF BELOW IS HIDDEN AT FIRST -->
+
+<div class="container secondContainer">
 	<div class="row">
 		
 		<div id="canvas" class="col-9">
@@ -59,16 +63,16 @@
 			</div>
 
 			<div id="scattercanvas" class="col-3">
-
+				<div class="row">
+					<input type="text" class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Color" id="colorvar">
+				</div>
 			Scatter goes here	
 			</div>
 		</div>
 		<div class="row">
-			<div id="legend" class="col-10"></div>
+			<div id="legend" class="col-12"></div>
 		</div>
 	</div>
 </div>
-
-
 
 </body>
