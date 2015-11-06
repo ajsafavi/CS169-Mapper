@@ -1,6 +1,28 @@
 var MapperBack = (function () {
 //any method here should be TESTABLE
 
+  /**hexColorDivs
+  */
+  var hexColorDivs = function(baseColor, divisions)
+  {
+    //improve me
+    // also feel free to improve the tests
+    var colors = [];
+    n = divisions - 1;
+    var rdelta = (255-baseColor[0])/n;
+    var gdelta = (255-baseColor[1])/n;
+    var bdelta = (255-baseColor[2])/n;
+    for(var i=0; i<divisions;i++)
+    {
+      var rval = Math.floor(255 - rdelta * i);
+      var gval = Math.floor(255 - gdelta * i);
+      var bval = Math.floor(255 - bdelta * i);
+      var c = rval*256*256 + gval * 256 + bval;
+
+      colors.push("#" + c.toString(16));
+    }
+    return colors;
+  }
   /** color divs
     * @param {list} baseColor   base rgb color [r,g,b]
     * @param {number} divisions  color divisions
@@ -91,6 +113,7 @@ var MapperBack = (function () {
     // PUBLIC METHODS
     // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
   return {
+    hexColorDivs: hexColorDivs,
     filterPoints: filterPoints,
     getapiUrl: getapiUrl,
     getEnvironment: getEnvironment,

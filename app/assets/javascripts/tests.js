@@ -60,6 +60,24 @@ QUnit.test( "Colors length", function( assert ) {
 
 });
 
+QUnit.test( "Hex Colors", function( assert ) {
+  //feel free to change this
+  var colors = MapperBack.hexColorDivs([255,0,0], 2);
+  var correct = ["#ffffff","#ff0000"]
+  //console.log(processed);
+  assert.deepEqual(colors, correct,  "make sure correct num of colors are created");
+
+});
+
+QUnit.test( "Hex Colors 2", function( assert ) {
+  var colors = MapperBack.hexColorDivs([255,0,0], 10);
+  var correct = ["#ffffff","#ff0000"];
+  var len = colors.length;
+  //console.log(processed);
+  assert.equal(len, 10,  "make sure correct num of colors are created");
+
+});
+
 QUnit.test( "draw USA test", function( assert ) {
   //feel free to change this
   Mapper.drawUSA('states','#canvas');

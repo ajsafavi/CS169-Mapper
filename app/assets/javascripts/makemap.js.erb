@@ -126,7 +126,7 @@ var Mapper = (function () {
         .attr("text-anchor", "middle")  
         .style("font-size", "16px") 
         .style("text-decoration", "underline")  
-        // .text("Make me a pretty title");
+        .text("Make me a pretty title");
   }
 
   //add the legend to the plot
@@ -135,14 +135,31 @@ var Mapper = (function () {
     //improve this 
     //legend should show each color and what range its for
     // heres an example http://bl.ocks.org/ZJONSSON/3918369
-    var legend = svg.append("g")
-    .attr("class", "legend")
-    .attr("x", 65)
-    .attr("y", 25)
-    .attr("height", 100)
-    .attr("width", 100);
+    var colors = d3.scale.quantize()
+      .range(MapperBack.hexColorDivs([10,10,100],10));
+    var legend = d3.select('#legend')
+      .append('ul')
+        .attr('class', 'list-inline');
+    var keys = legend.selectAll('li.key')
+    .data(colors.range());
+    keys.enter().append('li')
+      .attr('class', 'key')
+      .style('border-top-color', String)
+      .text(function(d) {
+          var r = colors.invertExtent(d);
+          return r[0];
+      });
+    d3.selectAll('.key')
+      .style('border-top-width', '15px')
+      .style('border-top-style', 'solid')
+      .style('width', '10%')
+      .style('font-size:','.75em');
   }
 
+  var listToColor = function(c)
+  {
+    return "rgb("+c[0] + "," +c[1] + "," +c[2] + ")";
+  }
   //apply the colors to the map
   var applyColors = function(svg, color, divs)
   {
@@ -186,11 +203,11 @@ var Mapper = (function () {
     //console.log(width, height)
 
     // set attrs and 'resume' force 
-    svg = $('#svgMap')
-    svg.attr('width', width);
-    svg.attr('height', height);
-    svg.attr('max-width', width);
-    svg.attr('max-height', height);
+    //svg = $('#svgMap')
+    mapSvg.attr('width', width);
+    mapSvg.attr('height', height);
+    mapSvg.attr('max-width', width);
+    mapSvg.attr('max-height', height);
   }
 
   
@@ -238,11 +255,13 @@ var Mapper = (function () {
           .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
           .attr("class", "states")
           .attr("d", path)
+
+      
       applyColors(null,[10,10,100], 10);
     });
 
     d3.select(self.frameElement).style("height", height + "px");
-    return svg
+    return svg;
   }
 
   var start = function() {
@@ -263,12 +282,11 @@ var Mapper = (function () {
         var location = parseInt(dataPoints[i].location) / 1000 //why is 1000 hardcoded in
         rateById.set(location, dataPoints[i].value);
       }
-
-      var svg = drawUSA("state", "#canvas", quantize, rateById)
+      var svg = drawUSA("state", "#canvas", quantize, rateById);
+      
+      document.getElementsByTagName('svg')[0].id = 'svgMap';   
       addLegend(svg);
       addTitle(svg);
-      document.getElementsByTagName('svg')[0].id = 'svgMap';   
-      
 
       d3.select(self.frameElement).style("height", height + "px");
 
