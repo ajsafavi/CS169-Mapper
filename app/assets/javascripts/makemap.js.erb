@@ -146,7 +146,7 @@ var Mapper = (function () {
   //apply the colors to the map
   var applyColors = function(svg, color, divs)
   {
-    debugger;
+    //debugger;
     var colors = MapperBack.colorDivs(color, divs);
     for (var i = colors.length - 1; i >= 0; i--) 
     {
@@ -183,7 +183,7 @@ var Mapper = (function () {
     var width = $('#canvas').width(); 
 
     var height = $('#canvas').height(); 
-    console.log(width, height)
+    //console.log(width, height)
 
     // set attrs and 'resume' force 
     svg = $('#svgMap')
@@ -194,6 +194,8 @@ var Mapper = (function () {
   }
 
   
+  var proj; //the global variable for projection
+  var mapSvg; //the global variable for svg
 
   /** drawState
     * @param {string} res   draw land, states, or counties
@@ -202,18 +204,16 @@ var Mapper = (function () {
     */
 
   var drawUSA = function(res, canvas, quantize, rateById)
-  {
-    //let me draw states, counties or just the whole country
-
-    var rateById = d3.map();
-   
+  {   
     var background = $(canvas);
     var width = background.width();
     var height = background.height();
 
+    
     var projection = d3.geo.albersUsa()
         .scale(1000)
         .translate([width / 2, height / 2]);
+    proj = projection;
 
     var path = d3.geo.path()
         .projection(projection);
@@ -221,6 +221,8 @@ var Mapper = (function () {
     var svg = d3.select(canvas).append("svg")
         .attr("width", width)
         .attr("height", height);
+
+    mapSvg = svg;
 
     d3.json("/scripts/us.json", function(error, us) {
       if (error) throw error;
@@ -265,20 +267,11 @@ var Mapper = (function () {
       var svg = drawUSA("state", "#canvas", quantize, rateById)
       addLegend(svg);
       addTitle(svg);
-// <<<<<<< HEAD
-//       applyColors(svg,[10,10,100], 10);
       document.getElementsByTagName('svg')[0].id = 'svgMap';   
       
 
-// =======
-
-      
-
       d3.select(self.frameElement).style("height", height + "px");
-      //svg.exit();
-      
 
-// >>>>>>> d90dfe1f80384bc44bd59e2fccc3da59155439ac
     };
     var onFailure = function() { 
       console.error('fail'); 
@@ -288,15 +281,16 @@ var Mapper = (function () {
 
   };
 
-  // PUBLIC METHODS
-  // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
+
   $(document).ready(function() {
     $(window).resize(function () {
       $(window).on('resize', resize);
     });
   });
-  
 
+  // PUBLIC METHODS
+  // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
+  
   return {
     createQuantize: createQuantize,
     drawUSA: drawUSA,
