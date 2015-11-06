@@ -1,8 +1,11 @@
 require 'test_helper'
 
 class DatasetsControllerTest < ActionController::TestCase
+
   setup do
     @dataset = datasets(:sample)
+    @user = users(:aryan)
+    sign_in @user
   end
 
   test "should get index" do
@@ -18,7 +21,7 @@ class DatasetsControllerTest < ActionController::TestCase
 
   test "should create dataset" do
     assert_difference('Dataset.count') do
-      post :create, {  }
+      post :create, { 'name' => 'new', 'owner' => @user.id }
     end
 
     assert_redirected_to dataset_path(assigns(:dataset))
