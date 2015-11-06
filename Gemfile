@@ -31,6 +31,8 @@ gem 'devise'
 # gem 'simple_token_authentication', '~> 1.0'
 gem 'devise_token_auth'
 
+gem 'simplecov', :require => false, :group => :test
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
