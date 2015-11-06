@@ -146,10 +146,14 @@ var Mapper = (function () {
     var data_buckets = data_quantize.range()
 
     var colors = d3.scale.quantize()
-      .range(MapperBack.hexColorDivs([10,10,100],10));
+      .range(MapperBack.hexColorDivs([10,10,100],11));
     var legend = d3.select('#legend')
       .append('ul')
         .attr('class', 'list-inline');
+    console.log(colors.range())
+    // debugger
+    colors.range().pop();
+
     var keys = legend.selectAll('li.key').data(colors.range());
     console.log(keys)
     var bucket_i = 0
