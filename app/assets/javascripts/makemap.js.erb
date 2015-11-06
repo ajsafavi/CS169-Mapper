@@ -146,12 +146,11 @@ var Mapper = (function () {
     var data_buckets = data_quantize.range()
 
     var colors = d3.scale.quantize()
-      .range(MapperBack.hexColorDivs([10,10,100],11));
+      .range(MapperBack.hexColorDivs([10,100,10],11));
     var legend = d3.select('#legend')
       .append('ul')
         .attr('class', 'list-inline');
     console.log(colors.range())
-    // debugger
     colors.range().pop();
 
     var keys = legend.selectAll('li.key').data(colors.range());
@@ -303,7 +302,7 @@ var Mapper = (function () {
           .attr("d", path)
 
       
-      applyColors(null,[10,10,100], 10);
+      applyColors(null,[10,100,10], 10);
     });
 
     d3.select(self.frameElement).style("height", height + "px");
@@ -317,7 +316,7 @@ var Mapper = (function () {
       var dataPoints = MapperBack.processPoints(data);
 
       //may want to abstract this into another method (createQuantize or something)
-      var quantize = createQuantize([10,10,100], 10, dataPoints);
+      var quantize = createQuantize([10,100,10], 10, dataPoints);
 
       var width = 870,
         height = 505;
