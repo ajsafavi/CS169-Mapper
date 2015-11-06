@@ -31,6 +31,9 @@ gem 'devise'
 # gem 'simple_token_authentication', '~> 1.0'
 gem 'devise_token_auth'
 
+# gem google fonts
+gem 'google-webfonts-rails', '~> 0.0.4'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 

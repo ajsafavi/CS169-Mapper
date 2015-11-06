@@ -6,6 +6,8 @@ $primary-color: #AAA;
 
 h2 {
 	color: $primary-color;
+	font-family: 'Bitter', serif;
+	font-weight: 100;
 }
 
 .newContainer{
@@ -15,4 +17,12 @@ h2 {
 .signLabel {
 	font-size: 1.2em;
 	color: $primary-color;
+}
+
+.signLabel {
+	font-family: 'Raleway', sans-serif;
+}
+
+.nonCenter {
+	text-align: right;
 }
