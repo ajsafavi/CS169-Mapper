@@ -82,9 +82,9 @@ var Mapper = (function () {
         $("div#secondContainer").removeClass('hidden');
         $("div#firstContainer").addClass('hidden');
         $("div#idnavcontainer").append($( "#idvar" ));
-        //$("div#idnavcontainer").append($( "#idfilteringvar" ));
-        //$("div#idnavcontainer").append($( "#idrange" ));
-        //$("div#idnavcontainer").append($( "#idgeo" ));
+        // $("div#idnavcontainer").append($( "#idfilteringvar" ));
+        // $("div#idnavcontainer").append($( "#idrange" ));
+        // $("div#idnavcontainer").append($( "#idgeo" ));
         $("div#idnavcontainer").append($( "#idsubmit" ));
         $( "#idvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
         $( "#idfilteringvar" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
@@ -147,9 +147,9 @@ var Mapper = (function () {
       .style('border-top-color', String)
       .text(function(d) {
           var r = colors.invertExtent(d);
-          return r[0];
+          return "value";
       });
-    d3.selectAll('.key')
+    d3.selectAll('li.key')
       .style('border-top-width', '15px')
       .style('border-top-style', 'solid')
       .style('width', '10%')
