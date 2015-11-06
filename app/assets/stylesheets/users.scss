@@ -4,6 +4,15 @@
 
 $primary-color: #AAA;
 
-.row {
-	background-color: $primary-color;
+h2 {
+	color: $primary-color;
+}
+
+.newContainer{
+	text-align: center;
+}
+
+.signLabel {
+	font-size: 1.2em;
+	color: $primary-color;
 }
