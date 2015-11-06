@@ -60,9 +60,29 @@ var Mapper = (function () {
   //methods dealing with front end
 
   var startAutocomplete = function() {
-    $("#idvar").autocomplete({source: varList});
-    $("#idfilteringvar").autocomplete({source: varList});
-    $("#idgeo").autocomplete({source: geoList});
+    $("#idvar").autocomplete({
+      source: varList,
+      minLength: 0,
+      scroll: true
+    }).focus(function() {
+        $(this).autocomplete("search", "");
+    });
+
+    $("#idfilteringvar").autocomplete({
+      source: varList,
+      minLength: 0,
+      scroll: true
+    }).focus(function() {
+        $(this).autocomplete("search", "");
+    });
+
+    $("#idgeo").autocomplete({
+      source: geoList,
+      minLength: 0,
+      scroll: true
+    }).focus(function() {
+        $(this).autocomplete("search", "");
+    });
   }
 
   var submitClickHandler = function() {

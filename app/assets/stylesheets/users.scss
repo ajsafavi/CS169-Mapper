@@ -6,11 +6,11 @@ $primary-color: #AAA;
 
 h2 {
 	color: $primary-color;
-	font-family: 'Bitter', serif;
+	font-family: 'Raleway', sans-serif;
 	font-weight: 100;
 }
 
-.newContainer{
+.centerContainer{
 	text-align: center;
 }
 
@@ -21,8 +21,13 @@ h2 {
 
 .signLabel {
 	font-family: 'Raleway', sans-serif;
+	font-weight: 100;
 }
 
-.nonCenter {
+.rightContainer {
 	text-align: right;
+}
+
+.leftContainer{
+	text-align: left;
 }
