@@ -189,9 +189,24 @@ var Mapper = (function () {
     svg = $('#svgMap')
     svg.attr('width', width);
     svg.attr('height', height);
-    svg.attr('max-width', width);
-    svg.attr('max-height', height);
   }
+
+  // var resize = function() {
+
+  //   width = parseInt(d3.select('#canvas').style('width'))
+  //   height = parseInt(d3.select('#canvas').style('height'))
+  //   debugger
+
+  //   // update projection
+  //   proj.translate([width / 2, height / 2]).scale(width);
+
+  //   // resize the map container
+  //   mapSvg.style('width', width + 'px').style('height', height + 'px');
+
+  //   // // resize the map
+  //   mapSvg.select('.land').attr('d', path);
+  //   mapSvg.selectAll('.state').attr('d', path);
+  // }
 
   
   var proj; //the global variable for projection
@@ -281,12 +296,8 @@ var Mapper = (function () {
 
   };
 
+  d3.select(window).on('resize', resize);
 
-  $(document).ready(function() {
-    $(window).resize(function () {
-      $(window).on('resize', resize);
-    });
-  });
 
   // PUBLIC METHODS
   // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
