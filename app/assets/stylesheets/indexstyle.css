@@ -1,4 +1,7 @@
 /*Below is stuff for overwriting bootstrap*/
+.list-inline {
+	margin-left: 0px;
+}
 
 .navbar-right {
 	margin-right: 20px;
@@ -23,7 +26,8 @@ input[type="range"] {
 }
 
 .navbar-brand{
-	font-family: 'Bitter', serif;
+	font-family: 'Raleway', sans-serif;
+	font-weight: 100;
 }
 
 body {
@@ -33,11 +37,21 @@ body {
 
 /*end of bootstrap fixes*/
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 100;
+}
 
 * {
     box-sizing: border-box;
     font-family: 'Raleway', sans-serif;
+    font-weight: 100;
 }
+
 
 #canvas {
 	background-color: #ccc;
@@ -96,5 +110,11 @@ body {
 .titleText {
 	text-align: center;
 	color: #aaa;
-	font-family: 'Bitter', sans-serif;
+	font-family: 'Raleway', sans-serif;
+	font-weight: 100;
 }
+
+li {
+	color: #aaa;
+}
+

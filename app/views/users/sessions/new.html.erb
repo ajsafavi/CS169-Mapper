@@ -3,32 +3,32 @@
     google: ['Bitter', 'Raleway']
   }) %>s
 <div class="container">
-<div class="row newContainer">
-  <h2>Log in</h2>
+<div class="row">
+  <h2 class="centerContainer">Log in</h2>
   <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
     <div class="field form-group ">
-      <%= f.label :email, class: 'col-xs-offset-4 col-xs-4 signLabel' %><br />
+      <%= f.label :email, class: 'col-xs-offset-4 col-xs-4 signLabel leftContainer' %><br />
       <%= f.email_field :email, autofocus: true, class: 'col-xs-offset-4 col-xs-4' %>
     </div>
 
     <div class="field form-group ">
-      <%= f.label :password, class: 'col-xs-offset-4 col-xs-4 signLabel' %><br />
+      <%= f.label :password, class: 'col-xs-offset-4 col-xs-4 signLabel leftContainer' %><br />
       <%= f.password_field :password, autocomplete: "off", class: 'col-xs-offset-4 col-xs-4' %>
     </div>
 
     <% if devise_mapping.rememberable? -%>
       <div class="field form-group col-xs-offset-4 col-xs-4">
         <%= f.check_box :remember_me %>
-        <%= f.label :remember_me, class: 'signLabel' %>
+        <%= f.label :remember_me, class: 'signLabel leftContainer' %>
       </div>
     <% end -%>
 
-    <div class="actions col-xs-offset-4 col-xs-4">
+    <div class="actions col-xs-offset-4 col-xs-4 centerContainer">
       <%= f.submit "Log in" %>
     </div>
   <% end %>
 
-  <div class='col-xs-offset-4 col-xs-4 nonCenter'>
+  <div class='col-xs-offset-4 col-xs-4 rightContainer'>
     <%= render "users/shared/links" %>
   </div>
 </div>
