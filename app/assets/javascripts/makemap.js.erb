@@ -28,7 +28,8 @@ var Mapper = (function () {
 									"Minnesota", 
 									"Mississippi", 
 									"Missouri", 
-									"Montana Nebraska", 
+									"Montana",
+                  "Nebraska", 
 									"Nevada", 
 									"New Hampshire", 
 									"New Jersey", 
@@ -39,7 +40,8 @@ var Mapper = (function () {
 									"Ohio", 
 									"Oklahoma", 
 									"Oregon", 
-									"Pennsylvania Rhode Island", 
+									"Pennsylvania", 
+                  "Rhode Island", 
 									"South Carolina", 
 									"South Dakota", 
 									"Tennessee", 
@@ -66,7 +68,8 @@ var Mapper = (function () {
 		$("#idvar").autocomplete({
 			source: varList,
 			minLength: 0,
-			scroll: true
+			scroll: true,
+      autoFocus: true
 		}).focus(function() {
 				$(this).autocomplete("search", "");
 		});

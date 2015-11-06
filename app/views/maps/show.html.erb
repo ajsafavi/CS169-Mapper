@@ -18,6 +18,7 @@
 <%= stylesheet_link_tag "bootstrap.css" %> 
 <%= stylesheet_link_tag "indexstyle.css" %> 
 <%= stylesheet_link_tag "mapstyle.css" %>
+<%= stylesheet_link_tag "show.css" %>
 
 <%= google_webfonts_init({
     google: ['Bitter', 'Raleway']
@@ -52,7 +53,7 @@
 
 <div class="container secondContainer">
 	<div class="row">
-		<div  class='col-9'>
+		<div  class='col-12'>
 			<h2 id='graphTitle'>WORDS</h2>
 		</div>
 	</div>
@@ -75,9 +76,13 @@
 			Scatter goes here	
 			</div>
 		</div>
-		<div class="row">
-			<div id="legend" class="col-12"></div>
+		<div class="row col-12">
+			<h5 id='graphTitle'>Legend</h5>
+			<div id="legend"></div>
 		</div>
+		<!-- <div class="row">
+			<div id="legend" class="col-12"></div>
+		</div> -->
 	</div>
 </div>
 
