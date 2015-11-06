@@ -36,34 +36,30 @@ class DatasetsController < ApplicationController
   # POST /datasets
   # POST /datasets.json
   def create
-    if (current_user.nil? or current_user.id != @dataset.user_id)
-      render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
-    end
 
     params = dataset_params
 
-    if params[:owner] != current_user.id
-      render json: {"errors" => ["Currently authorized user's ID must be the same as the user ID for the dataset!"]}, status: :unauthorized
-    end
-
-    create_params = Hash.new
-
-    create_params[:name] = params[:name]
-    create_params[:filepath] = (Rails.root + "/datasets/fake.csv").to_s
-    create_params[:location_column] = params[:location_column]
-    create_params[:location_type] = params[:location_type]
-    create_params[:weight_column] = params[:weight_column]
-    create_params[:num_rows] = 1000
-    create_params[:name] = params[:user]
-
-    @dataset = Dataset.new(create_params)
-    @okay = @dataset.save
-    
-
-    if @okay
-      redirect_to @dataset, format: :json
+    if (current_user.nil? or current_user.id != params[:owner].to_i)
+      render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
     else
-      render json: @dataset.errors, status: :unprocessable_entity
+      create_params = Hash.new
+      create_params[:name] = params[:name]
+      create_params[:filepath] = (Rails.root + "/datasets/fake.csv").to_s
+      create_params[:location_column] = params[:location_column]
+      create_params[:location_type] = params[:location_type]
+      create_params[:weight_column] = params[:weight_column]
+      create_params[:num_rows] = 1000
+      create_params[:user_id] = params[:owner]
+
+      @dataset = Dataset.new(create_params)
+      @okay = @dataset.save
+      logger.debug @dataset.errors
+      if @okay
+        redirect_to @dataset, format: :json
+      else
+        render json: @dataset.errors, status: :unprocessable_entity
+      end
+
     end
 
   end
@@ -72,18 +68,19 @@ class DatasetsController < ApplicationController
 
     if (current_user.nil? or current_user.id != @dataset.user_id)
       render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
-    end
-
-    params = dataset_edit_params.except!(:id)
-
-    @dataset.update(params)
-
-    @okay = @dataset.valid?
-
-    if @okay
-      redirect_to @dataset, format: :json
     else
-      render json: @dataset.errors, status: :unprocessable_entity
+
+      params = dataset_edit_params.except!(:id)
+
+      @dataset.update(params)
+
+      @okay = @dataset.valid?
+
+      if @okay
+        redirect_to @dataset, format: :json
+      else
+        render json: @dataset.errors, status: :unprocessable_entity
+      end
     end
 
   end
@@ -106,30 +103,20 @@ class DatasetsController < ApplicationController
   def points
     if !@dataset.is_public? and (current_user.nil? or current_user.id != @dataset.user_id)
       render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
+    else
+
+      params = point_params
+      num_points = params[:num_points].to_i
+      display_val = params[:display_val]
+      filter_val = params[:filter_val]
+      location_type = @dataset.location_type
+      config.log_level = :debug 
+      @points = @dataset.generate_points(num_points, display_val, filter_val)
+      num_points = @points.size
+
+      render json: {'points' => @points, 'num_points' => num_points, 'location_type' => location_type}
     end
-
-    params = point_params
-    num_points = params[:num_points].to_i
-    display_val = params[:display_val]
-    filter_val = params[:filter_val]
-    location_type = @dataset.location_type
-    config.log_level = :debug 
-    @points = @dataset.generate_points(num_points, display_val, filter_val)
-    num_points = @points.size
-
-    render json: {'points' => @points, 'num_points' => num_points, 'location_type' => location_type}
   end
-
-  # def column_suggestions
-  #   ans = Array.new
-  #   guess = column_params[:partial_name]
-  #   @dataset.columns.each do |column|
-  #     if column.name.starts_with?(guess)
-  #       ans.push({'name' => column.name, 'id' => column.id})
-  #     end
-  #   end
-  #   render json: ans
-  # end
 
   private
     # Use callbacks to share common setup or constraints between actions.

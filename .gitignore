@@ -18,3 +18,5 @@
 
 # Ignore scratch work
 scratch.txt
+
+coverage
