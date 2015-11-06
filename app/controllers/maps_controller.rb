@@ -37,7 +37,6 @@ class MapsController < ApplicationController
     @errors = Array.new
     params = map_params
     @map = Map.create(map_params)
-
     @okay = @map.valid?
     if @okay
       redirect_to @map, format: :json
@@ -105,6 +104,9 @@ class MapsController < ApplicationController
       num_points = params[:num_points].to_i
       display_val = params[:display_val]
       filter_val = params[:filter_val]
+      if filter_val.nil? or filter_val.length == 0
+        filter_val = nil
+      end
       location_type = @dataset.location_type
       @points = @dataset.generate_points(num_points, display_val, filter_val)
       num_points = @points.size
@@ -122,7 +124,7 @@ class MapsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def map_params
-      params.permit(:id, :name, :owner, :dataset, :display_variable, :filter_variable, :styling)
+      params.permit(:id, :name, :user_id, :dataset, :display_variable, :filter_variable, :styling)
     end
 
     def point_params
