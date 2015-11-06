@@ -147,9 +147,9 @@ var Mapper = (function () {
       .style('border-top-color', String)
       .text(function(d) {
           var r = colors.invertExtent(d);
-          return r[0];
+          return "value";
       });
-    d3.selectAll('.key')
+    d3.selectAll('li.key')
       .style('border-top-width', '15px')
       .style('border-top-style', 'solid')
       .style('width', '10%')
