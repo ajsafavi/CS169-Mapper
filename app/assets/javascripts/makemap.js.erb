@@ -99,6 +99,7 @@ var Mapper = (function () {
 
         //hide stuff
         $("div#canvas").html('');
+        $("#legend").html('')
         $(".secondContainer").removeClass('hidden');
         $(".firstContainer").addClass('hidden');
         // $("div#idnavcontainer").append($( "#idvar" ));
@@ -150,24 +151,32 @@ var Mapper = (function () {
   }
 
   //add the legend to the plot
-  var addLegend = function (svg) 
+  var addLegend = function (svg, data_quantize) 
   {
     //improve this 
     //legend should show each color and what range its for
     // heres an example http://bl.ocks.org/ZJONSSON/3918369
+    var data_buckets = data_quantize.range()
+
     var colors = d3.scale.quantize()
       .range(MapperBack.hexColorDivs([10,10,100],10));
     var legend = d3.select('#legend')
       .append('ul')
         .attr('class', 'list-inline');
-    var keys = legend.selectAll('li.key')
-    .data(colors.range());
+    var keys = legend.selectAll('li.key').data(colors.range());
+    console.log(keys)
+    var bucket_i = 0
     keys.enter().append('li')
       .attr('class', 'key')
       .style('border-top-color', String)
       .text(function(d) {
+          var bucket = data_buckets[bucket_i]
+          bucket_i += 1
           var r = colors.invertExtent(d);
-          return "value";
+          var curr_range = data_quantize.invertExtent(bucket)
+          var first = Math.round(curr_range[0]*100)/100;
+          var second = Math.round(curr_range[1]*100)/100;
+          return first + " - " + second;
       });
     d3.selectAll('li.key')
       .style('border-top-width', '15px')
@@ -204,11 +213,18 @@ var Mapper = (function () {
     */
   var createQuantize = function(color, divs, dataPoints)
   {
-    var quantize = d3.scale.quantize()
-        .domain([Math.min.apply(Math,dataPoints.map(function(o) {return o.value;})), 
-          Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
-        .range(d3.range(divs).map(function(i) { return "q" + i + "-" + divs; }));
+    var displayPoints = dataPoints.map(function(point) { return point.value })
+    var minVal = Math.min.apply(null, displayPoints)
+    var maxVal = Math.max.apply(null, displayPoints)
+    // var quantize = d3.scale.quantize()
+    //     .domain([Math.min.apply(Math,dataPoints.map(function(o) {return o.value;})), 
+    //       Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
+    //     .range(d3.range(divs).map(function(i) { return "q" + i + "-" + divs; }));
 
+    var quantize = d3.scale.quantize()
+        .domain([minVal, maxVal])
+        .range(d3.range(divs).map(function(i) { return "q" + i + "-" + divs; }));
+ 
     return quantize;
 
   }
@@ -323,7 +339,7 @@ var Mapper = (function () {
       var svg = drawUSA("state", "#canvas", quantize, rateById);
       
       document.getElementsByTagName('svg')[0].id = 'svgMap';   
-      addLegend(svg);
+      addLegend(svg, quantize);
       addTitle(svg);
 
       d3.select(self.frameElement).style("height", height + "px");
@@ -352,4 +368,3 @@ var Mapper = (function () {
     resize: resize,
   };
 })();
-
