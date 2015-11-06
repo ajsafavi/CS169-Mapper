@@ -109,6 +109,9 @@ class DatasetsController < ApplicationController
       num_points = params[:num_points].to_i
       display_val = params[:display_val]
       filter_val = params[:filter_val]
+      if filter_val.nil? or filter_val.length == 0
+        filter_val = nil
+      end
       location_type = @dataset.location_type
       config.log_level = :debug 
       @points = @dataset.generate_points(num_points, display_val, filter_val)

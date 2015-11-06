@@ -1,424 +1,432 @@
 var Mapper = (function () {
 // nothing here can be tested, keep it simple
-  var apiUrl = ""
-  var mapId = null
-  var varList = ["Employment","Income","Labor Participation","Sex","Age"];
-  var geoList = ["USA", "Alabama", 
-                  "Alaska", 
-                  "Arizona",
-                  "Arkansas", 
-                  "California", 
-                  "Colorado", 
-                  "Connecticut", 
-                  "Delaware",
-                  "Florida", 
-                  "Georgia", 
-                  "Hawaii", 
-                  "Idaho", 
-                  "Illinois", 
-                  "Indiana", 
-                  "Iowa", 
-                  "Kansas", 
-                  "Kentucky", 
-                  "Louisiana", 
-                  "Maine", 
-                  "Maryland", 
-                  "Massachusetts", 
-                  "Michigan", 
-                  "Minnesota", 
-                  "Mississippi", 
-                  "Missouri", 
-                  "Montana Nebraska", 
-                  "Nevada", 
-                  "New Hampshire", 
-                  "New Jersey", 
-                  "New Mexico", 
-                  "New York", 
-                  "North Carolina", 
-                  "North Dakota", 
-                  "Ohio", 
-                  "Oklahoma", 
-                  "Oregon", 
-                  "Pennsylvania Rhode Island", 
-                  "South Carolina", 
-                  "South Dakota", 
-                  "Tennessee", 
-                  "Texas", 
-                  "Utah", 
-                  "Vermont", 
-                  "Virginia", 
-                  "Washington", 
-                  "West Virginia", 
-                  "Wisconsin", 
-                  "Wyoming"]
+	var apiUrl = ""
+	var varList = ["Employment","Income","Labor Participation","Sex","Age"];
+	var geoList = ["USA", "Alabama", 
+									"Alaska", 
+									"Arizona",
+									"Arkansas", 
+									"California", 
+									"Colorado", 
+									"Connecticut", 
+									"Delaware",
+									"Florida", 
+									"Georgia", 
+									"Hawaii", 
+									"Idaho", 
+									"Illinois", 
+									"Indiana", 
+									"Iowa", 
+									"Kansas", 
+									"Kentucky", 
+									"Louisiana", 
+									"Maine", 
+									"Maryland", 
+									"Massachusetts", 
+									"Michigan", 
+									"Minnesota", 
+									"Mississippi", 
+									"Missouri", 
+									"Montana Nebraska", 
+									"Nevada", 
+									"New Hampshire", 
+									"New Jersey", 
+									"New Mexico", 
+									"New York", 
+									"North Carolina", 
+									"North Dakota", 
+									"Ohio", 
+									"Oklahoma", 
+									"Oregon", 
+									"Pennsylvania Rhode Island", 
+									"South Carolina", 
+									"South Dakota", 
+									"Tennessee", 
+									"Texas", 
+									"Utah", 
+									"Vermont", 
+									"Virginia", 
+									"Washington", 
+									"West Virginia", 
+									"Wisconsin", 
+									"Wyoming"]
 
-  var displayval; //string
-  var filterval; //string
-  var geoval; //string
+	var mapId = null
+	var datasetId = 1 //TODO: Make sure this is kept safe!
+	var userId = 1
+	var displayval; //string
+	var filterval; //string
+	var geoval; //string
 
-  //methods dealing with front end
+	//methods dealing with front end
 
-  var startAutocomplete = function() {
-    $("#idvar").autocomplete({
-      source: varList,
-      minLength: 0,
-      scroll: true
-    }).focus(function() {
-        $(this).autocomplete("search", "");
-    });
+	var startAutocomplete = function() {
+		$("#idvar").autocomplete({
+			source: varList,
+			minLength: 0,
+			scroll: true
+		}).focus(function() {
+				$(this).autocomplete("search", "");
+		});
 
-    $("#idfilteringvar").autocomplete({
-      source: varList,
-      minLength: 0,
-      scroll: true
-    }).focus(function() {
-        $(this).autocomplete("search", "");
-    });
+		$("#idfilteringvar").autocomplete({
+			source: varList,
+			minLength: 0,
+			scroll: true
+		}).focus(function() {
+				$(this).autocomplete("search", "");
+		});
 
-    $("#idgeo").autocomplete({
-      source: geoList,
-      minLength: 0,
-      scroll: true
-    }).focus(function() {
-        $(this).autocomplete("search", "");
-    });
-  }
+		$("#idgeo").autocomplete({
+			source: geoList,
+			minLength: 0,
+			scroll: true
+		}).focus(function() {
+				$(this).autocomplete("search", "");
+		});
+	}
 
-  var submitClickHandler = function() {
-      $( "body" ).on( "click", "#idsubmit", function() {
-        //set values
-        apiUrl = MapperBack.getapiUrl();
-        displayval = $("#idvar").val();
-        filterval = $("#idfilteringvar").val();
-        geoval = $("#idfilteringvar").val();
+	var submitClickHandler = function() {
+			$( "body" ).on( "click", "#idsubmit", function() {
+				//set values
+				apiUrl = MapperBack.getapiUrl();
+				displayval = $("#idvar").val();
+				filterval = $("#idfilteringvar").val();
+				geoval = $("#idfilteringvar").val();
 
-        //set URL
-        apiUrl += '&display_val=' + displayval.toUpperCase().replace(' ', '_');
-        if (filterval) '&filter_val=' + filterval.toUpperCase().replace(' ', '_');
+				//set URL
+				// apiUrl += '&display_val=' + displayval.toUpperCase().replace(' ', '_');
+				// if (filterval) '&filter_val=' + filterval.toUpperCase().replace(' ', '_');
 
-        //hide stuff
-        $("div#canvas").html('');
-        $("#legend").html('')
-        $(".secondContainer").removeClass('hidden');
-        $(".firstContainer").addClass('hidden');
-        start();
+				//hide stuff
+				$("div#canvas").html('');
+				$("#legend").html('')
+				$(".secondContainer").removeClass('hidden');
+				$(".firstContainer").addClass('hidden');
+				start();
 
-    });
-  }
-
-    /**
-  * HTTP GET request 
-  * @param  {string}   url       URL path, e.g. "/api/smiles"
-  * @param  {function} onSuccess   callback method to execute upon request success (200 status)
-  * @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
-  * @return {None}
-  */
-  var makeGetRequest = function(url, params, onSuccess, onFailure) {
-    makeAjaxRequest(url, "GET", params, onSuccess, onFailure)
-  };
+		});
+	}
 
 
-    /**
-  * HTTP GET request 
-  * @param  {string}   url       URL path, e.g. "/api/smiles"
-  * @param  {function} onSuccess   callback method to execute upon request success (200 status)
-  * @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
-  * @return {None}
-  */
-  var makePutRequest = function(url, params, onSuccess, onFailure) {
-    makeAjaxRequest(url, "PUT", params, onSuccess, onFailure)
-  };
+	var makeGetRequest = function(url, params, onSuccess, onFailure) {
+		makeAjaxRequest(url, "GET", params, onSuccess, onFailure)
+	};
 
-  /**
-  * HTTP GET request 
-  * @param  {string}   url       URL path, e.g. "/api/smiles"
-  * @param  {function} onSuccess   callback method to execute upon request success (200 status)
-  * @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
-  * @return {None}
-  */
-  var makePostRequest = function(url, params, onSuccess, onFailure) {
-    makeAjaxRequest(url, "POST", params, onSuccess, onFailure)
-  };
+	var makePutRequest = function(url, params, onSuccess, onFailure) {
+		makeAjaxRequest(url, "PUT", params, onSuccess, onFailure)
+	};
 
-  /**
-  * HTTP request 
-  * @param  {string}   url       URL path, e.g. "/api/smiles"
-  * @param  {function} onSuccess   callback method to execute upon request success (200 status)
-  * @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
-  * @return {None}
-  */
-  var makeAjaxRequest = function(url, http_method, params, onSuccess, onFailure) {
-    $.ajax({
-      type: http_method,
-      url: url,
-      params: params,
-      dataType: "json",
-      success: onSuccess,
-      error: onFailure,
-      xhrFields: {
-        withCredentials: true
-      }
-    });
-  };
+	var makePostRequest = function(url, params, onSuccess, onFailure) {
+		makeAjaxRequest(url, "POST", params, onSuccess, onFailure)
+	};
 
-  //Methods dealing with the map
-  //adds title to our graph
-  var addTitle = function(svg)
-  {
-    svg.append("text")
-        .attr("x", 100)             
-        .attr("y", 50)
-        .attr("text-anchor", "middle")  
-        .style("font-size", "16px") 
-        .style("text-decoration", "underline")  
-        // .text("Make me a pretty title");
-  }
+	/**
+	* HTTP request 
+	* @param  {string}   url       URL path, e.g. "/api/smiles"
+	* @param  {function} onSuccess   callback method to execute upon request success (200 status)
+	* @param  {function} onFailure   callback method to execute upon request failure (non-200 status)
+	* @return {None}
+	*/
+	var makeAjaxRequest = function(url, http_method, params, onSuccess, onFailure) {
+		console.log ("making a request to : " + url)
+		$.ajax({
+			type: http_method,
+			url: url,
+			data: params,
+			dataType: "json",
+			success: onSuccess,
+			error: onFailure,
+			xhrFields: {
+				withCredentials: true
+			},
+			headers: {
+			  'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+			}
+		});
+	};
 
-  //add the legend to the plot
-  var addLegend = function (svg, data_quantize) 
-  {
-    //improve this 
-    //legend should show each color and what range its for
-    // heres an example http://bl.ocks.org/ZJONSSON/3918369
-    var data_buckets = data_quantize.range()
+	//Methods dealing with the map
+	//adds title to our graph
+	var addTitle = function(svg)
+	{
+		svg.append("text")
+				.attr("x", 100)             
+				.attr("y", 50)
+				.attr("text-anchor", "middle")  
+				.style("font-size", "16px") 
+				.style("text-decoration", "underline")  
+				// .text("Make me a pretty title");
+	}
 
-    var colors = d3.scale.quantize()
-      .range(MapperBack.hexColorDivs([10,10,100],11));
-    var legend = d3.select('#legend')
-      .append('ul')
-        .attr('class', 'list-inline');
-    console.log(colors.range())
-    // debugger
-    colors.range().pop();
+	//add the legend to the plot
+	var addLegend = function (svg, data_quantize) 
+	{
+		//improve this 
+		//legend should show each color and what range its for
+		// heres an example http://bl.ocks.org/ZJONSSON/3918369
+		var data_buckets = data_quantize.range()
 
-    var keys = legend.selectAll('li.key').data(colors.range());
-    console.log(keys)
-    var bucket_i = 0
-    keys.enter().append('li')
-      .attr('class', 'key')
-      .style('border-top-color', String)
-      .text(function(d) {
-          var bucket = data_buckets[bucket_i]
-          bucket_i += 1
-          var r = colors.invertExtent(d);
-          var curr_range = data_quantize.invertExtent(bucket)
-          var first = Math.round(curr_range[0]*100)/100;
-          var second = Math.round(curr_range[1]*100)/100;
-          return first + " - " + second;
-      });
-    d3.selectAll('li.key')
-      .style('border-top-width', '15px')
-      .style('border-top-style', 'solid')
-      .style('width', '10%')
-      .style('font-size:','.75em');
+		var colors = d3.scale.quantize()
+			.range(MapperBack.hexColorDivs([10,10,100],11));
+		var legend = d3.select('#legend')
+			.append('ul')
+				.attr('class', 'list-inline');
+		console.log(colors.range())
+		// debugger
+		colors.range().pop();
 
-  }
+		var keys = legend.selectAll('li.key').data(colors.range());
+		console.log(keys)
+		var bucket_i = 0
+		keys.enter().append('li')
+			.attr('class', 'key')
+			.style('border-top-color', String)
+			.text(function(d) {
+					var bucket = data_buckets[bucket_i]
+					bucket_i += 1
+					var r = colors.invertExtent(d);
+					var curr_range = data_quantize.invertExtent(bucket)
+					var first = Math.round(curr_range[0]*100)/100;
+					var second = Math.round(curr_range[1]*100)/100;
+					return first + " - " + second;
+			});
+		d3.selectAll('li.key')
+			.style('border-top-width', '15px')
+			.style('border-top-style', 'solid')
+			.style('width', '10%')
+			.style('font-size:','.75em');
 
-  var listToColor = function(c)
-  {
-    return "rgb("+c[0] + "," +c[1] + "," +c[2] + ")";
-  }
-  //apply the colors to the map
-  var applyColors = function(svg, color, divs)
-  {
-    //debugger;
-    var colors = MapperBack.colorDivs(color, divs);
-    for (var i = colors.length - 1; i >= 0; i--) 
-    {
-      //debugger;
-      var quart = ".q" + i + "-" + divs;
-      var c = colors[i];
-      var colorString = "rgb("+c[0] + "," +c[1] + "," +c[2] + ")";
-      
-      d3.selectAll(quart).style("fill", colorString);
+	}
 
-    }
-  }
+	var listToColor = function(c)
+	{
+		return "rgb("+c[0] + "," +c[1] + "," +c[2] + ")";
+	}
+	//apply the colors to the map
+	var applyColors = function(svg, color, divs)
+	{
+		//debugger;
+		var colors = MapperBack.colorDivs(color, divs);
+		for (var i = colors.length - 1; i >= 0; i--) 
+		{
+			//debugger;
+			var quart = ".q" + i + "-" + divs;
+			var c = colors[i];
+			var colorString = "rgb("+c[0] + "," +c[1] + "," +c[2] + ")";
+			
+			d3.selectAll(quart).style("fill", colorString);
 
-   /** createQuantize
-    * @param {list} color   base color to start with
-    * @param {number} divs  number of divisions
-    * @return {quantize} return the quantization var we draw with
-    */
-  var createQuantize = function(color, divs, dataPoints)
-  {
-    var displayPoints = dataPoints.map(function(point) { return point.value })
-    var minVal = Math.min.apply(null, displayPoints)
-    var maxVal = Math.max.apply(null, displayPoints)
-    // var quantize = d3.scale.quantize()
-    //     .domain([Math.min.apply(Math,dataPoints.map(function(o) {return o.value;})), 
-    //       Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
-    //     .range(d3.range(divs).map(function(i) { return "q" + i + "-" + divs; }));
+		}
+	}
 
-    var quantize = d3.scale.quantize()
-        .domain([minVal, maxVal])
-        .range(d3.range(divs).map(function(i) { return "q" + i + "-" + divs; }));
+	 /** createQuantize
+		* @param {list} color   base color to start with
+		* @param {number} divs  number of divisions
+		* @return {quantize} return the quantization var we draw with
+		*/
+	var createQuantize = function(color, divs, dataPoints)
+	{
+		var displayPoints = dataPoints.map(function(point) { return point.value })
+		var minVal = Math.min.apply(null, displayPoints)
+		var maxVal = Math.max.apply(null, displayPoints)
+		// var quantize = d3.scale.quantize()
+		//     .domain([Math.min.apply(Math,dataPoints.map(function(o) {return o.value;})), 
+		//       Math.max.apply(Math,dataPoints.map(function(o) {return o.value;}))])
+		//     .range(d3.range(divs).map(function(i) { return "q" + i + "-" + divs; }));
+
+		var quantize = d3.scale.quantize()
+				.domain([minVal, maxVal])
+				.range(d3.range(divs).map(function(i) { return "q" + i + "-" + divs; }));
  
-    return quantize;
+		return quantize;
 
-  }
+	}
 
-  var resize = function (){
-    // get width/height with container selector (body also works)
-    // or use other method of calculating desired values
-    var width = $('#canvas').width(); 
+	var resize = function (){
+		// get width/height with container selector (body also works)
+		// or use other method of calculating desired values
+		var width = $('#canvas').width(); 
 
-    var height = $('#canvas').height(); 
-    //console.log(width, height)
+		var height = $('#canvas').height(); 
+		//console.log(width, height)
 
-    // set attrs and 'resume' force 
-    //svg = $('#svgMap')
-    mapSvg.attr('width', width);
-    mapSvg.attr('height', height);
-    mapSvg.attr('max-width', width);
-    mapSvg.attr('max-height', height);
-  }
+		// set attrs and 'resume' force 
+		//svg = $('#svgMap')
+		mapSvg.attr('width', width);
+		mapSvg.attr('height', height);
+		mapSvg.attr('max-width', width);
+		mapSvg.attr('max-height', height);
+	}
 
-  // var resize = function() {
+	// var resize = function() {
 
-  //   width = parseInt(d3.select('#canvas').style('width'))
-  //   height = parseInt(d3.select('#canvas').style('height'))
-  //   debugger
+	//   width = parseInt(d3.select('#canvas').style('width'))
+	//   height = parseInt(d3.select('#canvas').style('height'))
+	//   debugger
 
-  //   // update projection
-  //   proj.translate([width / 2, height / 2]).scale(width);
+	//   // update projection
+	//   proj.translate([width / 2, height / 2]).scale(width);
 
-  //   // resize the map container
-  //   mapSvg.style('width', width + 'px').style('height', height + 'px');
+	//   // resize the map container
+	//   mapSvg.style('width', width + 'px').style('height', height + 'px');
 
-  //   // // resize the map
-  //   mapSvg.select('.land').attr('d', path);
-  //   mapSvg.selectAll('.state').attr('d', path);
-  // }
+	//   // // resize the map
+	//   mapSvg.select('.land').attr('d', path);
+	//   mapSvg.selectAll('.state').attr('d', path);
+	// }
 
-  
-  var proj; //the global variable for projection
-  var mapSvg; //the global variable for svg
+	
+	var proj; //the global variable for projection
+	var mapSvg; //the global variable for svg
 
-  /** drawState
-    * @param {string} res   draw land, states, or counties
-    * @param {string} canvas  id of element ot draw on ('#canvas')
-    * @return {svg} return the svg var we draw with
-    */
+	/** drawState
+		* @param {string} res   draw land, states, or counties
+		* @param {string} canvas  id of element ot draw on ('#canvas')
+		* @return {svg} return the svg var we draw with
+		*/
 
-  var drawUSA = function(res, canvas, quantize, rateById)
-  {   
-    var background = $(canvas);
-    var width = background.width();
-    var height = background.height();
+	var drawUSA = function(res, canvas, quantize, rateById)
+	{   
+		var background = $(canvas);
+		var width = background.width();
+		var height = background.height();
 
-    
-    var projection = d3.geo.albersUsa()
-        .scale(1000)
-        .translate([width / 2, height / 2]);
-    proj = projection;
+		
+		var projection = d3.geo.albersUsa()
+				.scale(1000)
+				.translate([width / 2, height / 2]);
+		proj = projection;
 
-    var path = d3.geo.path()
-        .projection(projection);
+		var path = d3.geo.path()
+				.projection(projection);
 
-    var svg = d3.select(canvas).append("svg")
-        .attr("width", width)
-        .attr("height", height);
+		var svg = d3.select(canvas).append("svg")
+				.attr("width", width)
+				.attr("height", height);
 
-    mapSvg = svg;
+		mapSvg = svg;
 
-    d3.json("/scripts/us.json", function(error, us) {
-      if (error) throw error;
-      svg.append("g")
-          .attr("class", "states")
-        .selectAll("path")
-          .data(topojson.feature(us, us.objects.states).features)
-        .enter().append("path")
-          .attr("class", function(d) { return quantize(rateById.get(d.id)); })
-          .attr("d", path)
+		d3.json("/scripts/us.json", function(error, us) {
+			if (error) throw error;
+			svg.append("g")
+					.attr("class", "states")
+				.selectAll("path")
+					.data(topojson.feature(us, us.objects.states).features)
+				.enter().append("path")
+					.attr("class", function(d) { return quantize(rateById.get(d.id)); })
+					.attr("d", path)
 
-      svg.append("path")
-          .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
-          .attr("class", "states")
-          .attr("d", path)
+			svg.append("path")
+					.datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
+					.attr("class", "states")
+					.attr("d", path)
 
-      
-      applyColors(null,[10,10,100], 10);
-    });
+			
+			applyColors(null,[10,10,100], 10);
+		});
 
-    d3.select(self.frameElement).style("height", height + "px");
-    return svg;
-  }
+		d3.select(self.frameElement).style("height", height + "px");
+		return svg;
+	}
 
-  var start = function() {   
-    var onSuccess = function(data) {
-      var dataPoints = MapperBack.processPoints(data);
+	var start = function() {   
+		var onSuccess = function(data) {
+			var dataPoints = MapperBack.processPoints(data);
 
-      //may want to abstract this into another method (createQuantize or something)
-      var quantize = createQuantize([10,10,100], 10, dataPoints);
+			//may want to abstract this into another method (createQuantize or something)
+			var quantize = createQuantize([10,10,100], 10, dataPoints);
 
-      var width = 870,
-        height = 505;
+			var width = 870,
+				height = 505;
 
-      var rateById = d3.map();
-      
-      for (var i = 0; i < dataPoints.length; i++) {
-        var location = parseInt(dataPoints[i].location) / 1000 //why is 1000 hardcoded in
-        rateById.set(location, dataPoints[i].value);
-      }
-      var svg = drawUSA("state", "#canvas", quantize, rateById);
-      
-      document.getElementsByTagName('svg')[0].id = 'svgMap';   
-      addLegend(svg, quantize);
-      addTitle(svg);
+			var rateById = d3.map();
+			
+			for (var i = 0; i < dataPoints.length; i++) {
+				var location = parseInt(dataPoints[i].location) / 1000 //why is 1000 hardcoded in
+				rateById.set(location, dataPoints[i].value);
+			}
+			var svg = drawUSA("state", "#canvas", quantize, rateById);
+			
+			document.getElementsByTagName('svg')[0].id = 'svgMap';   
+			addLegend(svg, quantize);
+			addTitle(svg);
 
-      d3.select(self.frameElement).style("height", height + "px");
-    };
-    var onFailure = function() { 
-      console.error('failed to fetch points'); 
-    }
+			d3.select(self.frameElement).style("height", height + "px");
+		};
+		var onFailure = function() {
 
-    params = gatherPointVariables()
-    var pointUrl = apiUrl + "maps/" + mapId + "/points"
-    makeGetRequest(apiUrl, params,  onSuccess, onFailure);
+			console.error('failed to fetch points'); 
+		}
 
-  };
+		params = gatherPointVariables()
+		var pointUrl = apiUrl + "datasets/" + datasetId + "/points"
+		makeGetRequest(pointUrl, params,  onSuccess, onFailure);
+	};
 
-  var gatherPointVariables = function() {
-    // TODO: Do me
-  }
+	var gatherPointVariables = function() {
+		// TODO: Get these from displayval etc.
+		var ans = {}
+		ans["display_val"] = displayval.toUpperCase().replace(' ', '_');
+		// ans["filter_val"] = null
+		ans["num_points"] = 50000
+		return ans
+	}
 
-  var gatherMapVariables = function() {
-    // TODO: Do me
-  }
+	var gatherMapVariables = function() {
+		// TODO: Do me
+		var ans = {}
+		ans["name"] = "My Fun Map"
+		ans["display_variable"] = displayval.toUpperCase().replace(' ', '_');
+		ans["filter_variable"] = null
+		ans["user_id"] = userId
+		ans["dataset_id"] = datasetId
+		return ans
+	}
 
-  var setMapId = function(newMapId) {
-    mapId = newMapId
-  }
+	var setMapId = function(newMapId) {
+		mapId = newMapId
+	}
 
-  var saveMap = function() {
-    
-    var onSuccess = function(data) {
-      // TODO: Do something?
-    }
+	var saveMap = function() {
+		var onSuccess = function(data) {
+			// TODO: Do something?
+			console.log(data)
+			if (data.id) {
+				mapId = data["id"]
+			}
+		}
 
-    var onFailure = function(data) {
-      // TODO: Do something?
-    }
+		var onFailure = function(data) {
+			// TODO: Do something?
+			console.error("Failed to save map")
+		}
 
-    params = gatherMapVariables()
-    var updateUrl = apiUrl + "/maps/" + mapId + "/"
-    makePutRequest()
-  }
+		params = gatherMapVariables()
 
-  d3.select(window).on('resize', resize);
+		var saveUrl
+		if (mapId != null) {
+			saveUrl = apiUrl + "maps/" + mapId + "/"
+			makePutRequest(saveUrl, params, onSuccess, onFailure)
+		} else {
+			saveUrl = apiUrl + "maps/"
+			makePostRequest(saveUrl, params, onSuccess, onFailure)
+		}
+	}
+
+	d3.select(window).on('resize', resize);
 
 
-  // PUBLIC METHODS
-  // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
-  
-  return {
-    createQuantize: createQuantize,
-    drawUSA: drawUSA,
-    start: start,
-    submitClickHandler: submitClickHandler,
-    startAutocomplete: startAutocomplete,
-    resize: resize,
-    saveMap: saveMap,
-  };
+	// PUBLIC METHODS
+	// any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
+	
+	return {
+		createQuantize: createQuantize,
+		drawUSA: drawUSA,
+		start: start,
+		submitClickHandler: submitClickHandler,
+		startAutocomplete: startAutocomplete,
+		resize: resize,
+		saveMap: saveMap,
+	};
 })();

@@ -63,7 +63,7 @@ class MapsController < ApplicationController
       @okay = @map.valid?
       
       if @okay
-        redirect_to @map, format: :json
+        redirect_to @map, format: :json, status: 303
       else
         render json: @map.errors, status: :unprocessable_entity
       end
@@ -124,7 +124,7 @@ class MapsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def map_params
-      params.permit(:id, :name, :user_id, :dataset, :display_variable, :filter_variable, :styling)
+      params.permit(:id, :name, :user_id, :dataset_id, :display_variable, :filter_variable, :styling)
     end
 
     def point_params
