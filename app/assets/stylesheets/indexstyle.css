@@ -129,6 +129,16 @@ li {
 	padding: 0px;
 }
 
+#shareButton {
+	color: #aaa;
+	float: right;
+}
+
+#shareCol{
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
 .ui-autocomplete { 
 	max-height: 150px; 
 	overflow-y: scroll; 
