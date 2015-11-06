@@ -193,12 +193,12 @@ var Mapper = (function () {
 		var legend = d3.select('#legend')
 			.append('ul')
 				.attr('class', 'list-inline');
-		console.log(colors.range())
+		//console.log(colors.range())
 		// debugger
 		colors.range().pop();
 
 		var keys = legend.selectAll('li.key').data(colors.range());
-		console.log(keys)
+		//console.log(keys)
 		var bucket_i = 0
 		keys.enter().append('li')
 			.attr('class', 'key')
@@ -255,6 +255,22 @@ var Mapper = (function () {
       d3.selectAll(quart).style("fill", colors[i]);
 
     }
+
+
+    //Tony make me work pls
+    
+    var colors = d3.scale.quantize()
+      .range(colors);
+    // debugger
+    //colors.range().pop();
+
+
+    var keys = d3.selectAll('li.key').data(colors.range());
+    //console.log(keys)
+    keys.enter().append('li')
+      .attr('class', 'key')
+      .style('border-top-color', String)
+
   }
 
 	 /** createQuantize
