@@ -1,9 +1,6 @@
-var ARYAN = null // TODO: Get rid of this
-var TEST1 = null
 var Mapper = (function () {
 // nothing here can be tested, keep it simple
   var apiUrl = ""
-
 
   var varList = ["Employment","Income","Labor Participation","Sex","Age"];
   var geoList = ["USA", "Alabama", 
@@ -81,15 +78,11 @@ var Mapper = (function () {
         if (filterval) '&filter_val=' + filterval.toUpperCase().replace(' ', '_');
 
         //hide stuff
-
-        // Clear the D3 Map and Legend
         $("div#canvas").html('');
         $("#legend").html('')
-
-        $("div#secondContainer").removeClass('hidden');
-        $("div#firstContainer").addClass('hidden');
-        $("div#idnavcontainer").append($( "#idvar" ));
-
+        $(".secondContainer").removeClass('hidden');
+        $(".firstContainer").addClass('hidden');
+        // $("div#idnavcontainer").append($( "#idvar" ));
         // $("div#idnavcontainer").append($( "#idfilteringvar" ));
         // $("div#idnavcontainer").append($( "#idrange" ));
         // $("div#idnavcontainer").append($( "#idgeo" ));
@@ -103,6 +96,7 @@ var Mapper = (function () {
         // $( "#idgeo" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
         // $( "#idsubmit" ).removeClass('col-xs-offset-4 col-xs-4 firstDisplay');
         start();
+
     });
   }
 
@@ -119,10 +113,7 @@ var Mapper = (function () {
       url: url,
       dataType: "json",
       success: onSuccess,
-      error: onFailure,
-      xhrFields: {
-        withCredentials: true
-      }
+      error: onFailure
     });
   };
 
@@ -218,6 +209,7 @@ var Mapper = (function () {
 
   }
 
+
   var resize = function (){
     // get width/height with container selector (body also works)
     // or use other method of calculating desired values
@@ -308,6 +300,7 @@ var Mapper = (function () {
 
   var start = function() {
 
+    
     var onSuccess = function(data) {
       var dataPoints = MapperBack.processPoints(data);
 
@@ -323,10 +316,8 @@ var Mapper = (function () {
         var location = parseInt(dataPoints[i].location) / 1000 //why is 1000 hardcoded in
         rateById.set(location, dataPoints[i].value);
       }
-      
       var svg = drawUSA("state", "#canvas", quantize, rateById);
-      console.log(quantize)
-      ARYAN = quantize
+      
       document.getElementsByTagName('svg')[0].id = 'svgMap';   
       addLegend(svg, quantize);
       addTitle(svg);
@@ -357,4 +348,3 @@ var Mapper = (function () {
     resize: resize,
   };
 })();
-
