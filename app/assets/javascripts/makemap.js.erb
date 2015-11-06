@@ -61,6 +61,7 @@ var Mapper = (function () {
 
 	//methods dealing with front end
 
+
 	var startAutocomplete = function() {
 		$("#idvar").autocomplete({
 			source: varList,
@@ -105,6 +106,23 @@ var Mapper = (function () {
 				$(".secondContainer").removeClass('hidden');
 				$(".firstContainer").addClass('hidden');
 				start();
+
+		});
+	}
+
+
+	var submitHomeClickHandler = function() {
+			$( "body" ).on( "click", "#idsubmit", function() {
+				//set values
+				apiUrl = MapperBack.getapiUrl();
+				displayval = $("#idvar").val();
+				filterval = $("#idfilteringvar").val();
+				geoval = $("#idfilteringvar").val();
+
+				params = gatherMapVariables()
+				saveUrl = apiUrl + "maps/"
+
+				$.redirect(saveUrl, params, "POST")
 
 		});
 	}
@@ -330,6 +348,12 @@ var Mapper = (function () {
 		return svg;
 	}
 
+	var initialize = function(display_variable, filter_variable) {
+		displayval = display_variable
+		filterval = filter_variable
+		apiUrl = MapperBack.getapiUrl();
+	}
+
 	var start = function() {   
 		var onSuccess = function(data) {
 			var dataPoints = MapperBack.processPoints(data);
@@ -424,7 +448,9 @@ var Mapper = (function () {
 		createQuantize: createQuantize,
 		drawUSA: drawUSA,
 		start: start,
+		initialize: initialize,
 		submitClickHandler: submitClickHandler,
+		submitHomeClickHandler: submitHomeClickHandler,
 		startAutocomplete: startAutocomplete,
 		resize: resize,
 		saveMap: saveMap,
