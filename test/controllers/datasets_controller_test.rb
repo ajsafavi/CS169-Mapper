@@ -53,6 +53,14 @@ class DatasetsControllerTest < ActionController::TestCase
     # assert_redirected_to datasets_path
   end
 
+
+  test "should return points" do
+    get :points, {:id => @dataset, :display_val => "INCOME", :num_points => 5000}
+
+    assert assigns(:points), "Points should be returned"
+    assert assigns(:points).size > 0, "Points should not be empty"
+  end
+
   # Other Custom Methods
 
 end

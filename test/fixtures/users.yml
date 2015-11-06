@@ -8,3 +8,8 @@
 aryan:
   email: test@example.org
   encrypted_password: <%= User.new.send(:password_digest, 'password') %>
+
+
+# richard:
+#   email: richyrich@hello.org
+#   encrypted_password: <%= User.new.send(:password_digest, 'passy') %>

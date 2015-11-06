@@ -38,7 +38,6 @@ class DatasetsController < ApplicationController
   def create
 
     params = dataset_params
-    logger.debug "CURRENT: #{current_user.id}"
 
     if (current_user.nil? or current_user.id != params[:owner].to_i)
       render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
