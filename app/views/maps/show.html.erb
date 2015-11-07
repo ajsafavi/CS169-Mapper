@@ -64,16 +64,18 @@
 		<div class='col-2 titleCol'>
 			<input type="text" placeholder="Variable" id="idvar" class="titleInput">
 		</div>
-		<div class='col-1'>
-			<h2 id='inText' class="titleColText">In</h2>
+		<div class='col-2'>
+			<h2 id='inText' class="titleColText">, Filter By </h2>
 		</div>
 		<div class='col-2 titleCol'>
-			<input type="text" placeholder="USA" id="idgeo" class="titleInput">
+			<input type="text" class="titleInput" placeholder="Filtering Variable" id="idfilteringvar">
 		</div>
-		<div class='col-4 titleCol'>
-			<button type="submit" class="btn btn-default" id="idSubmit"/>
+		<div class='col-2 titleCol'>
+			<button type="submit" class="btn btn-default titleInput" id="idsubmit">
+				Submit
+			</button>
 		</div>
-		<div class="col-2 titleCol">
+		<div class="col-1 titleCol">
 			<i class="fa fa-share fa-3x" id="shareButton"></i>
 		</div>
 	</div>
@@ -90,38 +92,33 @@
 				<div class="row">
 					<input type="text" id="range-display" readonly/>
 					<br>
-					<div id="slider-range" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"/>
+					<div id="slider-range" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all">
+					</div>
 					<br>
 					<button id="select-range">Select range</button>
 				</div>
 			</div>
 
-			<br>
-			<br>
-			<br>
-
-
 			<div id="scattercanvas" class="col-3">
 				<div class="row">
 					<input type="text" class="col-xs-offset-4 col-xs-4" placeholder="Color" id="colorvar">
 					<script>
-// <<<<<<< HEAD
 						$('#colorvar').minicolors();
 						$('#colorvar').on('input', function() {
-// =======
-// 						$('input[type=text]#colorvar').minicolors();
-// 						$('input[type=text]#colorvar').on('input', function() {
-// >>>>>>> 4c672fb6080af7ad26b618a24047a5a6e125623c
 							Mapper.changeColor($(this).val());
 						})
 					</script>
 				</div>
+
 			</div>
+
 		</div>
 		<div class="row col-12">
 			<h5 id='graphTitle'>Legend</h5>
 			<div id="legend"></div>
 		</div>
+
+
 	</div>
 </div>
 
