@@ -42,7 +42,6 @@
 		  	Mapper.saveMap()
 		});
     });
-
    
 </script>
 
@@ -72,23 +71,34 @@
 			
 		</div>
 
-		<div class="row">
-			<div id="barcanvas" class="col-3">
 
-			Bar goes here
+
+		<div class="row">
+			<div id="barcanvas" class="row col-3">
+				<div class="row">
+					<input type="text" id="range-display" readonly/>
+					<br>
+					<div id="slider-range" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"/>
+					<br>
+					<button id="select-range">Select range</button>
+				</div>
 			</div>
+
+			<br>
+			<br>
+			<br>
+
 
 			<div id="scattercanvas" class="col-3">
 				<div class="row">
 					<input type="text" class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Color" id="colorvar">
 					<script>
-						$('input[type=text]').minicolors();
-						$('input[type=text]').on('input', function() {
+						$('input[type=text]#colorvar').minicolors();
+						$('input[type=text]#colorvar').on('input', function() {
 							Mapper.changeColor($(this).val());
 						})
 					</script>
 				</div>
-			Scatter goes here	
 			</div>
 		</div>
 		<div class="row col-12">
