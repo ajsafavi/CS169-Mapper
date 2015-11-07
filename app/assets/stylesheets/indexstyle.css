@@ -122,11 +122,9 @@ li {
 	color: #aaa;
 }
 
-#graphTitle {
-	color: #aaa;
-	font-family: 'Raleway', sans-serif;
-	font-weight: 100;
-	padding: 0px;
+
+#inText {
+	text-align: center;
 }
 
 #shareButton {
@@ -134,9 +132,19 @@ li {
 	float: right;
 }
 
-#shareCol{
-	margin-top: 20px;
+.titleCol{
+	margin-top: 10px;
 	margin-bottom: 10px;
+	text-align: center;
+}
+
+.titleColText {
+	margin-top: 15px;
+	margin-bottom: 10px;
+	color: #aaa;
+	font-family: 'Raleway', sans-serif;
+	font-weight: 100;
+	padding: 0px;
 }
 
 .ui-autocomplete { 
@@ -145,3 +153,20 @@ li {
 	overflow-x: hidden;
 }
 
+#idvar {
+	margin-left: 25px;
+}
+
+.titleInput {
+	height: 3em;
+	padding-left: 10px;
+}
+
+#idSubmit {
+	width: 100px;
+	height: 3em;
+}
+
+#leftContainer{
+	text-align: left;
+}

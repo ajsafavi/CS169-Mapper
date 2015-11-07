@@ -59,10 +59,22 @@
 
 <div class="container secondContainer">
 	<div class="row">
-		<div class='col-10'>
-			<h2 id='graphTitle'>WORDS</h2>
+		<div class='col-1'>
+			<h2 id='mapOfText' class="titleColText">Map of</h2>
 		</div>
-		<div class="col-2" id="shareCol">
+		<div class='col-2 titleCol'>
+			<input type="text" placeholder="Variable" id="idvar" class="titleInput">
+		</div>
+		<div class='col-1'>
+			<h2 id='inText' class="titleColText">In</h2>
+		</div>
+		<div class='col-2 titleCol'>
+			<input type="text" placeholder="USA" id="idgeo" class="titleInput">
+		</div>
+		<div class='col-4 titleCol'>
+			<button type="submit" class="btn btn-default" id="idSubmit"/>
+		</div>
+		<div class="col-2 titleCol">
 			<i class="fa fa-share fa-3x" id="shareButton"></i>
 		</div>
 	</div>
@@ -80,10 +92,10 @@
 
 			<div id="scattercanvas" class="col-3">
 				<div class="row">
-					<input type="text" class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Color" id="colorvar">
+					<input type="text" class="col-xs-offset-4 col-xs-4" placeholder="Color" id="colorvar">
 					<script>
-						$('input[type=text]').minicolors();
-						$('input[type=text]').on('input', function() {
+						$('#colorvar').minicolors();
+						$('#colorvar').on('input', function() {
 							Mapper.changeColor($(this).val());
 						})
 					</script>
