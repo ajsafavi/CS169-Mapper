@@ -1,6 +1,9 @@
 var Mapper = (function () {
 // nothing here can be tested, keep it simple
 
+
+  var allPoints;
+
 	var apiUrl = ""
 	var varList = ["Employment","Income","Labor Participation","Sex","Age"];
 	var geoList = ["USA", "Alabama", 
@@ -63,6 +66,41 @@ var Mapper = (function () {
 
 	//methods dealing with front end
 
+  var makeSlider = function() {
+    var displayPoints = (allPoints.points).map(function(point) { return point.filter_val })
+    var minVal = Math.floor(Math.min.apply(null, displayPoints))
+    var maxVal = Math.floor(Math.max.apply(null, displayPoints))
+
+    console.log("minVal: "+minVal+", maxVal: "+maxVal);
+
+      $( "#slider-range" ).slider({
+        range: true,
+        min: minVal,
+        max: maxVal,
+        values: [ minVal, maxVal ],
+        slide: function( event, ui ) {
+          $( "#range-display" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+        }
+      });
+      $( "#range-display" ).val($( "#slider-range" ).slider( "values", 0 ) +
+        " - " + $( "#slider-range" ).slider( "values", 1 ) );
+
+
+      $('#select-range').on("click", function() {
+        console.log("clicked");
+      });
+      
+      $('#select-range').on("click", function() {
+        var filtermin = $("#slider-range").slider("values",0);
+        var filtermax = $( "#slider-range" ).slider( "values", 1);
+
+        console.log("filtermin: "+filtermin+", filtermax: "+filtermax);
+
+        var dataPoints = MapperBack.filterPoints(allPoints, filtermin, filtermax);
+        drawMap(dataPoints);
+      });
+    }     
+
 
 	var startAutocomplete = function() {
 		$("#idvar").autocomplete({
@@ -97,7 +135,8 @@ var Mapper = (function () {
 				apiUrl = MapperBack.getapiUrl();
 				displayval = $("#idvar").val();
 				filterval = $("#idfilteringvar").val();
-				geoval = $("#idfilteringvar").val();
+        console.log("filterval: "+filterval);
+				geoval = $("#idgeo").val();
 
 				//set URL
 				// apiUrl += '&display_val=' + displayval.toUpperCase().replace(' ', '_');
@@ -120,7 +159,7 @@ var Mapper = (function () {
 				apiUrl = MapperBack.getapiUrl();
 				displayval = $("#idvar").val();
 				filterval = $("#idfilteringvar").val();
-				geoval = $("#idfilteringvar").val();
+				geoval = $("#idgeo").val();
 
 				params = gatherMapVariables()
 				saveUrl = apiUrl + "maps/"
@@ -193,12 +232,12 @@ var Mapper = (function () {
 		var legend = d3.select('#legend')
 			.append('ul')
 				.attr('class', 'list-inline');
-		console.log(colors.range())
+		//console.log(colors.range())
 		// debugger
 		colors.range().pop();
 
 		var keys = legend.selectAll('li.key').data(colors.range());
-		console.log(keys)
+		//console.log(keys)
 		var bucket_i = 0
 		keys.enter().append('li')
 			.attr('class', 'key')
@@ -255,6 +294,22 @@ var Mapper = (function () {
       d3.selectAll(quart).style("fill", colors[i]);
 
     }
+
+
+    //Tony make me work pls
+    
+    var colors = d3.scale.quantize()
+      .range(colors);
+    // debugger
+    //colors.range().pop();
+
+
+    var keys = d3.selectAll('li.key').data(colors.range());
+    //console.log(keys)
+    keys.enter().append('li')
+      .attr('class', 'key')
+      .style('border-top-color', String)
+
   }
 
 	 /** createQuantize
@@ -379,34 +434,40 @@ var Mapper = (function () {
 		apiUrl = MapperBack.getapiUrl();
 	}
 
+  var drawMap = function(dataPoints) {
+    $("#canvas").html("");
+    $("#legend").html("");
+    var quantize = createQuantize([10,10,100], 10, dataPoints);
+
+    var width = 870,
+      height = 505;
+
+    var rateById = d3.map();
+    
+    for (var i = 0; i < dataPoints.length; i++) {
+      var location = parseInt(dataPoints[i].location) / 1000
+      rateById.set(location, dataPoints[i].value);
+    }
+    var svg = drawUSA("state", "#canvas", quantize, rateById);
+    
+    document.getElementsByTagName('svg')[0].id = 'svgMap';   
+    addLegend(svg, quantize);
+    addTitle(svg);
+    changeColor('#ff0000');
+
+    d3.select(self.frameElement).style("height", height + "px");
+  }
+
 	var start = function() {   
+    console.log("displayval: "+displayval)
+    console.log("filterval: "+filterval);
 		var onSuccess = function(data) {
-
+      allPoints = data;
+      makeSlider();
 			var dataPoints = MapperBack.processPoints(data);
-
-			//may want to abstract this into another method (createQuantize or something)
-			var quantize = createQuantize([10,10,100], 10, dataPoints);
-
-			var width = 870,
-				height = 505;
-
-			var rateById = d3.map();
-			
-			for (var i = 0; i < dataPoints.length; i++) {
-				var location = parseInt(dataPoints[i].location) / 1000 //why is 1000 hardcoded in
-				rateById.set(location, dataPoints[i].value);
-			}
-			var svg = drawUSA("state", "#canvas", quantize, rateById);
-			
-			document.getElementsByTagName('svg')[0].id = 'svgMap';   
-			addLegend(svg, quantize);
-			addTitle(svg);
-      changeColor('#ff0000');
-
-			d3.select(self.frameElement).style("height", height + "px");
-
-      // debugger
+      drawMap(dataPoints);
 		};
+
 		var onFailure = function() {
 
 			console.error('failed to fetch points'); 
@@ -421,7 +482,7 @@ var Mapper = (function () {
 		// TODO: Get these from displayval etc.
 		var ans = {}
 		ans["display_val"] = displayval.toUpperCase().replace(' ', '_');
-		// ans["filter_val"] = null
+		ans["filter_val"] = filterval.toUpperCase().replace(' ', '_');
 		ans["num_points"] = 50000
 		return ans
 	}
@@ -431,7 +492,7 @@ var Mapper = (function () {
 		var ans = {}
 		ans["name"] = "My Fun Map"
 		ans["display_variable"] = displayval.toUpperCase().replace(' ', '_');
-		ans["filter_variable"] = null
+		ans["filter_variable"] = filterval.toUpperCase().replace(' ', '_');
 		ans["user_id"] = userId
 		ans["dataset_id"] = datasetId
 		return ans
@@ -474,6 +535,7 @@ var Mapper = (function () {
 	// any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
 	
 	return {
+    makeSlider: makeSlider,
     changeColor: changeColor,
 		createQuantize: createQuantize,
 		drawUSA: drawUSA,

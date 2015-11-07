@@ -8,12 +8,17 @@ Amir Safavi, Tony Chen, Prud, Aryan Falahadpisheh, June Cong
 
 Running the Program 
 
-navigate to the URL of the app and select the data you want to map. 
+Navigate to the project folder
+run `rake db:drop db:migrate db:seed`
+run `rails server`
+navigate to the URL of the app
 
 Testing 
 
 To test the javascript files go to "public/QUnitTests" and run "Tests1.html". By looking at the webpage it generates
 you should be able to tell which javascipt methods work
 
-To test the database navigate to the directory and run navigate "rake test".
+To test the database navigate to the directory and run "rake test".
 This will run automated tests that verfiy that the database is setup properly
+
+To run UI tests, install the Selenium IDE, navigate to `localhost:3000` and open `selenium/all_tests`
