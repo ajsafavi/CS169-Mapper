@@ -58,10 +58,24 @@
 
 <div class="container secondContainer">
 	<div class="row">
-		<div class='col-10'>
-			<h2 id='graphTitle'> Your Generated Graph </h2>
+		<div class='col-1'>
+			<h2 id='mapOfText' class="titleColText">Map of</h2>
 		</div>
-		<div class="col-2" id="shareCol">
+		<div class='col-2 titleCol'>
+			<input type="text" placeholder="Variable" id="idvar" class="titleInput">
+		</div>
+		<div class='col-2'>
+			<h2 id='inText' class="titleColText">, Filter By </h2>
+		</div>
+		<div class='col-2 titleCol'>
+			<input type="text" class="titleInput" placeholder="Filtering Variable" id="idfilteringvar">
+		</div>
+		<div class='col-2 titleCol'>
+			<button type="submit" class="btn btn-default titleInput" id="idsubmit">
+				Submit
+			</button>
+		</div>
+		<div class="col-1 titleCol">
 			<i class="fa fa-share fa-3x" id="shareButton"></i>
 		</div>
 	</div>
@@ -87,27 +101,13 @@
 
 			<div id="scattercanvas" class="col-3">
 				<div class="row">
-					<input type="text" class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Color" id="colorvar">
+					<input type="text" class="col-xs-offset-4 col-xs-4" placeholder="Color" id="colorvar">
 					<script>
-						$('input[type=text]#colorvar').minicolors();
-						$('input[type=text]#colorvar').on('input', function() {
+						$('#colorvar').minicolors();
+						$('#colorvar').on('input', function() {
 							Mapper.changeColor($(this).val());
 						})
 					</script>
-				</div>
-
-				
-
-				<div class="row">
-					<input type="text" class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Variable" id="idvar">
-				</div>
-
-				<div class="row">
-					<input type="text" class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Filtering Variable" id="idfilteringvar">
-				</div>
-
-				<div class="row">
-					<button type="submit" class="col-xs-offset-4 btn btn-default blockDisplay" id="idsubmit" >Submit</button>
 				</div>
 
 			</div>
