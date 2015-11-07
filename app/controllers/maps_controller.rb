@@ -38,6 +38,7 @@ class MapsController < ApplicationController
     # TODO: If they have a shareable link, verify that it is acceptable
     @errors = Array.new
     params = map_params
+
     @map = Map.create(map_params)
     @okay = @map.valid?
     if @okay
