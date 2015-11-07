@@ -3,13 +3,14 @@
 <title> Mappr </title>
 
 <head>
-<%= javascript_include_tag "jquery.min" %>
+<!--<%= javascript_include_tag "jquery.min" %>-->
 <%= javascript_include_tag "jquery-ui"%>
 <%= javascript_include_tag "bootstrap.js"%>
 <%= javascript_include_tag "d3.min"%>
 <%= javascript_include_tag "queue.min"%>
 
 <%= javascript_include_tag "topojson.min"%>
+<%= javascript_include_tag "tooltip"%>
 <%= javascript_include_tag "makemap"%>
 <%= javascript_include_tag "makemapback"%>
 
@@ -17,6 +18,7 @@
 <%= stylesheet_link_tag "bootstrap.css" %> 
 <%= stylesheet_link_tag "indexstyle.css" %> 
 <%= stylesheet_link_tag "mapstyle.css" %>
+<%= stylesheet_link_tag "show.css" %>
 
 <%= google_webfonts_init({
     google: ['Bitter', 'Raleway']
@@ -35,7 +37,13 @@
 
     $(document).ready(function() {
     	Mapper.start()
-    })
+    	
+    	$( "#shareButton" ).click(function() {
+		  	Mapper.saveMap()
+		});
+    });
+
+   
 </script>
 
 
@@ -51,6 +59,14 @@
 
 <div class="container secondContainer">
 	<div class="row">
+		<div class='col-10'>
+			<h2 id='graphTitle'>WORDS</h2>
+		</div>
+		<div class="col-2" id="shareCol">
+			<i class="fa fa-share fa-3x" id="shareButton"></i>
+		</div>
+	</div>
+	<div class="row">
 		
 		<div id="canvas" class="col-9">
 			
@@ -63,12 +79,21 @@
 			</div>
 
 			<div id="scattercanvas" class="col-3">
-
+				<div class="row">
+					<input type="text" class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Color" id="colorvar">
+					<script>
+						$('input[type=text]').minicolors();
+						$('input[type=text]').on('input', function() {
+							Mapper.changeColor($(this).val());
+						})
+					</script>
+				</div>
 			Scatter goes here	
 			</div>
 		</div>
-		<div class="row">
-			<div id="legend" class="col-12"></div>
+		<div class="row col-12">
+			<h5 id='graphTitle'>Legend</h5>
+			<div id="legend"></div>
 		</div>
 	</div>
 </div>

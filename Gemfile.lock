@@ -65,6 +65,8 @@ GEM
     docile (1.1.5)
     erubis (2.7.0)
     execjs (2.6.0)
+    font-awesome-rails (4.4.0.0)
+      railties (>= 3.2, < 5.0)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
     google-webfonts-rails (0.0.4)
@@ -74,6 +76,9 @@ GEM
     jbuilder (2.3.2)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
+    jquery-minicolors-rails (2.1.4.0)
+      jquery-rails
+      rails (>= 3.2.8)
     jquery-rails (4.0.5)
       rails-dom-testing (~> 1.0)
       railties (>= 4.2.0)
@@ -176,8 +181,10 @@ DEPENDENCIES
   d3-rails
   devise
   devise_token_auth
+  font-awesome-rails
   google-webfonts-rails (~> 0.0.4)
   jbuilder (~> 2.0)
+  jquery-minicolors-rails
   jquery-rails
   omniauth
   pg

@@ -34,6 +34,10 @@ body {
 	background-image: url('images/../congruent_outline.png');
 }
 
+/*.row {
+	margin-left: 0px;
+	margin-right: 0px;
+}*/
 
 /*end of bootstrap fixes*/
 
@@ -116,5 +120,28 @@ h6 {
 
 li {
 	color: #aaa;
+}
+
+#graphTitle {
+	color: #aaa;
+	font-family: 'Raleway', sans-serif;
+	font-weight: 100;
+	padding: 0px;
+}
+
+#shareButton {
+	color: #aaa;
+	float: right;
+}
+
+#shareCol{
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+.ui-autocomplete { 
+	max-height: 150px; 
+	overflow-y: scroll; 
+	overflow-x: hidden;
 }
 

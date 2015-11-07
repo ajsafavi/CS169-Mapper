@@ -15,6 +15,7 @@ Rails.application.config.assets.precompile += %w( d3.min.js )
 
 Rails.application.config.assets.precompile += %w( makemap.js )
 Rails.application.config.assets.precompile += %w( makemapback.js )
+Rails.application.config.assets.precompile += %w( tooltip.js )
 
 Rails.application.config.assets.precompile += %w( points.js )
 Rails.application.config.assets.precompile += %w( queue.min.js )
@@ -31,6 +32,7 @@ Rails.application.config.assets.precompile += %w(jquery-ui.css)
 
 Rails.application.config.assets.precompile += %w( indexstyle.css )
 Rails.application.config.assets.precompile += %w( mapstyle.css )
+Rails.application.config.assets.precompile += %w( show.css )
 Rails.application.config.assets.precompile += %w( qunit-1.19.0.css)
 
 Rails.application.config.assets.precompile += %w( auth_example.js )
