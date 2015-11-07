@@ -13,7 +13,7 @@ class MapsController < ApplicationController
   # GET /maps/1.json
   def show
     @display_variable = @map.display_variable
-    @dfilter_variable = @map.filter_variable
+    @filter_variable = @map.filter_variable
     respond_to do |format|
       format.html { } # TODO: Render the map page!
       format.json {
