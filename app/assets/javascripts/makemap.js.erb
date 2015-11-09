@@ -69,7 +69,7 @@ var Mapper = (function () {
 
   var makeSlider = function() {
     var displayPoints = (allPoints.points).map(function(point) { return point.filter_val })
-    var minVal = Math.floor(Math.min.apply(null, displayPoints))
+    var minVal = Math.max(0, Math.floor(Math.min.apply(null, displayPoints)))
     var maxVal = Math.floor(Math.max.apply(null, displayPoints))
 
     console.log("minVal: "+minVal+", maxVal: "+maxVal);
