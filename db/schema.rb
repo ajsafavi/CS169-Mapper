@@ -11,15 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151104094402) do
+ActiveRecord::Schema.define(version: 20151120000752) do
 
   create_table "columns", force: :cascade do |t|
     t.integer  "dataset_id"
     t.string   "name"
     t.string   "column_type"
     t.string   "null_value"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.string   "location_type"
   end
 
   add_index "columns", ["dataset_id"], name: "index_columns_on_dataset_id"
@@ -28,12 +29,9 @@ ActiveRecord::Schema.define(version: 20151104094402) do
     t.integer  "user_id"
     t.string   "name"
     t.string   "filepath"
-    t.string   "location_column"
-    t.string   "weight_column"
-    t.string   "location_type"
     t.integer  "num_rows"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean  "is_public"
   end
 
