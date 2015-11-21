@@ -5,23 +5,80 @@ class Dataset < ActiveRecord::Base
     has_many :columns
     has_many :maps
 
-    def consume_raw_file(filestream, filename)
-        # TODO: Process the file. Condense it. 
-        outpath = File.join(Rails.root, 'datasets', filename)
-        # TODO: Write the file here
-        # TODO: Return the filepath and the column names
+    def consume_raw_file(filestream)
+        outpath = self.filepath
+        logger.debug "FILEPATH: #{outpath}"
+        File.open(tmp_file, 'wb') do |f|
+            f.write(filestream)
+        end
     end
 
     def destroy_file!
-        # File.delete(self.filepath) if File.exist?(self.filepath)
+        File.delete(self.filepath) if File.exist?(self.filepath)
     end
 
-    def generate_points(num_points_wanted, display_val_name, filter_val_name)
+    def after_initialize
+        dataset_id = self.id
+        filepath = "#{Rails.root}/datasets/#{dataset_id}.csv"
+        self.filepath = filepath
+    end
+
+    def generate_raw_points(display_val_name, filter_val_name, detail_level)
+        line_num = 0
+        
+        by_location = Hash.new
+        
+        display_column = Column.find_by name: display_val_name
+        
+        display_null_val = display_column[:null_value]
+        
+        if not filter_val_name.nil?
+            filter_column = Column.find_by name: filter_val_name
+            filter_null_val = filter_column[:null_value]
+        else
+            filter_null_val = "-1"
+            filter_column = nil
+        end
+
+        CSV.foreach(filepath, :headers => true) do |row|
+            loc = row[location_column_name]
+
+            if not by_location.has_key?(loc)
+                by_location[loc] = Hash.new
+            end
+
+            display_val = row[display_val_name]
+
+            if not filter_val_name.nil?
+                filter_val = row[filter_val_name] # TODO: or nil if we don't have a filter
+            else
+                filter_val = "1"
+            end
+
+            if display_val == display_null_val or filter_val == filter_null_val
+                next
+            end
+
+            weight = row[weight_column_name].to_i
+            key = [display_val, filter_val]
+
+            if not by_location[loc].has_key?(key)
+                by_location[loc][key] = 0
+            end
+
+            by_location[loc][key] += weight
+            
+            line_num += 1
+        end
+        return by_location
+    end
+
+    def generate_points(num_points_wanted, display_val_name, filter_val_name, detail_level)
         logger.debug "FILTER VAL : #{filter_val_name}"
         logger.debug "DISPLAY VAL : #{display_val_name}"
+
         location_column_name = self.location_column
         weight_column_name = self.weight_column
-
 
         filepath = self.filepath
 
@@ -47,6 +104,7 @@ class Dataset < ActiveRecord::Base
         display_column = Column.find_by name: display_val_name
         
         display_null_val = display_column[:null_value]
+        
         if not filter_val_name.nil?
             filter_column = Column.find_by name: filter_val_name
             filter_null_val = filter_column[:null_value]
@@ -90,7 +148,6 @@ class Dataset < ActiveRecord::Base
 
     def condense_by_location(by_location, condense_factor)
         
-
         ans = Array.new
         by_location.each do |location, point_dict|
             target_size = (point_dict.size / condense_factor).to_i

@@ -44,7 +44,6 @@ class DatasetsController < ApplicationController
     else
       create_params = Hash.new
       create_params[:name] = params[:name]
-      create_params[:filepath] = (Rails.root + "/datasets/fake.csv").to_s
       create_params[:location_column] = params[:location_column]
       create_params[:location_type] = params[:location_type]
       create_params[:weight_column] = params[:weight_column]
@@ -52,6 +51,17 @@ class DatasetsController < ApplicationController
       create_params[:user_id] = params[:owner]
 
       @dataset = Dataset.new(create_params)
+
+      ajax_upload = params[:datafile].is_a?(String)
+      filedata = nil
+      if ajax_upload
+        filedata =  request.body.read
+      else
+        filedata = params[:datafile].read
+      end   
+
+      @dataset.consume_raw_file(filedata)
+
       @okay = @dataset.save
       logger.debug @dataset.errors
       if @okay

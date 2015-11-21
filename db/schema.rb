@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151120000752) do
+ActiveRecord::Schema.define(version: 20151121195209) do
 
   create_table "columns", force: :cascade do |t|
     t.integer  "dataset_id"
@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(version: 20151120000752) do
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
     t.string   "location_type"
+    t.string   "description"
+    t.string   "friendly_name"
   end
 
   add_index "columns", ["dataset_id"], name: "index_columns_on_dataset_id"
