@@ -50,13 +50,68 @@ class Dataset < ActiveRecord::Base
 
     # Returns a hash containing every single datapoint in this dataset. These should be condensed by some other function.
     # The response format is { 5-digit FIPS code for a location => [list of datapoints belonging to that location]}
-    # The format of each datapoint is { display_val: XX, filter_val: YY, weight: ZZ}
+    # The format of each datapoint is { display_val: XX, filter_val: YY, weight: ZZ, location: QQ}
     # Params
     # display_val_name - The name of the column to select display values from
     # display_val_name - The name of the column to select filter values from. Can be null.
     # detail_level - The level of location detail to return. Can be "STATE" or "COUNTY".
     def generate_raw_points(display_val_name, filter_val_name, detail_level)
         # TODO: Implement
+        line_num = 0
+
+        # { 5 digit fips code => [ ... list of points ... ]}
+        ans = Hash.new
+        
+        # TODO: Is this gonna error when there's multiple datasets?
+        display_column = Column.find_by(dataset_id: self.id, name: display_val_name)
+        display_null_val = display_column[:null_value]
+        
+        if not filter_val_name.nil?
+            filter_column = Column.find_by(dataset_id: self.id, name: filter_val_name)
+            filter_null_val = filter_column[:null_value]
+        else
+            filter_null_val = "-1"
+            filter_column = nil
+        end
+
+        # Iterate through the file raw
+        CSV.foreach(filepath, :headers => true) do |row|
+
+            display_val = row[display_val_name]
+
+            if not filter_val_name.nil?
+                filter_val = row[filter_val_name] # TODO: or nil if we don't have a filter
+            else
+                filter_val = "1"
+            end
+
+            if display_val == display_null_val or filter_val == filter_null_val
+                next
+            end
+
+            if not weight_column_name.nil?
+                weight = row[weight_column_name].to_f
+            else
+                weight = 1
+            end
+            
+            loc = self.get_row_location(row, detail_level)
+            if not ans.has_key?(loc)
+                ans[loc] = Array.new
+            end
+
+            datapoint = {display_val: display_val,
+                filter_val: filter_val,
+                location: loc,
+                weight: weight}
+
+            ans[loc].push(datapoint)
+            
+            line_num += 1
+        end
+
+        ans = {by_location: ans, num_points: line_num}
+        return ans
     end
 
     # Returns a hash containing a representative set of datapoints from this dataset.
@@ -70,22 +125,68 @@ class Dataset < ActiveRecord::Base
     def generate_points(num_points_wanted, display_val_name, filter_val_name, detail_level)
         # TODO: add error checking
 
-        all_points = self.generate_raw_points(display_val_name, filter_val_name, detail_level)
-        merged_dups = self.merge_repeats(all_points)
+        all_points = self.generate_raw_points(display_val_name, filter_val_name, detail_level)[:by_location]
+        
+        merged_dups_ans = self.merge_repeats(all_points)
+        merged_dups = merged_dups_ans[:by_location]
+        num_points = merged_dups_ans[:num_points]
 
-        num_points = merged_dups[:num_points]
         condense_factor = num_points_wanted * 1.0 / num_points
+        condensed_ans = self.condense_by_location(condense_factor)
+        condensed_points = condensed_ans[:by_location]
+        num_points = condensed_ans[:num_points]
 
-        condensed = self.condense_by_location(condense_factor)
+        ans = Array.new
 
-        return condensed
+        condensed_points.each do |loc, points|
+            points.each do |point|
+                ans.push(point)
+            end
+        end
+
+        return ans
     end
 
     # If two datapoints have the same exact location, display_val, and filter_val, this method merges them into one point.
     # Params
     # by_location - A hash of datapoints. This has the same format as that returned by generate_raw_points.
     def merge_repeats(by_location)
-        # TODO: Implement
+        ans = Hash.new
+        num_points = 0
+
+        by_location.each do |loc, points|
+            seen = Hash.new
+
+            points.each do |point|
+                display_val = point[:display_val]
+                filter_val = point[:filter_val]
+                weight = point[:weight]
+
+                key = [display_val, filter_val]
+                if not seen.has_key?(key)
+                    seen[key] = 0
+                end
+                seen[key] += weight
+            end
+
+            ans[loc] = Array.new
+
+            seen.each do |key, weight|
+                display_val = key[0]
+                filter_val = key[1]
+
+                point = {display_val: display_val,
+                    filter_val: filter_val,
+                    weight: weight,
+                    location: loc}
+
+                ans[loc].push(point)
+                num_points += 1
+            end
+        end
+
+        ans = {by_location: ans, num_points: num_points}
+        return ans
     end
 
     # It decreases the number of points within each location by a scale factor.
@@ -99,7 +200,53 @@ class Dataset < ActiveRecord::Base
     # condense_factor = 50
     # Returns { ... "alabama" => [20 datapoints] ... }
     def condense_by_location(by_location, condense_factor)
-        # TODO: Implement
+        num_points = 0
+
+        by_location.each do |loc, points|
+            target = [1, points.length / condense_factor].max
+
+            while (points.length > target)
+                to_merge = self.shrink_points(points)
+                p1 = to_merge[0]
+                p2 = to_merge[1]
+
+                merged = self.merge_points(p1, p2)
+                points.push(merged)
+            end
+
+            num_points += target
+
+        end
+
+        ans = {by_location: by_location, num_points: num_points}
+        return ans
+    end
+
+
+    # Given a list of points in one location, this method finds the two "best" points to merge.
+    # It removes them from the original list of points and returns the two points.
+    def shrink_points(points)
+        p1 = points.delete_at(rand(array.length))
+        p2 = points.delete_at(rand(array.length))
+        return [p1, p2]
+    end
+
+    # Given two hashes that represent datapoints, returns a point that is the merged of the two.
+    # The new point's display_val and filter_val will be an average of the originals. The weight will be the sum.
+    # The two points must have the same location.
+    def merge_points(p1, p2)
+        # TODO: handle actually averaging them?
+        display_val = p1[:display_val]
+        filter_val = p1[:filter_val]
+        location = p1[:location]
+        weight = p1[:weight] + p2[:weight]
+
+        merged = {display_val: display_val,
+                    filter_val: filter_val,
+                    weight: weight,
+                    location: location}
+
+        return merged
     end
 
 end
