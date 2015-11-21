@@ -5,12 +5,14 @@ class Dataset < ActiveRecord::Base
     has_many :columns
     has_many :maps
 
+    # Will read through the filestream to make sure it is valid: 
+    # * be parseable CSV
+    # * contain every column that the dataset is supposed to contain.
+    # * have fewer than 500,000 rows
+    # It will then write the filestream to the dataset's existing filepath. 
+    # It will return TRUE iff successful, FALSE otherwise
     def consume_raw_file(filestream)
-        outpath = self.filepath
-        logger.debug "FILEPATH: #{outpath}"
-        File.open(tmp_file, 'wb') do |f|
-            f.write(filestream)
-        end
+        # TODO: Implement
     end
 
     def destroy_file!
@@ -23,152 +25,81 @@ class Dataset < ActiveRecord::Base
         self.filepath = filepath
     end
 
+    # Takes a string that represents location and returns a 5-digit
+    # FIPS code representation of that location, or NULL if unknown
+    # Params:
+    # location - a string representation of a location of a row. Must conform to one of the known location types.
+    # location_type - The way that the given location parameter has been represented. Can have the following types:
+    # * state - NJ or New Jersey
+    # * statefips - 23 or 23000
+    # * countypartial - Bergen
+    # * countypartialfips - 234 or 00234
+    # * countyfull - Bergen, New Jersey or Bergen, NJ
+    # * countyfullfips - 23234
+    def convert_to_fips(location, location_type)
+        # TODO: Implement
+    end
+
+    # Returns a 5-digit FIPS code that represents this row's location as long as the dataset contains the correct columns.
+    # Params:
+    # row - a CSV row (a hash where keys are column headers)
+    # detail_level - a string that is either "STATE" or "COUNTY" that represents what detail to query locations by.
+    def get_row_location(row, detail_level)
+        # TODO: Implement     
+    end
+
+    # Returns a hash containing every single datapoint in this dataset. These should be condensed by some other function.
+    # The response format is { 5-digit FIPS code for a location => [list of datapoints belonging to that location]}
+    # The format of each datapoint is { display_val: XX, filter_val: YY, weight: ZZ}
+    # Params
+    # display_val_name - The name of the column to select display values from
+    # display_val_name - The name of the column to select filter values from. Can be null.
+    # detail_level - The level of location detail to return. Can be "STATE" or "COUNTY".
     def generate_raw_points(display_val_name, filter_val_name, detail_level)
-        line_num = 0
-        
-        by_location = Hash.new
-        
-        display_column = Column.find_by name: display_val_name
-        
-        display_null_val = display_column[:null_value]
-        
-        if not filter_val_name.nil?
-            filter_column = Column.find_by name: filter_val_name
-            filter_null_val = filter_column[:null_value]
-        else
-            filter_null_val = "-1"
-            filter_column = nil
-        end
-
-        CSV.foreach(filepath, :headers => true) do |row|
-            loc = row[location_column_name]
-
-            if not by_location.has_key?(loc)
-                by_location[loc] = Hash.new
-            end
-
-            display_val = row[display_val_name]
-
-            if not filter_val_name.nil?
-                filter_val = row[filter_val_name] # TODO: or nil if we don't have a filter
-            else
-                filter_val = "1"
-            end
-
-            if display_val == display_null_val or filter_val == filter_null_val
-                next
-            end
-
-            weight = row[weight_column_name].to_i
-            key = [display_val, filter_val]
-
-            if not by_location[loc].has_key?(key)
-                by_location[loc][key] = 0
-            end
-
-            by_location[loc][key] += weight
-            
-            line_num += 1
-        end
-        return by_location
+        # TODO: Implement
     end
 
+    # Returns a hash containing a representative set of datapoints from this dataset.
+    # The response format is { 5-digit FIPS code for a location => [list of datapoints belonging to that location]}
+    # The format of each datapoint is { display_val: XX, filter_val: YY, weight: ZZ}
+    # Params
+    # num_points_wanted - The maximum number of desired datapoints. This can not be less than the number of unique locations. The number of points returned can be less than this.
+    # display_val_name - The name of the column to select display values from
+    # display_val_name - The name of the column to select filter values from. Can be null.
+    # detail_level - The level of location detail to return. Can be "STATE" or "COUNTY".
     def generate_points(num_points_wanted, display_val_name, filter_val_name, detail_level)
-        logger.debug "FILTER VAL : #{filter_val_name}"
-        logger.debug "DISPLAY VAL : #{display_val_name}"
+        # TODO: add error checking
 
-        location_column_name = self.location_column
-        weight_column_name = self.weight_column
+        all_points = self.generate_raw_points(display_val_name, filter_val_name, detail_level)
+        merged_dups = self.merge_repeats(all_points)
 
-        filepath = self.filepath
+        num_points = merged_dups[:num_points]
+        condense_factor = num_points_wanted * 1.0 / num_points
 
-        by_location = self.merge_repeats(filepath, location_column_name, weight_column_name, display_val_name, filter_val_name)
+        condensed = self.condense_by_location(condense_factor)
 
-        num_condensed = 0
-        by_location.each do |location, point_dict|
-            num_condensed += point_dict.size
-        end
-        logger.debug "Num condensed: #{num_condensed}"
-        logger.debug "Num Points Wanted : #{num_points_wanted}"
-        condense_factor = num_condensed*1.0 / num_points_wanted
-        logger.debug "Condense Factor: #{condense_factor}"
-
-        ans = condense_by_location(by_location, condense_factor)
-        return ans
+        return condensed
     end
 
-    def merge_repeats(filepath, location_column_name, weight_column_name, display_val_name, filter_val_name)
-        line_num = 0
-        by_location = Hash.new
-        
-        display_column = Column.find_by name: display_val_name
-        
-        display_null_val = display_column[:null_value]
-        
-        if not filter_val_name.nil?
-            filter_column = Column.find_by name: filter_val_name
-            filter_null_val = filter_column[:null_value]
-        else
-            filter_null_val = "-1"
-            filter_column = nil
-        end
-
-        CSV.foreach(filepath, :headers => true) do |row|
-            loc = row[location_column_name]
-
-            if not by_location.has_key?(loc)
-                by_location[loc] = Hash.new
-            end
-
-            display_val = row[display_val_name]
-
-            if not filter_val_name.nil?
-                filter_val = row[filter_val_name] # TODO: or nil if we don't have a filter
-            else
-                filter_val = "1"
-            end
-
-            if display_val == display_null_val or filter_val == filter_null_val
-                next
-            end
-
-            weight = row[weight_column_name].to_i
-            key = [display_val, filter_val]
-
-            if not by_location[loc].has_key?(key)
-                by_location[loc][key] = 0
-            end
-
-            by_location[loc][key] += weight
-            
-            line_num += 1
-        end
-        return by_location
+    # If two datapoints have the same exact location, display_val, and filter_val, this method merges them into one point.
+    # Params
+    # by_location - A hash of datapoints. This has the same format as that returned by generate_raw_points.
+    def merge_repeats(by_location)
+        # TODO: Implement
     end
 
+    # It decreases the number of points within each location by a scale factor.
+    # The minimum size per location is 1 datapoint.
+    # 
+    # Params
+    # by_location - A hash of datapoints. This has the same format as that returned by generate_raw_points.
+    # 
+    # Example: (Note that the locations are actually 5-digit FIPS codes)
+    # by_location = { ... "alabama" => [1000 datapoints] ... }
+    # condense_factor = 50
+    # Returns { ... "alabama" => [20 datapoints] ... }
     def condense_by_location(by_location, condense_factor)
-        
-        ans = Array.new
-        by_location.each do |location, point_dict|
-            target_size = (point_dict.size / condense_factor).to_i
-            # TODO: figure out a better way to do this than just randomly
-
-            num_to_keep = [1, target_size].max
-            keys_to_keep = point_dict.keys.sample(num_to_keep)
-
-            keys_to_keep.each do |key|
-                display_val = key[0]
-                filter_val = key[1]
-                weight = point_dict[key]
-                to_add = {"location" => location,
-                        "display_val" => display_val,
-                        "filter_val" => filter_val,
-                        "weight" => weight}
-                ans.push(to_add)
-            end
-
-        end
-        return ans
+        # TODO: Implement
     end
 
 end
