@@ -4,11 +4,11 @@ class UsersController < ApplicationController
 
 	def show
 
-		if @user.eql? current_user
-			render json: @resource
-		else
+		if !(@user.eql? current_user)
 			render json: {"errors" => ["unauthorized!!!"], "current_user" => current_user, "user" => @user}, status: :unauthorized
 		end
+
+		@datasets = @user.datasets
 	end
 
 	def auth_example

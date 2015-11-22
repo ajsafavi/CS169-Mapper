@@ -1,3 +1,82 @@
-<%= request.headers["client"] %>
+<html lang="en">
+<meta charset="utf-8">
+<title> Mappr </title>
+
+<head>
+<%= javascript_include_tag "jquery.min" %>
+<%= javascript_include_tag "jquery-ui"%>
+<%= javascript_include_tag "jquery.redirect" %>
+<%= javascript_include_tag "bootstrap.js"%>
+<%= javascript_include_tag "queue.min"%>
+
+
+<%= javascript_include_tag "topojson.min"%>
+
+<%= stylesheet_link_tag "jquery-ui.css" %> 
+<%= stylesheet_link_tag "bootstrap.css" %> 
+<%= stylesheet_link_tag "indexstyle.css" %> 
+<%= stylesheet_link_tag "mapstyle.css" %>
+
+
+
+
+<script type="text/javascript">
+    // This is a jQuery convention to say that once all the files
+    // load, the function Smile.start() should run.
+    // This function is defined in the smiles.js
+    // $(function() {
+    //     Mapper.startAutocomplete();
+
+    // });
+    // $(function() {
+    //     Mapper.submitHomeClickHandler();
+    // });
+</script>
+
+
+
+</head>
+
+
+<body>
+
+<%= render 'welcome/header' %>
+
+<!-- THE STUFF BELOW IS HIDDEN AFTER CLICK -->
+<div class="container">
+	<div class="row titleText">
+		<h1><%= current_user.email %></h1>
+	</div>
+</div>
+
+<div class="spacer" style="height: 100px"></div>
+
+<div class="container">
+
+	<div class="row">
+		<div class="datasetList">
+			<ul>
+			<% @current_user.datasets.each do |dataset| %>
+
+				<li><%= dataset %>
+
+				<span class="deleteDataset" onclick="myFunction()">
+				<%= link_to 'Delete', dataset, method: :delete %>
+				</span></li>
+
+			<% end %>
+			</ul>
+		</div>
+		<script>
+			function myFunction() {
+			    location.reload();
+			}
+		</script>
+	</div>
+
+</div>
+
+</body>
+
 
 

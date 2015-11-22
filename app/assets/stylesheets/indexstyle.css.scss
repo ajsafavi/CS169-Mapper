@@ -25,9 +25,13 @@ input[type="range"] {
 	float: none;
 }
 
-.navbar-brand{
+.navbar-link a{
 	font-family: 'Raleway', sans-serif;
 	font-weight: 100;
+	font-size: 1.7em;
+	color: #000;
+	padding-top: 20px;
+	text-decoration: none;
 }
 
 body {
@@ -165,4 +169,14 @@ li {
 
 #leftContainer{
 	text-align: left;
+}
+
+div ul li{
+	text-align: center;
+	list-style-type: none;
+}
+
+.deleteDataset {
+	color: #fff;
+	padding: 10px;
 }
