@@ -18,10 +18,12 @@ class DatasetsController < ApplicationController
   # GET /datasets/1
   # GET /datasets/1.json
   def show
+
     @columns =  @dataset.columns
     @to_render = @dataset.as_json
     @to_render["columns"] = @columns
     render json: @to_render
+
   end
 
   # GET /datasets/new
@@ -125,15 +127,22 @@ class DatasetsController < ApplicationController
 
       params = point_params
       num_points = params[:num_points].to_i
-      display_val = params[:display_val].strip!
-      filter_val = params[:filter_val].strip!
+      display_val = params[:display_val].strip
+
+      if params[:detail_level]
+        detail_level = params[:detail_level].strip
+      else
+        detail_level = "STATE"
+      end
+
+      filter_val = "#{params[:filter_val]}".strip
 
       if filter_val.nil? or filter_val.length == 0
         filter_val = nil
       end
 
       config.log_level = :debug 
-      @points = @dataset.generate_points(num_points, display_val, filter_val)
+      @points = @dataset.generate_points(num_points, display_val, filter_val, detail_level)
       num_points = @points.size
 
       render json: {'points' => @points, 'num_points' => num_points}
@@ -148,15 +157,16 @@ class DatasetsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def dataset_params
-      params.permit(:id, :name, :owner, :location_column, :location_type, :weight_column, :datafile)
+      column_params = [:name, :detail_level, :column_type, :location_type, :description, :friendly_name, :null_value]
+      params.permit(:id, :name, :owner, {columns: column_params} , :datafile)
     end
 
     def dataset_edit_params
-      params.permit(:id, :name, :owner, :location_column, :location_type, :weight_column, :filepath)
+      # params.permit(:id, :name, :owner, :location_column, :location_type, :weight_column, :filepath)
     end
 
     def point_params
-      params.permit(:id, :num_points, :display_val, :filter_val)
+      params.permit(:id, :num_points, :display_val, :filter_val, :detail_level)
     end
 
     def column_params

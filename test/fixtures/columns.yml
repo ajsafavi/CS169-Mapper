@@ -32,3 +32,4 @@ county:
   column_type: LOCATION
   detail_level: countyfull
   null_value: '-1'
+

@@ -1,17 +1,17 @@
 require 'csv'
 require 'json'
 
-file = File.read('./full_to_fips.json')
-$english_to_fips = JSON.parse(file)
-
-file = File.read('./state_hash.json')
-$state_hash = JSON.parse(file)
-
 class Dataset < ActiveRecord::Base
     belongs_to :user
     has_many :columns
     has_many :maps
 
+
+    @@full_to_fips = JSON.parse(File.read("#{Rails.root}/app/models/full_to_fips.json"))
+    logger.debug "English to FIPS file: #{@english_to_fips}"
+
+    file = File.read("#{Rails.root}/app/models/states_hash.json")
+    @@states_hash = JSON.parse(file)
 
     # Will read through the filestream to make sure it is valid: 
     # * be parseable CSV
@@ -21,23 +21,30 @@ class Dataset < ActiveRecord::Base
     # It will return TRUE iff successful, FALSE otherwise
     def consume_raw_file(filestream)
         # TODO: Validate file
-
         if not self.filepath
             self.filepath = self.generate_filepath
         end
-
         outpath = self.filepath
         File.open(outpath, 'wb') do |f|
             f.write(filestream)
         end
     end
 
+    def is_fips?(query)
+        if not query or query.length != 5
+            return false
+        end
+
+        return /\A\d+\z/.match(query)
+    end
+
     def generate_filepath
         filepath = "#{Rails.root}/datasets/#{self.id}.csv"
+        return filepath
     end
 
     def destroy_file!
-        File.delete(self.filepath) if File.exist?(self.filepath)
+        # File.delete(self.filepath) if File.exist?(self.filepath)
     end
 
     def after_initialize
@@ -60,12 +67,12 @@ class Dataset < ActiveRecord::Base
         # TODO: this doesn't handle cases like "Bergen, 234" where fips and normal are mixed in
         location = location.upcase
 
-        if @state_hash.has_key?(location)
-            location = @state_hash[location]
+        if @@states_hash.has_key?(location)
+            location = @@states_hash[location]
         end
 
-        if @full_to_fips.has_key?(location)
-            location = @full_to_fips[location]
+        if @@full_to_fips.has_key?(location)
+            location = @@full_to_fips[location]
         end
 
         return location
@@ -75,10 +82,8 @@ class Dataset < ActiveRecord::Base
     # Params:
     # row - a CSV row (a hash where keys are column headers)
     # detail_level - a string that is either "STATE" or "COUNTY" that represents what detail to query locations by.
-    def get_row_location(row, detail_level)
-        county_full_col = Column.find_by(dataset_id: self.id, detail_level: "countyfull")
-        county_partial_col = Column.find_by(dataset_id: self.id, detail_level: "countypartial")
-        state_col = Column.find_by(dataset_id: self.id, detail_level: "state")
+    def get_row_location(row, detail_level, county_full_col, county_partial_col, state_col)
+        
 
         if detail_level == "STATE"
 
@@ -128,7 +133,7 @@ class Dataset < ActiveRecord::Base
     # display_val_name - The name of the column to select filter values from. Can be null.
     # detail_level - The level of location detail to return. Can be "STATE" or "COUNTY".
     def generate_raw_points(display_val_name, filter_val_name, detail_level)
-        # TODO: Implement
+
         line_num = 0
 
         # { 5 digit fips code => [ ... list of points ... ]}
@@ -136,6 +141,7 @@ class Dataset < ActiveRecord::Base
         
         # TODO: Is this gonna error when there's multiple datasets?
         display_column = Column.find_by(dataset_id: self.id, name: display_val_name)
+
         display_null_val = display_column[:null_value]
         
         if not filter_val_name.nil?
@@ -145,6 +151,17 @@ class Dataset < ActiveRecord::Base
             filter_null_val = "-1"
             filter_column = nil
         end
+
+        weight_column = Column.find_by(dataset_id: self.id, column_type: "WEIGHT")
+        if weight_column
+            weight_column_name = weight_column.name
+        else
+            weight_column_name = nil
+        end
+
+        county_full_col = Column.find_by(dataset_id: self.id, detail_level: "countyfull")
+        county_partial_col = Column.find_by(dataset_id: self.id, detail_level: "countypartial")
+        state_col = Column.find_by(dataset_id: self.id, detail_level: "state")
 
         # Iterate through the file raw
         CSV.foreach(filepath, :headers => true) do |row|
@@ -167,7 +184,7 @@ class Dataset < ActiveRecord::Base
                 weight = 1
             end
             
-            loc = self.get_row_location(row, detail_level)
+            loc = self.get_row_location(row, detail_level, county_full_col, county_partial_col, state_col)
 
             if not is_fips?(loc)
                 # TODO: ERROR
@@ -201,6 +218,8 @@ class Dataset < ActiveRecord::Base
     # detail_level - The level of location detail to return. Can be "STATE" or "COUNTY".
     def generate_points(num_points_wanted, display_val_name, filter_val_name, detail_level)
         # TODO: add error checking
+        logger.debug("dislay_val : #{display_val_name}")
+        logger.debug("filter_val : #{filter_val_name}")
 
         all_points = self.generate_raw_points(display_val_name, filter_val_name, detail_level)[:by_location]
         
@@ -209,7 +228,7 @@ class Dataset < ActiveRecord::Base
         num_points = merged_dups_ans[:num_points]
 
         condense_factor = num_points_wanted * 1.0 / num_points
-        condensed_ans = self.condense_by_location(condense_factor)
+        condensed_ans = self.condense_by_location(merged_dups, condense_factor)
         condensed_points = condensed_ans[:by_location]
         num_points = condensed_ans[:num_points]
 

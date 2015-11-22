@@ -91,32 +91,33 @@ class MapsController < ApplicationController
   end
 
   def points
-    params = point_params
-    @dataset = @map.dataset
+    # params = point_params
+    # @dataset = @map.dataset
 
-    authorized = true
-    if !@map.is_example? and (current_user.nil? or current_user.id != @map.user_id)
-      authorized = false
-    end
+    # authorized = true
+    # if !@map.is_example? and (current_user.nil? or current_user.id != @map.user_id)
+    #   authorized = false
+    # end
 
-    if !@dataset.is_public? and (current_user.nil? or current_user.id != @dataset.user_id)
-      authorized = false
-    end
+    # if !@dataset.is_public? and (current_user.nil? or current_user.id != @dataset.user_id)
+    #   authorized = false
+    # end
 
-    if authorized
-      num_points = params[:num_points].to_i
-      display_val = params[:display_val]
-      filter_val = params[:filter_val]
-      if filter_val.nil? or filter_val.length == 0
-        filter_val = nil
-      end
-      location_type = @dataset.location_type
-      @points = @dataset.generate_points(num_points, display_val, filter_val)
-      num_points = @points.size
-      render json: {'points' => @points, 'num_points' => num_points, 'location_type' => location_type}
-    else
-      render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
-    end
+    # if authorized
+    #   num_points = params[:num_points].to_i
+    #   display_val = params[:display_val]
+    #   filter_val = params[:filter_val]
+    #   if filter_val.nil? or filter_val.length == 0
+    #     filter_val = nil
+    #   end
+    #   location_type = @dataset.location_type
+    #   @points = @dataset.generate_points(num_points, display_val, filter_val)
+    #   num_points = @points.size
+    #   render json: {'points' => @points, 'num_points' => num_points, 'location_type' => location_type}
+    # else
+    #   render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
+    # end
+    redirect_to "datasets#points"
   end
 
   private
@@ -131,6 +132,6 @@ class MapsController < ApplicationController
     end
 
     def point_params
-      params.permit(:id, :num_points, :display_val, :filter_val)
+      params.permit(:id, :num_points, :display_val, :filter_val, :detail_level)
     end
 end

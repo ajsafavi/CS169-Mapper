@@ -54,9 +54,9 @@ class MapsControllerTest < ActionController::TestCase
   test "should return points" do
     dataset = @map.dataset
     get :points, {:id => @map, :display_val => "INCOME", :num_points => 5000}
-
-    assert assigns(:points), "Points should be returned"
-    assert assigns(:points).size > 0, "Points should not be empty"
+    assert_redirected_to "datasets#points"
+    # assert assigns(:points), "Points should be returned"
+    # assert assigns(:points).size > 0, "Points should not be empty"
   end
 
 end
