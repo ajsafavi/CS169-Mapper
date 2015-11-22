@@ -21,7 +21,7 @@ class Dataset < ActiveRecord::Base
     # It will return TRUE iff successful, FALSE otherwise
     def consume_raw_file(filestream)
         # TODO: Validate file
-        
+
         if not self.filepath
             self.filepath = self.generate_filepath
         end
@@ -30,7 +30,6 @@ class Dataset < ActiveRecord::Base
         File.open(outpath, 'wb') do |f|
             f.write(filestream)
         end
-
     end
 
     def generate_filepath

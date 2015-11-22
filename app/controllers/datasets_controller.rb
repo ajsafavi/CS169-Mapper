@@ -44,13 +44,18 @@ class DatasetsController < ApplicationController
     else
       create_params = Hash.new
       create_params[:name] = params[:name]
-      create_params[:location_column] = params[:location_column]
-      create_params[:location_type] = params[:location_type]
-      create_params[:weight_column] = params[:weight_column]
       create_params[:num_rows] = 1000
       create_params[:user_id] = params[:owner]
 
       @dataset = Dataset.new(create_params)
+
+      
+
+      @okay = @dataset.save
+      logger.debug @dataset.errors
+      if not @okay
+        render json: @dataset.errors, status: :unprocessable_entity
+      end
 
       ajax_upload = params[:datafile].is_a?(String)
       filedata = nil
@@ -60,40 +65,43 @@ class DatasetsController < ApplicationController
         filedata = params[:datafile].read
       end   
 
+      # Create columns
+      columns = params[:columns]
+      columns.each do |column_params|
+        column_params[:dataset_id] = @dataset.id
+        column = Column.new(column_params)
+        if not column.save
+          render json: column.errors, status: :unprocessable_entity
+        end
+      end
+
       @dataset.consume_raw_file(filedata)
 
-      @okay = @dataset.save
-      logger.debug @dataset.errors
-      if @okay
-        redirect_to @dataset, format: :json
-      else
-        render json: @dataset.errors, status: :unprocessable_entity
-      end
-
+      redirect_to @dataset, format: :json
     end
 
   end
 
-  def update
 
-    if (current_user.nil? or current_user.id != @dataset.user_id)
-      render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
-    else
+  # def update
 
-      params = dataset_edit_params.except!(:id)
+  #   if (current_user.nil? or current_user.id != @dataset.user_id)
+  #     render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
+  #   else
 
-      @dataset.update(params)
+  #     params = dataset_edit_params.except!(:id)
 
-      @okay = @dataset.valid?
+  #     @dataset.update(params)
+  #     @okay = @dataset.valid?
 
-      if @okay
-        redirect_to @dataset, format: :json
-      else
-        render json: @dataset.errors, status: :unprocessable_entity
-      end
-    end
+  #     if @okay
+  #       redirect_to @dataset, format: :json
+  #     else
+  #       render json: @dataset.errors, status: :unprocessable_entity
+  #     end
+  #   end
 
-  end
+  # end
 
   # DELETE /datasets/1
   # DELETE /datasets/1.json
@@ -117,17 +125,18 @@ class DatasetsController < ApplicationController
 
       params = point_params
       num_points = params[:num_points].to_i
-      display_val = params[:display_val]
-      filter_val = params[:filter_val]
+      display_val = params[:display_val].strip!
+      filter_val = params[:filter_val].strip!
+
       if filter_val.nil? or filter_val.length == 0
         filter_val = nil
       end
-      location_type = @dataset.location_type
+
       config.log_level = :debug 
       @points = @dataset.generate_points(num_points, display_val, filter_val)
       num_points = @points.size
 
-      render json: {'points' => @points, 'num_points' => num_points, 'location_type' => location_type}
+      render json: {'points' => @points, 'num_points' => num_points}
     end
   end
 
