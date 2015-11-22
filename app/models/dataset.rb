@@ -1,9 +1,17 @@
 require 'csv'
+require 'json'
+
+file = File.read('./full_to_fips.json')
+$english_to_fips = JSON.parse(file)
+
+file = File.read('./state_hash.json')
+$state_hash = JSON.parse(file)
 
 class Dataset < ActiveRecord::Base
     belongs_to :user
     has_many :columns
     has_many :maps
+
 
     # Will read through the filestream to make sure it is valid: 
     # * be parseable CSV
@@ -12,7 +20,21 @@ class Dataset < ActiveRecord::Base
     # It will then write the filestream to the dataset's existing filepath. 
     # It will return TRUE iff successful, FALSE otherwise
     def consume_raw_file(filestream)
-        # TODO: Implement
+        # TODO: Validate file
+        
+        if not self.filepath
+            self.filepath = self.generate_filepath
+        end
+
+        outpath = self.filepath
+        File.open(outpath, 'wb') do |f|
+            f.write(filestream)
+        end
+
+    end
+
+    def generate_filepath
+        filepath = "#{Rails.root}/datasets/#{self.id}.csv"
     end
 
     def destroy_file!
@@ -20,8 +42,7 @@ class Dataset < ActiveRecord::Base
     end
 
     def after_initialize
-        dataset_id = self.id
-        filepath = "#{Rails.root}/datasets/#{dataset_id}.csv"
+        filepath = generate_filepath
         self.filepath = filepath
     end
 
@@ -36,8 +57,19 @@ class Dataset < ActiveRecord::Base
     # * countypartialfips - 234 or 00234
     # * countyfull - Bergen, New Jersey or Bergen, NJ
     # * countyfullfips - 23234
-    def convert_to_fips(location, location_type)
-        # TODO: Implement
+    def convert_to_fips(location)
+        # TODO: this doesn't handle cases like "Bergen, 234" where fips and normal are mixed in
+        location = location.upcase
+
+        if @state_hash.has_key?(location)
+            location = @state_hash[location]
+        end
+
+        if @full_to_fips.has_key?(location)
+            location = @full_to_fips[location]
+        end
+
+        return location
     end
 
     # Returns a 5-digit FIPS code that represents this row's location as long as the dataset contains the correct columns.
@@ -45,7 +77,48 @@ class Dataset < ActiveRecord::Base
     # row - a CSV row (a hash where keys are column headers)
     # detail_level - a string that is either "STATE" or "COUNTY" that represents what detail to query locations by.
     def get_row_location(row, detail_level)
-        # TODO: Implement     
+        county_full_col = Column.find_by(dataset_id: self.id, detail_level: "countyfull")
+        county_partial_col = Column.find_by(dataset_id: self.id, detail_level: "countypartial")
+        state_col = Column.find_by(dataset_id: self.id, detail_level: "state")
+
+        if detail_level == "STATE"
+
+            if county_full_col
+                col_name = county_full_col.name
+                ans = row[col_name].upcase
+                ans = convert_to_fips(ans)
+                return ans
+            elsif state_col
+                col_name = county_full_col.name
+                ans = row[col_name].upcase
+                ans = convert_to_fips(ans)
+                # ANS might be wrong!
+                return ans
+            else
+                # ERROR??
+            end
+                
+        elsif detail_level == "COUNTY"
+
+            if county_full_col
+                col_name = county_full_col.name
+                ans = row[col_name].upcase
+                ans = convert_to_fips(ans)
+                return ans
+            elsif state_col and county_partial_col
+                # TODO: might error if null
+                state_name = state_col.name.upcase.strip
+                county_name = county_partial_col.name.upcase.strip
+                key = "#{state_name}, #{county_name}"
+                ans = convert_to_fips(key)
+                # TODO: might be incorrect!
+                return ans
+            else
+                # ERROR
+            end
+        else
+            # ERROR
+        end         
     end
 
     # Returns a hash containing every single datapoint in this dataset. These should be condensed by some other function.
@@ -96,6 +169,11 @@ class Dataset < ActiveRecord::Base
             end
             
             loc = self.get_row_location(row, detail_level)
+
+            if not is_fips?(loc)
+                # TODO: ERROR
+            end
+
             if not ans.has_key?(loc)
                 ans[loc] = Array.new
             end
