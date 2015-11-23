@@ -37,18 +37,18 @@ class UnauthorizedRequestsTest < ActionDispatch::IntegrationTest
 		assert_response :redirect
 	end
 
-	test 'should_not_allow_points_from_private_map' do
-		private_map = maps(:default_map)
-		map_id = private_map.id
-		get '/maps/' + map_id.to_s + "/points", {}
-		assert_response @auth_error
-	end
+	# test 'should_not_allow_points_from_private_map' do
+	# 	private_map = maps(:default_map)
+	# 	map_id = private_map.id
+	# 	get '/maps/' + map_id.to_s + "/points", {}
+	# 	assert_response @auth_error
+	# end
 
-	test 'should_not_allow_points_from_private_dataset' do
-		private_dataset = datasets(:private)
-		map_id = private_dataset.id
-		get '/datasets/' + map_id.to_s + "/points", {}
-		assert_response @auth_error
-	end
+	# test 'should_not_allow_points_from_private_dataset' do
+	# 	private_dataset = datasets(:private)
+	# 	map_id = private_dataset.id
+	# 	get '/datasets/' + map_id.to_s + "/points", {}
+	# 	assert_response @auth_error
+	# end
 
 end

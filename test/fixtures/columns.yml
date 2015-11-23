@@ -1,5 +1,7 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
+
+# COLUMNS FOR SAMPLE DATASET
 income:
   dataset: sample
   name: INCOME
@@ -12,8 +14,22 @@ employment:
   column_type: VARIABLE
   null_value: '-1'
 
+sex:
+  dataset: sample
+  name: SEX
+  column_type: VARIABLE
+  null_value: '-1'
+
 weight:
   dataset: sample
   name: WEIGHT
   column_type: WEIGHT
   null_value: !!null
+
+county:
+  dataset: sample
+  name: COUNTY
+  column_type: LOCATION
+  detail_level: countyfull
+  null_value: '-1'
+

@@ -4,9 +4,6 @@ sample:
   user: aryan
   name: DEFAULT
   filepath: <%= Rails.root.join('datasets','sample.csv').to_s %>
-  location_column: COUNTY
-  weight_column: WEIGHT
-  location_type: COUNTY
   num_rows: 114487
 
 private:
@@ -14,8 +11,19 @@ private:
   user: aryan
   name: DEFAULT
   filepath: <%= Rails.root.join('datasets','sample.csv').to_s %>
-  location_column: COUNTY
-  weight_column: WEIGHT
-  location_type: COUNTY
+  num_rows: 114487
+
+farm:
+  is_public: false
+  user: aryan
+  name: Farm Dataset
+  filepath: <%= Rails.root.join('datasets','farm.csv').to_s %>
+  num_rows: 114487
+
+appliances:
+  is_public: false
+  user: aryan
+  name: Appliances Dataset
+  filepath: <%= Rails.root.join('datasets','appliances.csv').to_s %>
   num_rows: 114487
 

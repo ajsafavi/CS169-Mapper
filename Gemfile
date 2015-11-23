@@ -33,6 +33,8 @@ gem 'devise_token_auth'
 
 gem 'simplecov', :require => false, :group => :test
 
+gem 'json' 
+
 # gem color picker
 gem 'jquery-minicolors-rails'
 
