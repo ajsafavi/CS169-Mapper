@@ -41,7 +41,9 @@ class DatasetsController < ApplicationController
 
     params = dataset_params
 
-    if (current_user.nil? or current_user.id != params[:owner].to_i)
+    params[:owner] = params[:owner].to_i
+    if (current_user.nil? or current_user.id != params[:owner])
+      # logger.debug "CURRENTLY_LOGGED_IN: #{current_user.id.class}, OWNER: #{params[:owner].class}"
       render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
     else
       create_params = Hash.new
@@ -63,6 +65,7 @@ class DatasetsController < ApplicationController
       if ajax_upload
         filedata =  request.body.read
       else
+        logger.debug "DATAFILE: #{params[:datafile]}"
         filedata = params[:datafile].read
       end   
 
@@ -121,6 +124,7 @@ class DatasetsController < ApplicationController
 
   def points
     if !@dataset.is_public? and (current_user.nil? or current_user.id != @dataset.user_id)
+      logger.debug "CURRENT_USER: #{current_user.id}, Owner: #{@dataset.user_id}"
       render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
     else
 
@@ -157,7 +161,7 @@ class DatasetsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def dataset_params
       column_params = [:name, :detail_level, :column_type, :location_type, :description, :friendly_name, :null_value]
-      params.permit(:id, :name, :owner, {columns: column_params} , :datafile)
+      params.permit(:id, :name, :owner, :datafile, {columns: column_params})
     end
 
     def dataset_edit_params

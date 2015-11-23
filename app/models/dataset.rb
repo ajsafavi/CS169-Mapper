@@ -42,11 +42,13 @@ class Dataset < ActiveRecord::Base
         state_col = Column.find_by(dataset_id: self.id, detail_level: "state")
 
         CSV.foreach(outpath, :headers => true) do |row|
+            row = row.to_hash
             row["STATE_FIPS_MAPPR"] = self.generate_row_location(row, "STATE", county_full_col, county_partial_col, state_col)
             row["COUNTY_FIPS_MAPPR"] = self.generate_row_location(row, "COUNTY", county_full_col, county_partial_col, state_col)
+            rows.push(row)
         end
 
-        CSV.open(outpath, "wb", headers: rows.first.keys) do |csv|
+        CSV.open(outpath, "wb", write_headers: true, headers: rows.first.keys) do |csv|
             rows.each do |h|
                 csv << h.values
             end
@@ -107,7 +109,7 @@ class Dataset < ActiveRecord::Base
     end
 
     def abbrev_to_state(location)
-        location = location.upper
+        location = location.upcase
         if @@states_hash.has_key?(location)
             location = @@states_hash[location]
         end
@@ -115,7 +117,7 @@ class Dataset < ActiveRecord::Base
     end
 
     def fips_to_state(state_fips)
-        full_fips = state_fips.rfill(5, "0")
+        full_fips = state_fips.ljust(5, "0")
         if @@fips_to_full.has_key?(location)
             return @@fips_to_full[location]["state"]
         else
@@ -126,17 +128,17 @@ class Dataset < ActiveRecord::Base
     def state_to_fips(state)
         ans = state
         if self.is_numeric?(ans)
-            ans.rfill(5, "0")
+            ans.ljust(5, "0")
         else
-            ans = abbrev_to_state(ans).upper
+            ans = abbrev_to_state(ans).upcase
             ans = convert_to_fips(ans)
-            ans = ans.lfill(5, "0")
+            ans = ans.rjust(5, "0")
         end
         return ans
     end
 
     def fips_to_county(county_fips)
-        full_fips = state_fips.lfill(5, "0")
+        full_fips = state_fips.rjust(5, "0")
         if @@fips_to_full.has_key?(location) and @@fips_to_full["location"].has_key?("county")
             return @@fips_to_full[location]["county"]
         else
@@ -161,7 +163,7 @@ class Dataset < ActiveRecord::Base
                 col_name = county_full_col.name
                 ans = row[col_name].upcase.strip
                 ans = convert_to_fips(ans)
-                ans = ans.rfill(5, "0")
+                ans = ans.ljust(5, "0")
                 return ans
             elsif state_col
                 col_name = state_col.name
@@ -179,21 +181,27 @@ class Dataset < ActiveRecord::Base
                 col_name = county_full_col.name
                 ans = row[col_name].upcase
                 ans = convert_to_fips(ans)
-                ans = ans.lfill(5, "0")
+                ans = ans.rjust(5, "0")
                 return ans
             elsif state_col and county_partial_col
                 # TODO: might error if null
-                state_name = state_col.name.upcase.strip
-                county_name = county_partial_col.name.upcase.strip
+                state_name = row[state_col.name]
+                county_name = row[county_partial_col.name]
 
+                # logger.debug "STATE_NUMERIC: #{state_name}, #{state_name.class}"
+                # logger.debug "COUNTY: #{county_name}, #{county_name.class}"
+
+                state_name = state_name.upcase
+                county_name = county_name.upcase
+                
                 if self.is_numeric?(state_name) and self.is_numeric?(county_name)
-                    state_name = state_name.rfill(5, "0")[0..2]
-                    county_name = county_name.lfill(5, "0")[2..5]
+                    state_name = state_name.ljust(5, "0")[0..2]
+                    county_name = county_name.rjust(5, "0")[2..5]
                     return state_name + county_name
                 elsif self.is_numeric?(county_name)
                     state_name = self.abbrev_to_state(state_name)
-                    state_name = self.state_to_fips(state_name).rfill(5, "0")[0..2]
-                    county_name = county_name.lfill(5, "0")[2..5]
+                    state_name = self.state_to_fips(state_name).ljust(5, "0")[0..2]
+                    county_name = county_name.rjust(5, "0")[2..5]
                     return state_name + county_name
                 elsif self.is_numeric?(state_name)
                     state_name = self.fips_to_state(state_name)
@@ -295,7 +303,7 @@ class Dataset < ActiveRecord::Base
 
 
     def get_row_location(row, detail_level)
-        if detail_level == "STATE":
+        if detail_level == "STATE"
             return row["STATE_FIPS_MAPPR"]
         elsif detail_level == "COUNTY"
             return row["COUNTY_FIPS_MAPPR"]
