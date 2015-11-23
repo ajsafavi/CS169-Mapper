@@ -19,11 +19,14 @@ for (fips, key) in county_codes["table"]["rows"]:
 
 	state = state_hash[state].upper()
 	key = state
+	entry = dict()
+	entry["state"] = state
 	if len(key_split) == 2:
 		county = key_split[1].upper().strip()
 		key = "{}, {}".format(county, state)
+		entry["county"] = county
 	full_to_fips[key] = fips
-	fips_to_full[fips] = key
+	fips_to_full[fips] = entry
 
 with open("full_to_fips.json", "w") as fp:
 	json.dump(full_to_fips, fp, indent=4)

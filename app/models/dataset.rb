@@ -11,6 +11,9 @@ class Dataset < ActiveRecord::Base
     @@full_to_fips = JSON.parse(File.read("#{Rails.root}/app/models/full_to_fips.json"))
     logger.debug "English to FIPS file: #{@english_to_fips}"
 
+
+    @@fips_to_full = JSON.parse(File.read("#{Rails.root}/app/models/fips_to_full.json"))
+
     file = File.read("#{Rails.root}/app/models/states_hash.json")
     @@states_hash = JSON.parse(file)
 
@@ -85,25 +88,67 @@ class Dataset < ActiveRecord::Base
         return location
     end
 
+    def abbrev_to_state(location)
+        location = location.upper
+        if @@states_hash.has_key?(location)
+            location = @@states_hash[location]
+        end
+        return location
+    end
+
+    def fips_to_state(state_fips)
+        full_fips = state_fips.rfill(5, "0")
+        if @@fips_to_full.has_key?(location)
+            return @@fips_to_full[location]["state"]
+        else
+            return state_fips
+        end
+    end
+
+    def state_to_fips(state)
+        ans = state
+        if self.is_numeric?(ans)
+            ans.rfill(5, "0")
+        else
+            ans = abbrev_to_state(ans).upper
+            ans = convert_to_fips(ans)
+            ans = ans.lfill(5, "0")
+        end
+        return ans
+    end
+
+    def fips_to_county(county_fips)
+        full_fips = state_fips.lfill(5, "0")
+        if @@fips_to_full.has_key?(location) and @@fips_to_full["location"].has_key?("county")
+            return @@fips_to_full[location]["county"]
+        else
+            return state_fips
+        end
+    end
+
+    def is_numeric?(query)
+        return (/\A\d+\z/.match(query))
+    end
+
+
     # Returns a 5-digit FIPS code that represents this row's location as long as the dataset contains the correct columns.
     # Params:
     # row - a CSV row (a hash where keys are column headers)
     # detail_level - a string that is either "STATE" or "COUNTY" that represents what detail to query locations by.
     def get_row_location(row, detail_level, county_full_col, county_partial_col, state_col)
-        
 
         if detail_level == "STATE"
 
             if county_full_col
                 col_name = county_full_col.name
-                ans = row[col_name].upcase
+                ans = row[col_name].upcase.strip
                 ans = convert_to_fips(ans)
+                ans = ans.rfill(5, "0")
                 return ans
             elsif state_col
-                col_name = county_full_col.name
+                col_name = state_col.name
                 ans = row[col_name].upcase
-                ans = convert_to_fips(ans)
-                # ANS might be wrong!
+                ans = state_to_fips(ans)
                 return ans
             else
                 # ERROR??
@@ -115,14 +160,28 @@ class Dataset < ActiveRecord::Base
                 col_name = county_full_col.name
                 ans = row[col_name].upcase
                 ans = convert_to_fips(ans)
+                ans = ans.lfill(5, "0")
                 return ans
             elsif state_col and county_partial_col
                 # TODO: might error if null
                 state_name = state_col.name.upcase.strip
                 county_name = county_partial_col.name.upcase.strip
+
+                if self.is_numeric?(state_name) and self.is_numeric?(county_name)
+                    state_name = state_name.rfill(5, "0")[0..2]
+                    county_name = county_name.lfill(5, "0")[2..5]
+                    return state_name + county_name
+                elsif self.is_numeric?(county_name)
+                    state_name = self.abbrev_to_state(state_name)
+                    state_name = self.state_to_fips(state_name).rfill(5, "0")[0..2]
+                    county_name = county_name.lfill(5, "0")[2..5]
+                    return state_name + county_name
+                elsif self.is_numeric?(state_name)
+                    state_name = self.fips_to_state(state_name)
+                end
+
                 key = "#{state_name}, #{county_name}"
                 ans = convert_to_fips(key)
-                # TODO: might be incorrect!
                 return ans
             else
                 # ERROR
