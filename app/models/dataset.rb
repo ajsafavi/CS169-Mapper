@@ -30,8 +30,26 @@ class Dataset < ActiveRecord::Base
         end
         outpath = self.filepath
         logger.debug "Writing Dataset File To: #{outpath}"
+
+
         File.open(outpath, 'wb') do |f|
             f.write(filestream)
+        end
+
+        rows = Array.new
+        county_full_col = Column.find_by(dataset_id: self.id, detail_level: "countyfull")
+        county_partial_col = Column.find_by(dataset_id: self.id, detail_level: "countypartial")
+        state_col = Column.find_by(dataset_id: self.id, detail_level: "state")
+
+        CSV.foreach(outpath, :headers => true) do |row|
+            row["STATE_FIPS_MAPPR"] = self.generate_row_location(row, "STATE", county_full_col, county_partial_col, state_col)
+            row["COUNTY_FIPS_MAPPR"] = self.generate_row_location(row, "COUNTY", county_full_col, county_partial_col, state_col)
+        end
+
+        CSV.open(outpath, "wb", headers: rows.first.keys) do |csv|
+            rows.each do |h|
+                csv << h.values
+            end
         end
     end
 
@@ -135,7 +153,7 @@ class Dataset < ActiveRecord::Base
     # Params:
     # row - a CSV row (a hash where keys are column headers)
     # detail_level - a string that is either "STATE" or "COUNTY" that represents what detail to query locations by.
-    def get_row_location(row, detail_level, county_full_col, county_partial_col, state_col)
+    def generate_row_location(row, detail_level, county_full_col, county_partial_col, state_col)
 
         if detail_level == "STATE"
 
@@ -152,6 +170,7 @@ class Dataset < ActiveRecord::Base
                 return ans
             else
                 # ERROR??
+                return nil
             end
                 
         elsif detail_level == "COUNTY"
@@ -185,9 +204,11 @@ class Dataset < ActiveRecord::Base
                 return ans
             else
                 # ERROR
+                return nil
             end
         else
             # ERROR
+            return nil
         end         
     end
 
@@ -225,10 +246,6 @@ class Dataset < ActiveRecord::Base
             weight_column_name = nil
         end
 
-        county_full_col = Column.find_by(dataset_id: self.id, detail_level: "countyfull")
-        county_partial_col = Column.find_by(dataset_id: self.id, detail_level: "countypartial")
-        state_col = Column.find_by(dataset_id: self.id, detail_level: "state")
-
         filepath = self.filepath
         # Iterate through the file raw
         logger.debug "Corrent filepath: #{filepath}"
@@ -252,7 +269,7 @@ class Dataset < ActiveRecord::Base
                 weight = 1
             end
             
-            loc = self.get_row_location(row, detail_level, county_full_col, county_partial_col, state_col)
+            loc = self.get_row_location(row, detail_level)
 
             if not is_fips?(loc)
                 # TODO: ERROR
@@ -274,6 +291,15 @@ class Dataset < ActiveRecord::Base
 
         ans = {by_location: ans, num_points: line_num}
         return ans
+    end
+
+
+    def get_row_location(row, detail_level)
+        if detail_level == "STATE":
+            return row["STATE_FIPS_MAPPR"]
+        elsif detail_level == "COUNTY"
+            return row["COUNTY_FIPS_MAPPR"]
+        end
     end
 
     # Returns a hash containing a representative set of datapoints from this dataset.
