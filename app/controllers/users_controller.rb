@@ -3,9 +3,12 @@ class UsersController < ApplicationController
 	before_action :set_user, only: [:show, :edit, :update, :destroy, :points, :column_suggestions]
 
 	def show
-		if not @user.eql? current_user
+
+		if !(@user.eql? current_user)
 			render json: {"errors" => ["unauthorized!!!"], "current_user" => current_user, "user" => @user}, status: :unauthorized
 		end
+
+		@datasets = @user.datasets
 	end
 
 	def auth_example
