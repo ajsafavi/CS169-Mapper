@@ -48,10 +48,9 @@ class DatasetsController < ApplicationController
       create_params[:name] = params[:name]
       create_params[:num_rows] = 1000
       create_params[:user_id] = params[:owner]
+      create_params[:filepath] = params[:filepath]
 
       @dataset = Dataset.new(create_params)
-
-      
 
       @okay = @dataset.save
       logger.debug @dataset.errors

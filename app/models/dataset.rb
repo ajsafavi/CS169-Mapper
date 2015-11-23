@@ -6,6 +6,7 @@ class Dataset < ActiveRecord::Base
     has_many :columns
     has_many :maps
 
+    after_initialize :after_initialize
 
     @@full_to_fips = JSON.parse(File.read("#{Rails.root}/app/models/full_to_fips.json"))
     logger.debug "English to FIPS file: #{@english_to_fips}"
@@ -25,6 +26,7 @@ class Dataset < ActiveRecord::Base
             self.filepath = self.generate_filepath
         end
         outpath = self.filepath
+        logger.debug "Writing Dataset File To: #{outpath}"
         File.open(outpath, 'wb') do |f|
             f.write(filestream)
         end
@@ -39,7 +41,10 @@ class Dataset < ActiveRecord::Base
     end
 
     def generate_filepath
+        self.save
         filepath = "#{Rails.root}/datasets/#{self.id}.csv"
+        self.filepath = filepath
+        self.save
         return filepath
     end
 
@@ -48,8 +53,10 @@ class Dataset < ActiveRecord::Base
     end
 
     def after_initialize
-        filepath = generate_filepath
-        self.filepath = filepath
+        # logger.debug "AFTER INITIALIZE"
+        # filepath = self.generate_filepath()
+        # logger.debug "Generated filepath: #{filepath}"
+        # self.filepath = filepath
     end
 
     # Takes a string that represents location and returns a 5-digit
@@ -163,7 +170,9 @@ class Dataset < ActiveRecord::Base
         county_partial_col = Column.find_by(dataset_id: self.id, detail_level: "countypartial")
         state_col = Column.find_by(dataset_id: self.id, detail_level: "state")
 
+        filepath = self.filepath
         # Iterate through the file raw
+        logger.debug "Corrent filepath: #{filepath}"
         CSV.foreach(filepath, :headers => true) do |row|
 
             display_val = row[display_val_name]
@@ -319,11 +328,11 @@ class Dataset < ActiveRecord::Base
     end
 
 
-    # Given a list of points in one location, this method finds the two "best" points to merge.
+    # Given a list `of points in one location, this method finds the two "best" points to merge.
     # It removes them from the original list of points and returns the two points.
     def shrink_points(points)
-        p1 = points.delete_at(rand(array.length))
-        p2 = points.delete_at(rand(array.length))
+        p1 = points.delete_at(rand(points.length))
+        p2 = points.delete_at(rand(points.length))
         return [p1, p2]
     end
 

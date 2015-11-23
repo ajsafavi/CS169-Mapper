@@ -32,7 +32,15 @@ class DatasetsControllerTest < ActionController::TestCase
       post :create, params
     end
 
-    assert_redirected_to dataset_path(assigns(:dataset))
+    new_dataset = assigns(:dataset)
+    assert_not_nil new_dataset.filepath, "The filepath should be set after being created"
+    
+    assert_redirected_to dataset_path(new_dataset)
+
+    get :points, {:id => new_dataset, :display_val => "EMPLOYMENT", :detail_level => "STATE", :num_points => 5000}
+
+    assert assigns(:points), "Points should be returned"
+    assert assigns(:points).size > 0, "Points should not be empty"
   end
 
   test "should show dataset" do
