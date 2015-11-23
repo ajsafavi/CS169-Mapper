@@ -1,6 +1,7 @@
 import json
 
 full_to_fips = dict()
+fips_to_full = dict()
 
 with open("./FipsCountyCodes.json") as fp:
 	county_codes = json.load(fp)
@@ -22,6 +23,10 @@ for (fips, key) in county_codes["table"]["rows"]:
 		county = key_split[1].upper().strip()
 		key = "{}, {}".format(county, state)
 	full_to_fips[key] = fips
+	fips_to_full[fips] = key
 
 with open("full_to_fips.json", "w") as fp:
 	json.dump(full_to_fips, fp, indent=4)
+
+with open("fips_to_full.json", "w") as fp:
+	json.dump(fips_to_full, fp, indent=4)
