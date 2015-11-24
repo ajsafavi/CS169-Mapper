@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-	before_action :set_user, only: [:show, :edit, :update, :destroy, :points, :column_suggestions]
+	before_action :set_user, only: [:show, :edit, :update, :destroy, :points, :column_suggestions, :maps, :datasets]
 
 	def show
 
@@ -11,12 +11,24 @@ class UsersController < ApplicationController
 		@datasets = @user.datasets
 	end
 
-	def auth_example
-
+	def maps
+		render json:  @user.maps
 	end
 
-	def maps
+	def datasets
+		@public_datasets = Dataset.where(is_public: true)
+		@our_datasets = @user.datasets
+		ans = Set.new
+		
+		@public_datasets.each do |dataset|
+			ans.add(dataset)
+		end
 
+		@our_datasets.each do |dataset|
+			ans.add(dataset)
+		end
+
+		render json: ans
 	end
 
 private

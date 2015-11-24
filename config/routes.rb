@@ -26,6 +26,9 @@ Rails.application.routes.draw do
   get 'javascripttest' => 'javascripttester#test'
   
   match '/users/:id', :to => 'users#show',    :as => :user,         :via => :get
+
+  get 'users/:id/datasets' => 'users#datasets'
+  get 'users/:id/maps' => 'users#maps'
   #get 'welcome#index'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

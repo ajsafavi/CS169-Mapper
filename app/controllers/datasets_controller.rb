@@ -86,27 +86,6 @@ class DatasetsController < ApplicationController
 
   end
 
-
-  # def update
-
-  #   if (current_user.nil? or current_user.id != @dataset.user_id)
-  #     render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
-  #   else
-
-  #     params = dataset_edit_params.except!(:id)
-
-  #     @dataset.update(params)
-  #     @okay = @dataset.valid?
-
-  #     if @okay
-  #       redirect_to @dataset, format: :json
-  #     else
-  #       render json: @dataset.errors, status: :unprocessable_entity
-  #     end
-  #   end
-
-  # end
-
   # DELETE /datasets/1
   # DELETE /datasets/1.json
   def destroy
@@ -120,7 +99,6 @@ class DatasetsController < ApplicationController
     @dataset.destroy
     head :no_content
   end
-
 
   def points
     if !@dataset.is_public? and (current_user.nil? or current_user.id != @dataset.user_id)

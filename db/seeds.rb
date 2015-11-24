@@ -13,9 +13,10 @@ name = "Sample Dataset"
 dataset = Dataset.create({
 	name: name,
 	filepath: filepath, 
-	user_id: aryan.id,
+	user_id: nil,
 	is_public: true
-	})
+})
+
 dataset.columns.create({name: "COUNTY_FIPS_MAPPR", column_type: "LOCATION", detail_level: "countyfull"})
 dataset.columns.create({name: "STATE_FIPS_MAPPR", column_type: "LOCATION", detail_level: "state"})
 dataset.columns.create({name: "WEIGHT", column_type: "WEIGHT", null_value: nil})
