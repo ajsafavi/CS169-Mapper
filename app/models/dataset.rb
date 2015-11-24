@@ -417,7 +417,7 @@ class Dataset < ActiveRecord::Base
         num_points = 0
 
         by_location.each do |loc, points|
-            target = [1, points.length / condense_factor].max
+            target = [1, points.length * condense_factor].max
 
             while (points.length > target)
                 to_merge = self.shrink_points(points)
@@ -450,7 +450,7 @@ class Dataset < ActiveRecord::Base
     # The two points must have the same location.
     def merge_points(p1, p2)
         # TODO: handle actually averaging them?
-        display_val = p1[:display_val]
+        display_val = (p1[:display_val].to_f*p1[:weight] + p2[:display_val].to_f*p2[:weight]) / (p1[:weight] + p2[:weight])
         filter_val = p1[:filter_val]
         location = p1[:location]
         weight = p1[:weight] + p2[:weight]
