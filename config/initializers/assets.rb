@@ -16,6 +16,7 @@ Rails.application.config.assets.precompile += %w( d3.min.js )
 Rails.application.config.assets.precompile += %w( makemap.js )
 Rails.application.config.assets.precompile += %w( makemapback.js )
 Rails.application.config.assets.precompile += %w( tooltip.js )
+Rails.application.config.assets.precompile += %w( adddata.js )
 
 Rails.application.config.assets.precompile += %w( points.js )
 Rails.application.config.assets.precompile += %w( queue.min.js )

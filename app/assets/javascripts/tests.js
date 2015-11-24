@@ -85,3 +85,13 @@ QUnit.test( "draw USA test", function( assert ) {
   assert.equal(1, 1,  "you should see the USA drawn somewhere, with states");
 
 });
+
+
+
+QUnit.test( "good file test", function( assert ) {
+  var path = "/testCSV/wrongfile.txt"
+  var valid = AddData.validFile(path);
+  //console.log(processed);
+  assert.equal(valid, false,  "ensure that the program identifies correct file format");
+
+});

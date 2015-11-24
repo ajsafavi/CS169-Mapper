@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :user_input_data
   devise_for :users
   
   get 'users/:id' => 'users#show'
@@ -24,7 +25,7 @@ Rails.application.routes.draw do
 
   get 'maps/public/:shareable_url' => 'maps#shareable'
   get 'javascripttest' => 'javascripttester#test'
-  
+
   match '/users/:id', :to => 'users#show',    :as => :user,         :via => :get
   #get 'welcome#index'
   # The priority is based upon order of creation: first created -> highest priority.

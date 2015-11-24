@@ -73,6 +73,18 @@
 			}
 		</script>
 	</div>
+	<div>
+		<font color="black">
+			Select file to create data set (put some instruction here about the file)
+		</font>
+		<form action='' method='POST' enctype='multipart/form-data'>
+	    	<input type='file' name='userFile' class='fileSelect'><br>
+	    	<input type='submit' name='upload_btn' value='upload'>
+		</form>
+		<%= javascript_include_tag "adddata.js"%>
+
+	</div>
+	
 
 </div>
 
