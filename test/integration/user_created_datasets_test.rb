@@ -35,6 +35,7 @@ class UserCreatedDatasetsTest < ActionDispatch::IntegrationTest
 
     assert assigns(:points), "Points should be returned"
     assert assigns(:points).size > 30, "Points should not be empty"
+    assert_not_nil (assigns(:points)[0][:location])
 
   end
 
@@ -64,6 +65,8 @@ class UserCreatedDatasetsTest < ActionDispatch::IntegrationTest
     get "/datasets/#{basic_dataset.id}/points", {:display_val => "ROOMS", :detail_level => "COUNTY", :num_points => 5000}
     assert assigns(:points), "Points should be returned"
     assert assigns(:points).size > 30, "Points should not be empty"
+    assert_not_nil (assigns(:points)[0][:location])
+
   end
 
   test "two english location columns" do
@@ -92,6 +95,8 @@ class UserCreatedDatasetsTest < ActionDispatch::IntegrationTest
     get "/datasets/#{basic_dataset.id}/points", {:display_val => "ROOMS", :detail_level => "COUNTY", :num_points => 5000}
     assert assigns(:points), "Points should be returned"
     assert assigns(:points).size > 30, "Points should not be empty"
+    assert_not_nil (assigns(:points)[0][:location])
+
   end
 
   test "two fips location columns" do
@@ -120,6 +125,8 @@ class UserCreatedDatasetsTest < ActionDispatch::IntegrationTest
     get "/datasets/#{basic_dataset.id}/points", {:display_val => "ROOMS", :detail_level => "COUNTY", :num_points => 5000}
     assert assigns(:points), "Points should be returned"
     assert assigns(:points).size > 30, "Points should not be empty"
+    assert_not_nil (assigns(:points)[0][:location])
+
   end
 
   test "two mixed location columns" do
@@ -148,6 +155,8 @@ class UserCreatedDatasetsTest < ActionDispatch::IntegrationTest
     get "/datasets/#{basic_dataset.id}/points", {:display_val => "ROOMS", :detail_level => "COUNTY", :num_points => 5000}
     assert assigns(:points), "Points should be returned"
     assert assigns(:points).size > 30, "Points should not be empty"
+    assert_not_nil (assigns(:points)[0][:location])
+
   end
 
 

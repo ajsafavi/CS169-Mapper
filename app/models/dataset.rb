@@ -169,6 +169,7 @@ class Dataset < ActiveRecord::Base
                 col_name = state_col.name
                 ans = row[col_name].upcase
                 ans = state_to_fips(ans)
+                ans = ans.ljust(5, "0")
                 return ans
             else
                 # ERROR??
@@ -195,19 +196,19 @@ class Dataset < ActiveRecord::Base
                 county_name = county_name.upcase
                 
                 if self.is_numeric?(state_name) and self.is_numeric?(county_name)
-                    state_name = state_name.ljust(5, "0")[0..2]
+                    state_name = state_name.ljust(5, "0")[0..1]
                     county_name = county_name.rjust(5, "0")[2..5]
                     return state_name + county_name
                 elsif self.is_numeric?(county_name)
                     state_name = self.abbrev_to_state(state_name)
-                    state_name = self.state_to_fips(state_name).ljust(5, "0")[0..2]
+                    state_name = self.state_to_fips(state_name).ljust(5, "0")[0..1]
                     county_name = county_name.rjust(5, "0")[2..5]
                     return state_name + county_name
                 elsif self.is_numeric?(state_name)
                     state_name = self.fips_to_state(state_name)
                 end
 
-                key = "#{state_name}, #{county_name}"
+                key = "#{county_name}, #{state_name}"
                 ans = convert_to_fips(key)
                 return ans
             else
@@ -259,6 +260,7 @@ class Dataset < ActiveRecord::Base
         logger.debug "Corrent filepath: #{filepath}"
         CSV.foreach(filepath, :headers => true) do |row|
 
+            row = row.to_hash
             display_val = row[display_val_name]
 
             if not filter_val_name.nil?
@@ -278,9 +280,11 @@ class Dataset < ActiveRecord::Base
             end
             
             loc = self.get_row_location(row, detail_level)
+            # logger.error "SHOULD BE FIPS #{loc}"
 
             if not is_fips?(loc)
                 # TODO: ERROR
+                logger.error "SHOULD BE FIPS #{loc}"
             end
 
             if not ans.has_key?(loc)
@@ -303,11 +307,17 @@ class Dataset < ActiveRecord::Base
 
 
     def get_row_location(row, detail_level)
+        ans = nil
         if detail_level == "STATE"
-            return row["STATE_FIPS_MAPPR"]
+            ans = row["STATE_FIPS_MAPPR"]
         elsif detail_level == "COUNTY"
-            return row["COUNTY_FIPS_MAPPR"]
+            ans = row["COUNTY_FIPS_MAPPR"]
         end
+
+        # if ans.nil?
+        #     logger.debug("The row gave null value #{row}")
+        # end
+
     end
 
     # Returns a hash containing a representative set of datapoints from this dataset.
@@ -325,6 +335,11 @@ class Dataset < ActiveRecord::Base
 
         all_points = self.generate_raw_points(display_val_name, filter_val_name, detail_level)[:by_location]
         
+
+        # if all_points[0][:location].nil?
+        #     logger.error "DATAPOINT LOCATION SHOULD NOT BE nil : #{all_points[0]}"
+        # end
+
         merged_dups_ans = self.merge_repeats(all_points)
         merged_dups = merged_dups_ans[:by_location]
         num_points = merged_dups_ans[:num_points]
@@ -332,6 +347,7 @@ class Dataset < ActiveRecord::Base
         condense_factor = num_points_wanted * 1.0 / num_points
         condensed_ans = self.condense_by_location(merged_dups, condense_factor)
         condensed_points = condensed_ans[:by_location]
+
         num_points = condensed_ans[:num_points]
 
         ans = Array.new
@@ -341,7 +357,7 @@ class Dataset < ActiveRecord::Base
                 ans.push(point)
             end
         end
-
+        logger.debug "FIRST points: #{ans[0]}"
         return ans
     end
 
