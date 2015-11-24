@@ -146,6 +146,7 @@ class DatasetsController < ApplicationController
 
       config.log_level = :debug 
       @points = @dataset.generate_points(num_points, display_val, filter_val, detail_level)
+      # logger.debug @points
       num_points = @points.size
 
       render json: {'points' => @points, 'num_points' => num_points}

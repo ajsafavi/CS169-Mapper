@@ -9,30 +9,35 @@
 aryan = User.create({email: 'persian_princess242@yahoo.com', password: "password123", password_confirmation: "password123"})
 
 filepath = Rails.root.join('datasets','sample.csv').to_s
-num_rows = 114487
-location_column = "COUNTY"
-weight_column = "WEIGHT"
-location_type = "COUNTY"
-name = "DEFAULT DATASET"
-
+name = "Sample Dataset"
 dataset = Dataset.create({
 	name: name,
 	filepath: filepath, 
-	num_rows: num_rows, 
-	location_column: location_column, 
-	weight_column: weight_column, 
-	location_type: location_type,
 	user_id: aryan.id,
 	is_public: true
 	})
-
-dataset.columns.create({name: "COUNTY", column_type: "LOCATION", null_value: nil})
+dataset.columns.create({name: "COUNTY_FIPS_MAPPR", column_type: "LOCATION", detail_level: "countyfull"})
+dataset.columns.create({name: "STATE_FIPS_MAPPR", column_type: "LOCATION", detail_level: "state"})
 dataset.columns.create({name: "WEIGHT", column_type: "WEIGHT", null_value: nil})
 dataset.columns.create({name: "EMPLOYMENT", column_type: "VARIABLE", null_value: "-1"})
 dataset.columns.create({name: "LABOR_PARTICIPATION", column_type: "VARIABLE", null_value: "-1"})
 dataset.columns.create({name: "INCOME", column_type: "VARIABLE", null_value: "9999999"})
 dataset.columns.create({name: "SEX", column_type: "VARIABLE", null_value: nil})
 dataset.columns.create({name: "AGE", column_type: "VARIABLE", null_value: nil})
+
+filepath = Rails.root.join('datasets','farm.csv').to_s
+name = "Farm Dataset"
+dataset = Dataset.create({
+	name: name,
+	filepath: filepath, 
+	user_id: aryan.id,
+	is_public: true
+	})
+dataset.columns.create({name: "COUNTY_FIPS_MAPPR", column_type: "LOCATION", detail_level: "countyfull"})
+dataset.columns.create({name: "STATE_FIPS_MAPPR", column_type: "LOCATION", detail_level: "state"})
+dataset.columns.create({name: "WEIGHT", column_type: "WEIGHT", null_value: nil})
+dataset.columns.create({name: "FARM", column_type: "VARIABLE", null_value: "-1"})
+
 
 
 map = Map.create({

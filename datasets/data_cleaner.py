@@ -26,6 +26,8 @@ def fips_to_county(fips):
 def fips_to_state_abbrev(fips):
 	return fips_to_loc[fips]["state_abbrev"]
 
+
+
 original = pd.read_csv('./farm_raw.csv')
 original["STATE_ENGLISH"] = None
 original["STATE_FIPS"] = None
@@ -34,6 +36,9 @@ original["COUNTY_ENGLISH"] = None
 original["COUNTY_FULL_FIPS"] = None
 original["COUNTY_PARTIAL_FIPS"] = None
 original["COUNTY_FULL_ENGLISH"] = None
+
+original["STATE_FIPS_MAPPR"] = None
+original["COUNTY_FIPS_MAPPR"] = None
 original["valid"] = True
 
 x = {"rows" : 0}
@@ -47,7 +52,9 @@ def filter_row(row):
 	try:
 		row["COUNTY_PARTIAL_FIPS"] = str(row["COUNTYFIPS"]).zfill(3)
 		row["STATE_FIPS"] = str(row["STATEFIPS"]).zfill(2)
+		row["STATE_FIPS_MAPPR"] = row["STATE_FIPS"] + "000"
 		row["COUNTY_FULL_FIPS"] = row["STATE_FIPS"] + row["COUNTY_PARTIAL_FIPS"]
+		row["COUNTY_FIPS_MAPPR"] = row["COUNTY_FULL_FIPS"]
 		row["STATE_ENGLISH_SHORT"] = fips_to_state_abbrev(row["COUNTY_FULL_FIPS"])
 		row["STATE_ENGLISH"] = abbrev_to_state(row["STATE_ENGLISH_SHORT"])
 		row["COUNTY_ENGLISH"] = fips_to_county(row["COUNTY_FULL_FIPS"])
@@ -59,7 +66,8 @@ def filter_row(row):
 	return row
 
 desired_columns = ["HHWT", "COUNTYFIPS", "FARM", "STATE_FIPS", \
-	"STATE_ENGLISH", "COUNTY_ENGLISH", "COUNTY_FULL_ENGLISH", "COUNTY_FULL_FIPS"]
+	"STATE_ENGLISH", "COUNTY_ENGLISH", "COUNTY_FULL_ENGLISH", "COUNTY_FULL_FIPS",
+	"STATE_FIPS_MAPPR", "COUNTY_FIPS_MAPPR"]
 
 edited = original.apply(filter_row, axis=1)
 edited = edited.loc[edited["valid"] == True]
