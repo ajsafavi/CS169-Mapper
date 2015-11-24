@@ -15,22 +15,6 @@ class UsersController < ApplicationController
 		render json:  @user.maps
 	end
 
-	def datasets
-		@public_datasets = Dataset.where(is_public: true)
-		@our_datasets = @user.datasets
-		ans = Set.new
-		
-		@public_datasets.each do |dataset|
-			ans.add(dataset)
-		end
-
-		@our_datasets.each do |dataset|
-			ans.add(dataset)
-		end
-
-		render json: ans
-	end
-
 private
 
 	def set_user

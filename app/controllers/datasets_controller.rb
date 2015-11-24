@@ -8,11 +8,15 @@ class DatasetsController < ApplicationController
   # GET /datasets
   # GET /datasets.json
   def index
-    @datasets = Dataset.all
-    respond_to do |format|
-      format.html { }
-      format.json { render json: @datasets }
+    ans = Set.new(Dataset.where(is_public: true))
+    if current_user
+      others = current_user.datasets
+      others.each do |dataset|
+        ans.add(dataset)
+      end
     end
+
+    render json: ans
   end
 
   # GET /datasets/1
