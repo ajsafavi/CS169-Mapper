@@ -17,8 +17,24 @@ var AddData = (function () {
     return true;
   }
 
+  //location column always 1 (for now)
+  //weight column always 2 (for now)
+  var createDataSet = function(path)
+  {
+    $.ajax({
+        type: "POST",
+        url: "/datasets",
+        owner: 1, //how do I get the owner in javascript?
+        name: $(".datasetname").value,
+        datafile: $(".fileSelect").value,
+        location_column: 1, //hardcoded i'll change it
+        weight_column: 2,
+        success: function(data) {dataSetCreated(data);}
+     });
+  }
+
   //return the json that is submitted to the backend to create a dataset
-  var createJSON = function(path)
+  var uploadCSV = function(path)
   {
     var lines = [];
     $.ajax({
