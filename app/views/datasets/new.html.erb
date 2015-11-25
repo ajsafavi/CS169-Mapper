@@ -1,5 +1,45 @@
 <h1>New Dataset</h1>
 
-<%= render 'form' %>
+
 
 <%= link_to 'Back', datasets_path %>
+
+	<div>
+		<p>
+			Select file to create data set (put some instruction here about the file)
+		<p>
+		<form action='' method='POST' enctype='multipart/form-data'>
+			<input type="text" name="Dataset Name" value="name" class='datasetname'>
+	    	<input type='file' name='userFile' class='fileSelect'><br>
+	    	<input type='submit' name='upload_btn' value='upload'>
+		</form>
+		<%= javascript_include_tag "adddata.js"%>
+
+	</div>
+
+	<%= javascript_include_tag "adddataUI.js"%>
+	<div class="variableSelectors container">
+		<div class="row">
+			<div class="col-md-4"><p>Variables</p></div>
+  			<div class="col-md-8"><p>Options</p></div>
+		</div>
+		<%# dataset.variable.each do |variable| %>
+			<div class="row">
+	      	<div class="col-md-4"><p>Variable</p></div>
+  			<div class="col-md-8">
+  				<button type="button" class="btn btn-default btn-sm" onclick="varClick();">Variable</button>
+  				<button type="button" class="btn btn-default btn-sm" onclick="locClick();">Location</button>
+  				<button type="button" class="btn btn-default btn-sm" onclick="weightClick();">Weight</button>
+  				<span class="extras">
+  					<button type="button" class="btn btn-default btn-sm" id="null">Null?</button>
+  					<button type="button" class="btn btn-default btn-sm" id="state">State</button>
+  					<button type="button" class="btn btn-default btn-sm" id="countypartial">County Partial</button>
+  					<button type="button" class="btn btn-default btn-sm" id="countyfull">County Full</button>
+  					<!-- <button type="button" class="btn btn-default btn-sm" id="null"></button> -->
+  				</span>
+  			</div>
+	      	</div>
+    	<%# end %>
+
+	</div>
+
