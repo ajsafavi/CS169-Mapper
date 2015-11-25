@@ -74,7 +74,6 @@ var Mapper = (function () {
     var minVal = Math.max(0, Math.floor(Math.min.apply(null, displayPoints)))
     var maxVal = Math.floor(Math.max.apply(null, displayPoints))
 
-    console.log("minVal: "+minVal+", maxVal: "+maxVal);
 
     $( "#slider-range" ).slider({
         range: true,
@@ -89,14 +88,12 @@ var Mapper = (function () {
         " - " + $( "#slider-range" ).slider( "values", 1 ) );
 
       $('#select-range').on("click", function() {
-        console.log("clicked");
       });
       
       $('#select-range').on("click", function() {
         var filtermin = $("#slider-range").slider("values",0);
         var filtermax = $( "#slider-range" ).slider( "values", 1);
 
-        console.log("filtermin: "+filtermin+", filtermax: "+filtermax);
 
         var dataPoints = MapperBack.filterPoints(allPoints, filtermin, filtermax);
         drawMap(dataPoints);
@@ -109,37 +106,40 @@ var Mapper = (function () {
     	var datasetsUrl = apiUrl + "/datasets"
     	
     	var success = function(data) {
-    		console.log("loaded datasets: " + datasets)
-    		console.log(data)
     		datasets = new Array()
     		datasetList = new Array()
+
+    		$("#iddataset").empty()
     		for (var i = data.length - 1; i >= 0; i--) {
     			datasets.push(data[i])
     			datasetList.push(data[i].name)
+    			$("#iddataset").append("<option> " + data[i].name + " </option>")
     		}
 
     		// $("#iddataset").on('input propertychange paste autocompleteselect', function() {
     		$("#iddataset").on('change', function() {
-    			console.log("Dataset Change Detected")
     			datasetName = this.value
     			dataset = findDatasetByName($('#iddataset').val())
     			datasetId = dataset.id
-    			console.log(datasetId)
     			loadColumnsAsync(dataset.columns)
 	    	});
+
+	    	$("#iddataset").append("<option value=\"\" disabled selected class=\"disabled\"> Select a Dataset </option>")
+
     	}
 
+
+
     	makeGetRequest(datasetsUrl, null, success)
-
-
     }
 
-    var loadColumns = function(datasetId) {
+    var loadColumns = function(datasetId_param) {
     	// Loads all legal columns
-    	var datasetUrl = apiUrl + "/datasets/" + datasetId
-
+    	var datasetUrl = apiUrl + "/datasets/" + datasetId_param
     	var success = function(dataset) {
     		var columns = dataset.columns
+    		datasetId = dataset.id
+    		$("#iddataset").val(dataset.name)
     		loadColumnsAsync(columns)
     	}
 
@@ -149,57 +149,63 @@ var Mapper = (function () {
 
 
     var loadColumnsAsync = function(columns) {
-    	$("#idfilteringvar").html("")
-		$("#idvar").html("")
+    	$("#idfilteringvar").empty()
+		$("#idvar").empty()
+
 		varList = new Array()
 
 		for (var i = columns.length - 1; i >= 0; i--) {
 			var column = columns[i]
 			if (column.column_type === "VARIABLE") {
 				varList.push(column.name)
+				$("#idfilteringvar").append("<option> " + column.name + " </option>")
+				$("#idvar").append("<option> " + column.name + " </option>")
 			}
 		};
 
+		$("#idfilteringvar").append("<option> </option>")
+		$("#idfilteringvar").append("<option value=\"\" disabled selected class=\"disabled\"> Select a Filter Variable </option>")
+		$("#idvar").append("<option value=\"\" disabled selected class=\"disabled\"> Select a Display Variable </option>")
 		startAutocomplete()
     }
 
 
 
 	var startAutocomplete = function() {
-		$("#idvar").autocomplete({
-			source: varList,
-			minLength: 0,
-			scroll: true,
-      autoFocus: true
-		}).focus(function() {
-				$(this).autocomplete("search", "");
-		});
+		// $("#idvar").autocomplete({
+		// 	source: varList,
+		// 	minLength: 0,
+		// 	scroll: true,
+  //     autoFocus: true
+		// }).focus(function() {
+		// 		$(this).autocomplete("search", "");
+		// });
 
-		$("#iddataset").autocomplete({
-			source: datasetList,
-			minLength: 0,
-			scroll: true,
+		// $("#iddataset").autocomplete({
+		// 	source: datasetList,
+		// 	minLength: 0,
+		// 	scroll: true,
 			
-      autoFocus: true
-		}).focus(function() {
-				$(this).autocomplete("search", "");
-		});
+  //     autoFocus: true
+		// }).focus(function() {
+		// 		$(this).autocomplete("search", "");
+		// });
 
-		$("#idfilteringvar").autocomplete({
-			source: varList,
-			minLength: 0,
-			scroll: true
-		}).focus(function() {
-				$(this).autocomplete("search", "");
-		});
+		// $("#idfilteringvar").autocomplete({
+		// 	source: varList,
+		// 	minLength: 0,
+		// 	scroll: true
+		// }).focus(function() {
+		// 		$(this).autocomplete("search", "");
+		// });
 
-		$("#idgeo").autocomplete({
-			source: geoList,
-			minLength: 0,
-			scroll: true
-		}).focus(function() {
-				$(this).autocomplete("search", "");
-		});
+		// $("#idgeo").autocomplete({
+		// 	source: geoList,
+		// 	minLength: 0,
+		// 	scroll: true
+		// }).focus(function() {
+		// 		$(this).autocomplete("search", "");
+		// });
 	}
 
 	var submitClickHandler = function() {
@@ -520,7 +526,7 @@ var Mapper = (function () {
 		datasetId = dataset_id
 
 		loadDatasets()
-		loadColumns(dataset_id)
+		loadColumns(datasetId)
 		
 	}
 
@@ -576,7 +582,7 @@ var Mapper = (function () {
 	var findDatasetByName = function(datasetName) {
 		for (var i = datasets.length - 1; i >= 0; i--) {
 			if (datasets[i].name === datasetName) {
-				return datasets[i]["id"]
+				return datasets[i]
 			}
 		};
 		return null
@@ -611,7 +617,6 @@ var Mapper = (function () {
 		var onSuccess = function(data) {
 			// TODO: Do something?
 
-			console.log(data)
 			if (data.id) {
 				mapId = data["id"]
 			}

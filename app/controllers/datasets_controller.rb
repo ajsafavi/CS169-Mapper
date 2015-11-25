@@ -25,6 +25,8 @@ class DatasetsController < ApplicationController
       end
     end
 
+    @ans = ans
+
     render json: ans
   end
 
