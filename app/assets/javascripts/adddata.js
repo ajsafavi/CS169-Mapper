@@ -27,32 +27,47 @@ var AddData = (function () {
   {
     var read = new FileReader();
     var path = $(".fileSelect").val();
-    var toSend = new FormData();
+    var toSend = {};
     var rawText = "";
     var vars = [];
     var columns = [];
+    var nameOfSet = $(".datasetname").val();
     //toSend.append('owner', 1);
-    toSend.append('name', $(".datasetname").val());
-    toSend.append('datafile', file);
+    //toSend.append('name', $(".datasetname").val());
+    //toSend.append('datafile_raw', file);
 
     read.readAsBinaryString(file)
     read.onloadend = function() 
     {
-      console.log(read.result);
+      //console.log(read.result);
       rawText = read.result;
       vars = textToVars(rawText);
-      console.log(vars);
-      console.log(toSend);
+      //console.log(vars);
+
+      //console.log(toSend);
       for(var i = 0; i < vars.length; i++)
       {
         //change this
-        columns.push({name: vars[i],
+        if(i == 0)
+        {
+          columns.push({name: vars[i],
                         column_type:"LOCATION",
                         detail_level:"countyfull"});
+        }
+        else
+        {
+          columns.push({name:vars[i],
+                        column_type:"VARIABLE"});
+        }
       }
-      console.log(columns);
-      toSend.append('columns',columns);
-      //console.log(toSend.get('columns'));
+      //onsole.log(columns);
+
+      toSend = {name: nameOfSet,
+                datafile_raw: rawText,
+                columns: columns
+                };
+      //toSend.append('columns',columns);
+      console.log(toSend);
       $.ajax({
           type: "POST",
           url: "/datasets",
