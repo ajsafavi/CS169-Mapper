@@ -60,7 +60,6 @@ var MapperBack = (function () {
     var newPoints = [];
     for (var i=0;i<points.length;i++) {
       var point = points[i];
-      console.log("filter_val: "+point.filter_val);
       if (point.filter_val >= filtermin && point.filter_val <= filtermax) {
         newPoints.push(point);
       }

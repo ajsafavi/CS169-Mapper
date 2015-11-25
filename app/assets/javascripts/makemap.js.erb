@@ -3,6 +3,7 @@ var Mapper = (function () {
 
 
   var allPoints;
+  var currPoints;
   var currColor;
 
 	var apiUrl = ""
@@ -58,6 +59,60 @@ var Mapper = (function () {
 									"Wisconsin", 
 									"Wyoming"]
 
+	var state_codes = {
+	   "01": "Alabama",
+	   "02": "Alaska",
+	   "04": "Arizona",
+	   "05": "Arkansas",
+	   "06": "California",
+	   "08": "Colorado",
+	   "09": "Connecticut",
+	   "10": "Delaware",
+	   "11": "District of Columbia",
+	   "12": "Florida",
+	   "13": "Geogia",
+	   "15": "Hawaii",
+	   "16": "Idaho",
+	   "17": "Illinois",
+	   "18": "Indiana",
+	   "19": "Iowa",
+	   "20": "Kansas",
+	   "21": "Kentucky",
+	   "22": "Louisiana",
+	   "23": "Maine",
+	   "24": "Maryland",
+	   "25": "Massachusetts",
+	   "26": "Michigan",
+	   "27": "Minnesota",
+	   "28": "Mississippi",
+	   "29": "Missouri",
+	   "30": "Montana",
+	   "31": "Nebraska",
+	   "32": "Nevada",
+	   "33": "New Hampshire",
+	   "34": "New Jersey",
+	   "35": "New Mexico",
+	   "36": "New York",
+	   "37": "North Carolina",
+	   "38": "North Dakota",
+	   "39": "Ohio",
+	   "40": "Oklahoma",
+	   "41": "Oregon",
+	   "42": "Pennsylvania",
+	   "44": "Rhode Island",
+	   "45": "South Carolina",
+	   "46": "South Dakota",
+	   "47": "Tennessee",
+	   "48": "Texas",
+	   "49": "Utah",
+	   "50": "Vermont",
+	   "51": "Virginia",
+	   "53": "Washington",
+	   "54": "West Virginia",
+	   "55": "Wisconsin",
+	   "56": "Wyoming"
+	}
+
 	var mapId = null
 	var datasetId = 1 //TODO: Make sure this is kept safe!
 	var userId = 1
@@ -98,6 +153,7 @@ var Mapper = (function () {
         console.log("filtermin: "+filtermin+", filtermax: "+filtermax);
 
         var dataPoints = MapperBack.filterPoints(allPoints, filtermin, filtermax);
+        currPoints = dataPoints;
         drawMap(dataPoints);
       });
     }     
@@ -167,6 +223,22 @@ var Mapper = (function () {
 
 				$.redirect(saveUrl, params, "POST")
 
+		});
+	}
+
+	var stateHoverHandler = function() {
+		$("path").on('mouseover', function() {
+
+		}).on('mouseout', function() {
+
+		});
+	}
+
+	var stateClickHandler = function() {
+		$("path").each('click', function(i) {
+			var state = $(this).attr('state');
+			var state_name = state_codes.state;
+			$("#scattercanvas").append("p").text(state_name);
 		});
 	}
 
@@ -473,7 +545,9 @@ var Mapper = (function () {
     currColor = [10,10,100];
 		var onSuccess = function(data) {
       allPoints = data;
+      currPoints = data;
       makeSlider();
+      stateClickHandler();
 			var dataPoints = MapperBack.processPoints(data);
       drawMap(dataPoints);
 		};
@@ -555,6 +629,8 @@ var Mapper = (function () {
 		submitClickHandler: submitClickHandler,
 		submitHomeClickHandler: submitHomeClickHandler,
 		startAutocomplete: startAutocomplete,
+		stateClickHandler: stateClickHandler,
+		stateHoverHandler: stateHoverHandler,
 		resize: resize,
 		saveMap: saveMap,
 	};
