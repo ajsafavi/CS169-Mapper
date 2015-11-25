@@ -78,7 +78,7 @@ class DatasetsController < ApplicationController
       end
 
       filedata = nil
-
+      logger.debug params
       if (params[:datafile_raw].nil?)
         ajax_upload = params[:datafile].is_a?(String)
         if ajax_upload
@@ -93,7 +93,11 @@ class DatasetsController < ApplicationController
 
       # Create columns
       columns = params[:columns]
+      logger.debug "COLUMNS"
+      logger.debug columns
       columns.each do |column_params|
+        logger.debug column_params
+        logger.debug column_params.class
         column_params[:dataset_id] = @dataset.id
         column = Column.new(column_params)
         if not column.save

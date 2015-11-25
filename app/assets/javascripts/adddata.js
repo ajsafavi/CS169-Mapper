@@ -60,11 +60,11 @@ var AddData = (function () {
                         column_type:"VARIABLE"});
         }
       }
-      //onsole.log(columns);
+      //console.log(columns);
 
-      toSend = {name: nameOfSet,
-                datafile_raw: rawText,
-                columns: columns
+      toSend = {'name': nameOfSet,
+                'datafile_raw': rawText,
+                'columns': columns
                 };
       //toSend.append('columns',columns);
       console.log(toSend);
@@ -72,9 +72,6 @@ var AddData = (function () {
           type: "POST",
           url: "/datasets",
           data: toSend,
-          cache: false,
-          contentType: false,
-          processData: false,
           success: function(data) 
           {
             window.alert("created successfully");
