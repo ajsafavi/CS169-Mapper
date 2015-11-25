@@ -56,7 +56,7 @@ class DatasetsController < ApplicationController
       create_params[:num_rows] = 1000
       create_params[:user_id] = params[:owner]
       create_params[:filepath] = params[:filepath]
-      create_params[:owner] = current_user.id
+      create_params[:user_id] = current_user.id
 
       @dataset = Dataset.new(create_params)
 

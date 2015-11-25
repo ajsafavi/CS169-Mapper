@@ -48,9 +48,11 @@ var AddData = (function () {
         //change this
         columns.push({name: vars[i],
                         column_type:"LOCATION",
-                        detail_level:"county_full"});
+                        detail_level:"countyfull"});
       }
-
+      console.log(columns);
+      toSend.append('columns',columns);
+      //console.log(toSend.get('columns'));
       $.ajax({
           type: "POST",
           url: "/datasets",
