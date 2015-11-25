@@ -11,6 +11,15 @@ class UsersController < ApplicationController
 		@datasets = @user.datasets
 	end
 
+
+	def addData
+		#@user.datasets.add()
+	end
+
+	def auth_example
+
+	end
+
 	def maps
 		render json:  @user.maps
 	end

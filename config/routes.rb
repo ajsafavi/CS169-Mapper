@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :user_input_data
   devise_for :users
   
   get 'users/:id' => 'users#show'
@@ -23,7 +24,7 @@ Rails.application.routes.draw do
   get 'datasets/:id/columns' => 'datasets#column_suggestions'
   get 'maps/public/:shareable_url' => 'maps#shareable'
   get 'javascripttest' => 'javascripttester#test'
-  
+
   match '/users/:id', :to => 'users#show',    :as => :user,         :via => :get
 
   get 'users/:id/datasets' => 'users#datasets'
