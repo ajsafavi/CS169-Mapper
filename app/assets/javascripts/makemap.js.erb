@@ -2,11 +2,13 @@ var Mapper = (function () {
 // nothing here can be tested, keep it simple
 
 
-  var allPoints;
-  var currColor;
+	var allPoints;
+	var currColor;
+	var apiUrl;
+	var varList = null
+	var datasetList = null
+	var datasets = null
 
-	var apiUrl = ""
-	var varList = ["Employment","Income","Labor Participation","Sex","Age"];
 	var geoList = ["USA", "Alabama", 
 									"Alaska", 
 									"Arizona",
@@ -74,7 +76,7 @@ var Mapper = (function () {
 
     console.log("minVal: "+minVal+", maxVal: "+maxVal);
 
-      $( "#slider-range" ).slider({
+    $( "#slider-range" ).slider({
         range: true,
         min: minVal,
         max: maxVal,
@@ -85,7 +87,6 @@ var Mapper = (function () {
       });
       $( "#range-display" ).val($( "#slider-range" ).slider( "values", 0 ) +
         " - " + $( "#slider-range" ).slider( "values", 1 ) );
-
 
       $('#select-range').on("click", function() {
         console.log("clicked");
@@ -100,7 +101,50 @@ var Mapper = (function () {
         var dataPoints = MapperBack.filterPoints(allPoints, filtermin, filtermax);
         drawMap(dataPoints);
       });
-    }     
+    }
+
+
+    var loadDatasets = function() {
+    	// Loads all legal datasets
+    	var datasetsUrl = apiUrl + "/datasets"
+    	
+    	var success = function(data) {
+    		console.log("loaded datasets: " + datasets)
+    		console.log(data)
+    		datasets = new Array()
+    		datasetList = new Array()
+    		for (var i = data.length - 1; i >= 0; i--) {
+    			datasets.push(data[i])
+    			datasetList.push(data[i].name)
+    		}
+    	}
+
+    	makeGetRequest(datasetsUrl, null, success)
+    }
+
+    var loadColumns = function(datasetId) {
+    	// Loads all legal columns
+    	var datasetUrl = apiUrl + "/datasets/" + datasetId
+
+    	var success = function(dataset) {
+    		var columns = dataset.columns
+    		varList = new Array()
+
+    		for (var i = columns.length - 1; i >= 0; i--) {
+    			var column = columns[i]
+    			if (column.column_type === "VARIABLE") {
+    				varList.push(column.name)
+    			}
+    		};
+
+    		startAutocomplete()
+    	}
+
+    	
+
+    	makeGetRequest(datasetUrl, null, success)
+    }
+
 
 
 	var startAutocomplete = function() {
@@ -136,8 +180,12 @@ var Mapper = (function () {
 				apiUrl = MapperBack.getapiUrl();
 				displayval = $("#idvar").val();
 				filterval = $("#idfilteringvar").val();
-        console.log("filterval: "+filterval);
 				geoval = $("#idgeo").val();
+				datasetId_possible = datasetNameToId($('#iddataset').val())
+				if (datasetId_possible) {
+					datasetId = datasetId_possible
+				}
+
 
 				//set URL
 				// apiUrl += '&display_val=' + displayval.toUpperCase().replace(' ', '_');
@@ -152,7 +200,6 @@ var Mapper = (function () {
 
 		});
 	}
-
 
 	var submitHomeClickHandler = function() {
 			$( "body" ).on( "click", "#idsubmit", function() {
@@ -234,12 +281,10 @@ var Mapper = (function () {
 		var legend = d3.select('#legend')
 			.append('ul')
 				.attr('class', 'list-inline');
-		//console.log(colors.range())
 		// debugger
 		colors.range().pop();
 
 		var keys = legend.selectAll('li.key').data(colors.range());
-		//console.log(keys)
 		var bucket_i = 0
 		keys.enter().append('li')
 			.attr('class', 'key')
@@ -293,7 +338,7 @@ var Mapper = (function () {
     for (var i = colors.length - 1; i >= 0; i--) 
     {
       //debugger;
-      var quart = ".q" + i + "-" + 10;      
+      var quart = ".q" + i + "-" + 10;
       d3.selectAll(quart).style("fill", colors[i]);
 
     }
@@ -308,7 +353,6 @@ var Mapper = (function () {
 
 
     var keys = d3.selectAll('li.key').data(colors.range());
-    //console.log(keys)
     keys.enter().append('li')
       .attr('class', 'key')
       .style('border-top-color', String)
@@ -351,7 +395,6 @@ var Mapper = (function () {
 		var width = $('#canvas').width(); 
 
 		var height = $('#canvas').height(); 
-		//console.log(width, height)
 
 		// set attrs and 'resume' force 
 		//svg = $('#svgMap')
@@ -421,7 +464,6 @@ var Mapper = (function () {
           .attr("state",function(d) {return d.id})
           .call(d3.helper.tooltip(
             function(d, i){
-              //console.log(d.properties);
               return "<b>"+d.properties.name;
             }
             ));
@@ -438,48 +480,55 @@ var Mapper = (function () {
 		return svg;
 	}
 
-	var initialize = function(display_variable, filter_variable) {
+	var initialize = function(display_variable, filter_variable, user_id, dataset_id) {
 		displayval = display_variable
 		filterval = filter_variable
 		apiUrl = MapperBack.getapiUrl();
+		userId = user_id
+
+		if (dataset_id === null) {
+			dataset_id = 1
+		}
+		datasetId = dataset_id
+
+		loadDatasets()
+		loadColumns(dataset_id)
+		
 	}
 
-  var drawMap = function(dataPoints) {
-    $("#canvas").html("");
-    var quantize = createQuantize(currColor, 10, dataPoints);
+	var drawMap = function(dataPoints) {
+		$("#canvas").html("");
+		var quantize = createQuantize(currColor, 10, dataPoints);
 
-    var width = 870,
-      height = 505;
+		var width = 870,
+		  height = 505;
 
-    var rateById = d3.map();
-    
-    for (var i = 0; i < dataPoints.length; i++) {
-      var location = parseInt(dataPoints[i].location) / 1000
-      rateById.set(location, dataPoints[i].value);
-    }
-    var svg = drawUSA("state", "#canvas", quantize, rateById);
-    
-    document.getElementsByTagName('svg')[0].id = 'svgMap';   
-    addLegend(svg, quantize);
-    addTitle(svg);
-    //changeColor('#ff0000');
+		var rateById = d3.map();
 
-    d3.select(self.frameElement).style("height", height + "px");
-  }
+		for (var i = 0; i < dataPoints.length; i++) {
+		  var location = parseInt(dataPoints[i].location) / 1000
+		  rateById.set(location, dataPoints[i].value);
+		}
+		var svg = drawUSA("state", "#canvas", quantize, rateById);
+
+		document.getElementsByTagName('svg')[0].id = 'svgMap';   
+		addLegend(svg, quantize);
+		addTitle(svg);
+		//changeColor('#ff0000');
+
+		d3.select(self.frameElement).style("height", height + "px");
+	}
 
 	var start = function() {   
-    console.log("displayval: "+displayval)
-    console.log("filterval: "+filterval);
-    currColor = [10,10,100];
+    	currColor = [10,10,100];
 		var onSuccess = function(data) {
-      allPoints = data;
-      makeSlider();
+	     	allPoints = data;
+	     	makeSlider();
 			var dataPoints = MapperBack.processPoints(data);
-      drawMap(dataPoints);
+	     	drawMap(dataPoints);
 		};
 
 		var onFailure = function() {
-
 			console.error('failed to fetch points'); 
 		}
 
@@ -488,12 +537,22 @@ var Mapper = (function () {
 		makeGetRequest(pointUrl, params,  onSuccess, onFailure);
 	};
 
+	var datasetNameToId = function(datasetName) {
+		for (var i = datasets.length - 1; i >= 0; i--) {
+			if (datasets[i].name === datasetName) {
+				return datasets[i]["id"]
+			}
+		};
+		return null
+	}
+
 	var gatherPointVariables = function() {
 		// TODO: Get these from displayval etc.
 		var ans = {}
-		ans["display_val"] = displayval.toUpperCase().replace(' ', '_');
-		ans["filter_val"] = filterval.toUpperCase().replace(' ', '_');
-		ans["num_points"] = 50000
+		ans["display_val"] = displayval
+		ans["filter_val"] = filterval
+		ans["dataset_id"] = datasetId
+		ans["num_points"] = 20000
 		return ans
 	}
 
@@ -501,8 +560,8 @@ var Mapper = (function () {
 		// TODO: Do me
 		var ans = {}
 		ans["name"] = "My Fun Map"
-		ans["display_variable"] = displayval.toUpperCase().replace(' ', '_');
-		ans["filter_variable"] = filterval.toUpperCase().replace(' ', '_');
+		ans["display_variable"] = displayval
+		ans["filter_variable"] = filterval
 		ans["user_id"] = userId
 		ans["dataset_id"] = datasetId
 		return ans

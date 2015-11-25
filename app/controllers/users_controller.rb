@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-	before_action :set_user, only: [:show, :edit, :update, :destroy, :points, :column_suggestions]
+	before_action :set_user, only: [:show, :edit, :update, :destroy, :points, :column_suggestions, :maps, :datasets]
 
 	def show
 
@@ -11,6 +11,7 @@ class UsersController < ApplicationController
 		@datasets = @user.datasets
 	end
 
+
 	def addData
 		#@user.datasets.add()
 	end
@@ -20,7 +21,7 @@ class UsersController < ApplicationController
 	end
 
 	def maps
-
+		render json:  @user.maps
 	end
 
 private

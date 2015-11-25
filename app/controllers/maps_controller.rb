@@ -14,6 +14,13 @@ class MapsController < ApplicationController
   def show
     @display_variable = @map.display_variable
     @filter_variable = @map.filter_variable
+    if (current_user)
+      @user_id = current_user
+    else
+      @user_id = nil
+    end
+    @dataset_id = @map.dataset_id
+    
     respond_to do |format|
       format.html { } # TODO: Render the map page!
       format.json {

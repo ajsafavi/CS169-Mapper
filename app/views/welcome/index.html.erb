@@ -28,9 +28,14 @@
     // This is a jQuery convention to say that once all the files
     // load, the function Smile.start() should run.
     // This function is defined in the smiles.js
+
+    $(function() {
+    	Mapper.initialize('<%= @display_variable.to_s %>', '<%= @filter_variable.to_s %>', null, 1)
+        Mapper.startAutocomplete();
+    });
+
     $(function() {
         Mapper.startAutocomplete();
-
     });
     $(function() {
         Mapper.submitHomeClickHandler();
