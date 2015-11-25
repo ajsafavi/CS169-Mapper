@@ -117,9 +117,21 @@ var Mapper = (function () {
     			datasets.push(data[i])
     			datasetList.push(data[i].name)
     		}
+
+    		// $("#iddataset").on('input propertychange paste autocompleteselect', function() {
+    		$("#iddataset").on('change', function() {
+    			console.log("Dataset Change Detected")
+    			datasetName = this.value
+    			dataset = findDatasetByName($('#iddataset').val())
+    			datasetId = dataset.id
+    			console.log(datasetId)
+    			loadColumnsAsync(dataset.columns)
+	    	});
     	}
 
     	makeGetRequest(datasetsUrl, null, success)
+
+
     }
 
     var loadColumns = function(datasetId) {
@@ -128,21 +140,27 @@ var Mapper = (function () {
 
     	var success = function(dataset) {
     		var columns = dataset.columns
-    		varList = new Array()
-
-    		for (var i = columns.length - 1; i >= 0; i--) {
-    			var column = columns[i]
-    			if (column.column_type === "VARIABLE") {
-    				varList.push(column.name)
-    			}
-    		};
-
-    		startAutocomplete()
+    		loadColumnsAsync(columns)
     	}
 
-    	
 
     	makeGetRequest(datasetUrl, null, success)
+    }
+
+
+    var loadColumnsAsync = function(columns) {
+    	$("#idfilteringvar").html("")
+		$("#idvar").html("")
+		varList = new Array()
+
+		for (var i = columns.length - 1; i >= 0; i--) {
+			var column = columns[i]
+			if (column.column_type === "VARIABLE") {
+				varList.push(column.name)
+			}
+		};
+
+		startAutocomplete()
     }
 
 
@@ -152,6 +170,16 @@ var Mapper = (function () {
 			source: varList,
 			minLength: 0,
 			scroll: true,
+      autoFocus: true
+		}).focus(function() {
+				$(this).autocomplete("search", "");
+		});
+
+		$("#iddataset").autocomplete({
+			source: datasetList,
+			minLength: 0,
+			scroll: true,
+			
       autoFocus: true
 		}).focus(function() {
 				$(this).autocomplete("search", "");
@@ -181,9 +209,9 @@ var Mapper = (function () {
 				displayval = $("#idvar").val();
 				filterval = $("#idfilteringvar").val();
 				geoval = $("#idgeo").val();
-				datasetId_possible = datasetNameToId($('#iddataset').val())
+				datasetId_possible = findDatasetByName($('#iddataset').val())
 				if (datasetId_possible) {
-					datasetId = datasetId_possible
+					datasetId = datasetId_possible.id
 				}
 
 
@@ -537,7 +565,15 @@ var Mapper = (function () {
 		makeGetRequest(pointUrl, params,  onSuccess, onFailure);
 	};
 
-	var datasetNameToId = function(datasetName) {
+	var findDatasetById = function(datasetId) {
+		for (var i = datasets.length - 1; i >= 0; i--) {
+			if (datasets[i].id === datasetId) {
+				return datasets[i]
+			}
+		};
+		return null
+	}
+	var findDatasetByName = function(datasetName) {
 		for (var i = datasets.length - 1; i >= 0; i--) {
 			if (datasets[i].name === datasetName) {
 				return datasets[i]["id"]
