@@ -26,6 +26,7 @@ dataset.columns.create({name: "INCOME", column_type: "VARIABLE", null_value: "99
 dataset.columns.create({name: "SEX", column_type: "VARIABLE", null_value: nil})
 dataset.columns.create({name: "AGE", column_type: "VARIABLE", null_value: nil})
 
+
 filepath = Rails.root.join('datasets','farm.csv').to_s
 name = "Farm Dataset"
 dataset = Dataset.create({
@@ -36,8 +37,23 @@ dataset = Dataset.create({
 	})
 dataset.columns.create({name: "COUNTY_FIPS_MAPPR", column_type: "LOCATION", detail_level: "countyfull"})
 dataset.columns.create({name: "STATE_FIPS_MAPPR", column_type: "LOCATION", detail_level: "state"})
-dataset.columns.create({name: "WEIGHT", column_type: "WEIGHT", null_value: nil})
+dataset.columns.create({name: "HHWT", column_type: "WEIGHT", null_value: nil})
 dataset.columns.create({name: "FARM", column_type: "VARIABLE", null_value: "-1"})
+
+
+
+filepath = Rails.root.join('datasets','appliances.csv').to_s
+name = "Appliances Dataset"
+dataset = Dataset.create({
+	name: name,
+	filepath: filepath, 
+	user_id: aryan.id,
+	is_public: true
+	})
+dataset.columns.create({name: "COUNTY_FIPS_MAPPR", column_type: "LOCATION", detail_level: "countyfull"})
+dataset.columns.create({name: "STATE_FIPS_MAPPR", column_type: "LOCATION", detail_level: "state"})
+dataset.columns.create({name: "HHWT", column_type: "WEIGHT", null_value: nil})
+dataset.columns.create({name: "ROOMS", column_type: "VARIABLE", null_value: "0"})
 
 
 

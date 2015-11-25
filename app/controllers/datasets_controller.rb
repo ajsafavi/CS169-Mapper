@@ -8,13 +8,24 @@ class DatasetsController < ApplicationController
   # GET /datasets
   # GET /datasets.json
   def index
-    ans = Set.new(Dataset.where(is_public: true))
+    ans = Set.new
+
+    public_datasets = Dataset.where(is_public: true)
+    public_datasets.each do |dataset|
+      to_add = dataset.as_json
+      to_add[:columns] = dataset.columns
+      ans.add(to_add)
+    end
     if current_user
       others = current_user.datasets
       others.each do |dataset|
-        ans.add(dataset)
+        to_add = dataset.as_json
+        to_add[:columns] = dataset.columns
+        ans.add(to_add)
       end
     end
+
+    @ans = ans
 
     render json: ans
   end
