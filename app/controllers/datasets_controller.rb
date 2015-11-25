@@ -75,14 +75,19 @@ class DatasetsController < ApplicationController
         render json: @dataset.errors, status: :unprocessable_entity
       end
 
-      ajax_upload = params[:datafile].is_a?(String)
       filedata = nil
-      if ajax_upload
-        filedata =  request.body.read
+
+      if (params[:datafile_raw].nil?)
+        ajax_upload = params[:datafile].is_a?(String)
+        if ajax_upload
+          filedata =  request.body.read
+        else
+          logger.debug "DATAFILE: #{params[:datafile]}"
+          filedata = params[:datafile].read
+        end
       else
-        logger.debug "DATAFILE: #{params[:datafile]}"
-        filedata = params[:datafile].read
-      end   
+        filedata = params[:datafile_raw]
+      end
 
       # Create columns
       columns = params[:columns]
@@ -155,7 +160,7 @@ class DatasetsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def dataset_params
       column_params = [:name, :detail_level, :column_type, :location_type, :description, :friendly_name, :null_value]
-      params.permit(:id, :name, :owner, :datafile, {columns: column_params})
+      params.permit(:id, :name, :owner, :datafile, :datafile_raw, {columns: column_params})
     end
 
     def dataset_edit_params
