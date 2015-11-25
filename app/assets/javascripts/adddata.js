@@ -1,17 +1,40 @@
 var AddData = (function () {
 
+  var varTemplate;
   //wait for change and determine if valid file
   var file = [];
+  varTemplate = $(".variableSelectors .varrow")[0].outerHTML;
+  $(".variableSelectors .varrow").html('');
+
   $(".fileSelect").change(function(e) 
   { 
     console.log(e.target.files[0]);
     file = e.target.files[0];
+    addHeads();
 
   });
   $(".uploadbutton").click(function(){
     createDataSet();
   });
+  var addHeads = function()
+  {
+    var read = new FileReader();
+    var rawText = "";
+    read.readAsBinaryString(file)
+    read.onloadend = function() 
+    {
+      rawText = read.result;
+      vars = textToVars(rawText);
+      console.log(vars);
+      for(var i = 0; i < vars.length; i++)
+      {
+        var newElem = $(varTemplate);
+        newElem.find('.variable').text(vars[i]);
 
+        $(".variableSelectors").append(newElem);
+      }
+    }
+  } 
   var validFile = function(path) 
   {
     if (path.split('.').pop() != 'csv')

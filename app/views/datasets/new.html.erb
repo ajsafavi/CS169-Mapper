@@ -19,7 +19,7 @@
 			});
 		</script>
 		
-		<%= javascript_include_tag "adddata.js"%>
+		
 
 	</div>
 
@@ -29,22 +29,23 @@
   			<div class="col-md-8"><p>Options</p></div>
 		</div>
 		<%# dataset.variable.each do |variable| %>
-			<div class="row">
-	      	<div class="col-md-4"><p>Variable</p></div>
-  			<div class="col-md-8">
-  				<button type="button" class="btn btn-default btn-sm" onclick="varClick();">Variable</button>
-  				<button type="button" class="btn btn-default btn-sm" onclick="locClick();">Location</button>
-  				<button type="button" class="btn btn-default btn-sm" onclick="weightClick();">Weight</button>
-  				<span class="extras">
-  					<button type="button" class="btn btn-default btn-sm" id="null">Null?</button>
-  					<button type="button" class="btn btn-default btn-sm" id="state">State</button>
-  					<button type="button" class="btn btn-default btn-sm" id="countypartial">County Partial</button>
-  					<button type="button" class="btn btn-default btn-sm" id="countyfull">County Full</button>
-  					<!-- <button type="button" class="btn btn-default btn-sm" id="null"></button> -->
-  				</span>
-  			</div>
-	      	</div>
+		<div class="varrow">
+      	<div class="col-md-4"><p class="variable">Variable</p></div>
+			<div class="col-md-8">
+				<button type="button" class="btn btn-default btn-sm" onclick="varClick();">Variable</button>
+				<button type="button" class="btn btn-default btn-sm" onclick="locClick();">Location</button>
+				<button type="button" class="btn btn-default btn-sm" onclick="weightClick();">Weight</button>
+				<span class="extras">
+					<button type="button" class="btn btn-default btn-sm" id="null">Null?</button>
+					<button type="button" class="btn btn-default btn-sm" id="state">State</button>
+					<button type="button" class="btn btn-default btn-sm" id="countypartial">County Partial</button>
+					<button type="button" class="btn btn-default btn-sm" id="countyfull">County Full</button>
+					<!-- <button type="button" class="btn btn-default btn-sm" id="null"></button> -->
+				</span>
+			</div>
+      	</div>
     	<%# end %>
+    	<%= javascript_include_tag "adddata.js"%>
 
 	</div>
 
