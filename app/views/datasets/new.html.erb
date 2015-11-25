@@ -17,9 +17,25 @@
 
 	</div>
 
+	<%= javascript_include_tag "adddataUI.js"%>
 	<div class="variableSelectors container">
 		<div class="row">
-			<p>"hi"</p>
+			<div class="col-md-4"><p>Variables</p></div>
+  			<div class="col-md-8"><p>Options</p></div>
 		</div>
+		<%# dataset.variable.each do |variable| %>
+			<div class="row">
+	      	<div class="col-md-4"><p>Variable</p></div>
+  			<div class="col-md-8">
+  				<button type="button" class="btn btn-default btn-sm">Variable</button>
+  				<button type="button" class="btn btn-default btn-sm">Location</button>
+  				<button type="button" class="btn btn-default btn-sm">Weight</button>
+  				<span class="extras">
+  					<button type="button" class="btn btn-default btn-sm">Weight</button>
+  				</span>
+  			</div>
+	      	</div>
+    	<%# end %>
 
 	</div>
+
