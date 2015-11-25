@@ -11,13 +11,18 @@
 		<form action='' method='POST' enctype='multipart/form-data'>
 			<input type="text" name="Dataset Name" value="name" class='datasetname'>
 	    	<input type='file' name='userFile' class='fileSelect'><br>
-	    	<input type='submit' name='upload_btn' value='upload'>
+	    	<input type='button' name='upload_btn' value='upload' class = 'uploadbutton'>
 		</form>
+		<script type="text/javascript">
+			$(".submitbutton").click(function(){
+			  AddData.createDataSet();
+			});
+		</script>
+		
 		<%= javascript_include_tag "adddata.js"%>
 
 	</div>
 
-	<%= javascript_include_tag "adddataUI.js"%>
 	<div class="variableSelectors container">
 		<div class="row">
 			<div class="col-md-4"><p>Variables</p></div>

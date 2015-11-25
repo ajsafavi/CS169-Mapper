@@ -45,16 +45,18 @@ class DatasetsController < ApplicationController
 
     params = dataset_params
 
-    params[:owner] = params[:owner].to_i
-    if (current_user.nil? or current_user.id != params[:owner])
+    
+    if (current_user.nil?)
       # logger.debug "CURRENTLY_LOGGED_IN: #{current_user.id.class}, OWNER: #{params[:owner].class}"
       render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
     else
+
       create_params = Hash.new
       create_params[:name] = params[:name]
       create_params[:num_rows] = 1000
       create_params[:user_id] = params[:owner]
       create_params[:filepath] = params[:filepath]
+      create_params[:owner] = current_user.id
 
       @dataset = Dataset.new(create_params)
 
