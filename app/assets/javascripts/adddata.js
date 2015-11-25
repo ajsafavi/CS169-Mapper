@@ -68,6 +68,8 @@ var AddData = (function () {
                 };
       //toSend.append('columns',columns);
       console.log(toSend);
+      toSend = JSON.stringify(toSend)
+      console.log(toSend)
       $.ajax({
           type: "POST",
           url: "/datasets",
@@ -80,6 +82,9 @@ var AddData = (function () {
           {
 
           },
+          dataType: 'json',
+          contentType: 'application/json',
+
           xhrFields: 
           {
             withCredentials: true
