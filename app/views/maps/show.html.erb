@@ -28,7 +28,7 @@
 <script type="text/javascript">
 
     $(function() {
-    	Mapper.initialize('<%= @display_variable.to_s %>', '<%= @filter_variable.to_s %>')
+    	Mapper.initialize('<%= @display_variable.to_s %>', '<%= @filter_variable.to_s %>', '<%= @user_id.to_s %>', '<%= @dataset_id.to_s %>')
         Mapper.startAutocomplete();
     });
     $(function() {

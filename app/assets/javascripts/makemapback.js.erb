@@ -104,21 +104,31 @@ var MapperBack = (function () {
   {
     return '<%=Rails.env%>';
   }
+
   var getapiUrl = function()
   {
-    var env = getEnvironment();
+    // var env = getEnvironment();
 
-    if(env === 'production')
-    {
-      apiUrl = 'https://mappr169.herokuapp.com/';
-    }
+    // if(env === 'production')
+    // {
+    //   apiUrl = 'https://mappr169.herokuapp.com/';
+    // }
 
-    else if(env === 'development')
-    {
-      apiUrl = 'http://localhost:3000/';
+    // else if(env === 'development')
+    // {
+    //   apiUrl = 'http://localhost:3000/';
+    // }
+    // return apiUrl
+
+    if (typeof location.origin === 'undefined') {
+      location.origin = location.protocol + '//' + location.host;
     }
-    return apiUrl
+    console.log("Hello")
+    console.log(location.origin)
+    return location.origin + "/"
   }
+
+
     // PUBLIC METHODS
     // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
   return {
