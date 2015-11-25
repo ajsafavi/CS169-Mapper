@@ -1,3 +1,4 @@
+
 <html lang="en">
 <meta charset="utf-8">
 <title> Mappr </title>
@@ -8,7 +9,6 @@
 <%= javascript_include_tag "jquery.redirect" %>
 <%= javascript_include_tag "bootstrap.js"%>
 <%= javascript_include_tag "queue.min"%>
-
 
 <%= javascript_include_tag "topojson.min"%>
 
@@ -73,10 +73,22 @@
 			}
 		</script>
 	</div>
+	<div>
+		<font color="black">
+			Select file to create data set (put some instruction here about the file)
+		</font>
+		<form action='' method='POST' enctype='multipart/form-data'>
+			<input type="text" name="Dataset Name" value="name" class='datasetname'>
+	    	<input type='file' name='userFile' class='fileSelect'><br>
+	    	<input type='submit' name='upload_btn' value='upload'>
+		</form>
+		<%= javascript_include_tag "adddata.js"%>
+
+	</div>
+	
 
 </div>
 
 </body>
-
 
 

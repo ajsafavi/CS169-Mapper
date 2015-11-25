@@ -11,15 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151104094402) do
+ActiveRecord::Schema.define(version: 20151124013548) do
 
   create_table "columns", force: :cascade do |t|
     t.integer  "dataset_id"
     t.string   "name"
     t.string   "column_type"
     t.string   "null_value"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.string   "location_type"
+    t.string   "description"
+    t.string   "friendly_name"
+    t.string   "detail_level"
   end
 
   add_index "columns", ["dataset_id"], name: "index_columns_on_dataset_id"
@@ -28,12 +32,9 @@ ActiveRecord::Schema.define(version: 20151104094402) do
     t.integer  "user_id"
     t.string   "name"
     t.string   "filepath"
-    t.string   "location_column"
-    t.string   "weight_column"
-    t.string   "location_type"
     t.integer  "num_rows"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean  "is_public"
   end
 
@@ -55,6 +56,11 @@ ActiveRecord::Schema.define(version: 20151104094402) do
   add_index "maps", ["dataset_id"], name: "index_maps_on_dataset_id"
   add_index "maps", ["shareable_url"], name: "index_maps_on_shareable_url"
   add_index "maps", ["user_id"], name: "index_maps_on_user_id"
+
+  create_table "user_input_data", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "users", force: :cascade do |t|
     t.string   "provider",               default: "email", null: false
