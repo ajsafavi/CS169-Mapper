@@ -28,23 +28,34 @@
 			<div class="col-md-4"><p>Variables</p></div>
   			<div class="col-md-8"><p>Options</p></div>
 		</div>
-		<%# dataset.variable.each do |variable| %>
+
 		<div class="varrow">
-      	<div class="col-md-4"><p class="variable">Variable</p></div>
-			<div class="col-md-8">
-				<button type="button" class="btn btn-default btn-sm" onclick="varClick();">Variable</button>
-				<button type="button" class="btn btn-default btn-sm" onclick="locClick();">Location</button>
-				<button type="button" class="btn btn-default btn-sm" onclick="weightClick();">Weight</button>
-				<span class="extras">
+	      	<div class="col-md-4">
+	      		<p class="variable">Variable</p>
+	      	</div>
+			<div class="col-md-4">
+
+				<!-- <form action="#"> -->
+ 
+				<fieldset>
+					<select name="classification" id="classification">
+						<option selected="selected">Variable</option>
+						<option>Location</option>
+						<option>Weight</option>
+					</select>
+				</fieldset>
+			</div>
+			<div class="col-md-4">
+				<span class="extras variableExtras">
 					<button type="button" class="btn btn-default btn-sm" id="null">Null?</button>
+				</span>
+				<span class="extras locExtras">
 					<button type="button" class="btn btn-default btn-sm" id="state">State</button>
 					<button type="button" class="btn btn-default btn-sm" id="countypartial">County Partial</button>
 					<button type="button" class="btn btn-default btn-sm" id="countyfull">County Full</button>
-					<!-- <button type="button" class="btn btn-default btn-sm" id="null"></button> -->
 				</span>
 			</div>
       	</div>
-    	<%# end %>
     	<%= javascript_include_tag "adddata.js"%>
 
 	</div>
