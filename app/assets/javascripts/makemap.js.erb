@@ -11,13 +11,13 @@ var Mapper = (function () {
     var datasets = null
 
     var fipsState = {
-       "01": "Alabama",
-       "02": "Alaska",
-       "04": "Arizona",
-       "05": "Arkansas",
-       "06": "California",
-       "08": "Colorado",
-       "09": "Connecticut",
+       "1": "Alabama",
+       "2": "Alaska",
+       "4": "Arizona",
+       "5": "Arkansas",
+       "6": "California",
+       "8": "Colorado",
+       "9": "Connecticut",
        "10": "Delaware",
        "11": "District of Columbia",
        "12": "Florida",
@@ -676,7 +676,7 @@ var Mapper = (function () {
                     .attr("d", path)
                     .on("mouseover", function(d) { stateHover(d, rateById.get(d.id), true) })
                     .on("mouseout", function(d) { stateHover(d, rateById.get(d.id), false) })
-                    .on("click", function(d) { zoomMap(d, width, height, path) })
+                    .on("click", function(d) { zoomMap(d, width, height, path, rateById.get(d.id)) })
                     .attr("state",function(d) { return d.id })
                     // .call(d3.helper.tooltip(
                     //     function(d, i){
@@ -712,27 +712,31 @@ var Mapper = (function () {
         }
     }
 
-    var zoomMap = function (d, width, height, path) {
-        stateClickHandler(d)
+    var zoomMap = function (d, width, height, path, stateValue) {
+        if (d) {
+            var barcanvas = d3.select("#barcanvas");
+            barcanvas.selectAll("p").remove();
+            barcanvas.append("p").text(fipsState[d.id]).style("color", "black");
+            barcanvas.append("p").text(displayval + ":" + stateValue).style("color", "black");
+            barcanvas.append("p").text("Click state for more information.").style("color", "black");
+            stateClickHandler(d)
+        }
         var x, y, k;
         var g = d3.select("g");
-        var changed = false;
+        if (centered != null) {
+            highlightState(d, true, centered)
+        }
         if (d && centered !== d) {
             var centroid = path.centroid(d);
             x = centroid[0];
             y = centroid[1];
             k = 4;
-            if (centered !== null) {
-                highlightState(d, true, centered)
-            }
             centered = d;
-            changed = true;
             highlightState(d, false, centered);
         } else {
             x = width / 2;
             y = height / 2;
             k = 1;
-            highlightState(d, true, centered)
             $("#barcanvas svg").remove();
             centered = null;
         }

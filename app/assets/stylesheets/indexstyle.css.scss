@@ -34,7 +34,7 @@ input[type="range"] {
 	font-family: 'Raleway', sans-serif;
 	font-weight: 100;
 	font-size: 1.7em;
-	color: #000;
+	background-color: #fff;
 	padding-top: 20px;
 	text-decoration: none;
 }
@@ -43,12 +43,14 @@ body {
 	background-image: image-url('congruent_outline.png');
 }
 
-/*.row {
-	margin-left: 0px;
-	margin-right: 0px;
-}*/
-
 /*end of bootstrap fixes*/
+
+/*beginning of header fixes*/
+
+
+
+
+/*end of header fixes*/
 
 p {
     color: #aaa;
@@ -69,6 +71,10 @@ h6 {
     box-sizing: border-box;
     font-family: 'Raleway', sans-serif;
     font-weight: 100;
+}
+
+a:hover {
+	background-color: #fff;
 }
 
 
@@ -200,3 +206,6 @@ div ul li{
   pointer-events: all;
 }
 
+.firstContainer select {
+	height: 50px;
+}
