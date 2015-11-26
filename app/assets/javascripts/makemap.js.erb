@@ -648,158 +648,17 @@ var Mapper = (function () {
     }
 
     var saveMap = function() {
-        var onSuccess = function(data) {
-            // TODO: Do something?
+        var url = window.location.href;
+        window.prompt("Copy to clipboard to share:", url);
+    }
 
-            if (data.id) {
-                mapId = data["id"]
-            }
-            ));
-			svg.append("path")
-					.datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
-					.attr("class", "states")
-					.attr("d", path)
-
-			
-			applyColors(null,currColor, 10);
-		});
-
-		d3.select(self.frameElement).style("height", height + "px");
-		return svg;
-	}
-
-	var initialize = function(display_variable, filter_variable, user_id, dataset_id) {
-		displayval = display_variable
-		filterval = filter_variable
-		apiUrl = MapperBack.getapiUrl();
-		userId = user_id
-
-		if (dataset_id === null) {
-			dataset_id = 1
-		}
-		datasetId = dataset_id
-
-		loadDatasets()
-		loadColumns(datasetId)
-		
-	}
-
-	var drawMap = function(dataPoints) {
-		$("#canvas").html("");
-		var quantize = createQuantize(currColor, 10, dataPoints);
-
-		var width = 870,
-		  height = 505;
-
-		var rateById = d3.map();
-
-		for (var i = 0; i < dataPoints.length; i++) {
-		  var location = parseInt(dataPoints[i].location) / 1000
-		  rateById.set(location, dataPoints[i].value);
-		}
-		var svg = drawUSA("state", "#canvas", quantize, rateById);
-
-		document.getElementsByTagName('svg')[0].id = 'svgMap';   
-		addLegend(svg, quantize);
-		addTitle(svg);
-		//changeColor('#ff0000');
-
-		d3.select(self.frameElement).style("height", height + "px");
-	}
-
-	var start = function() {   
-    	currColor = [10,10,100];
-		var onSuccess = function(data) {
-	     	allPoints = data;
-	     	makeSlider();
-			var dataPoints = MapperBack.processPoints(data);
-	     	drawMap(dataPoints);
-		};
-
-		var onFailure = function() {
-			console.error('failed to fetch points'); 
-		}
-
-		params = gatherPointVariables()
-		var pointUrl = apiUrl + "datasets/" + datasetId + "/points"
-		makeGetRequest(pointUrl, params,  onSuccess, onFailure);
-	};
-
-	var findDatasetById = function(datasetId) {
-		for (var i = datasets.length - 1; i >= 0; i--) {
-			if (datasets[i].id === datasetId) {
-				return datasets[i]
-			}
-		};
-		return null
-	}
-	var findDatasetByName = function(datasetName) {
-		for (var i = datasets.length - 1; i >= 0; i--) {
-			if (datasets[i].name === datasetName) {
-				return datasets[i]
-			}
-		};
-		return null
-	}
-
-	var gatherPointVariables = function() {
-		// TODO: Get these from displayval etc.
-		var ans = {}
-		ans["display_val"] = displayval
-		ans["filter_val"] = filterval
-		ans["dataset_id"] = datasetId
-		ans["num_points"] = 50000
-		return ans
-	}
-
-	var gatherMapVariables = function() {
-		// TODO: Do me
-		var ans = {}
-		ans["name"] = "My Fun Map"
-		ans["display_variable"] = displayval
-		ans["filter_variable"] = filterval
-		ans["user_id"] = userId
-		ans["dataset_id"] = datasetId
-		return ans
-	}
-
-	var setMapId = function(newMapId) {
-		mapId = newMapId
-	}
-
-	var saveMap = function() {
-		var onSuccess = function(data) {
-			// TODO: Do something?
-
-			if (data.id) {
-				mapId = data["id"]
-			}
-		}
-
-		var onFailure = function(data) {
-			// TODO: Do something?
-			console.error("Failed to save map")
-		}
-
-		params = gatherMapVariables()
-
-		var saveUrl
-		if (mapId != null) {
-			saveUrl = apiUrl + "maps/" + mapId + "/"
-			makePutRequest(saveUrl, params, onSuccess, onFailure)
-		} else {
-			saveUrl = apiUrl + "maps/"
-			makePostRequest(saveUrl, params, onSuccess, onFailure)
-		}
-	}
-
-	d3.select(window).on('resize', resize);
+    d3.select(window).on('resize', resize);
 
 
-	// PUBLIC METHODS
-	// any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
-	
-	return {
+    // PUBLIC METHODS
+    // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
+    
+    return {
     makeSlider: makeSlider,
     changeColor: changeColor,
         createQuantize: createQuantize,
