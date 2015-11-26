@@ -280,9 +280,9 @@ var Mapper = (function () {
         startAutocomplete()
     }
 
-    /* makes histogram in scattercanvas */
+    /* makes histogram in barcanvas */
     var stateClickHandler = function(d) {
-        $("#scattercanvas svg").remove();
+        $("#barcanvas svg").remove();
         var filtermin = $("#slider-range").slider("values",0);
         var filtermax = $( "#slider-range" ).slider( "values", 1);
         var statePoints = MapperBack.filterPoints(allPoints, filtermin, filtermax, d.id);
@@ -291,8 +291,8 @@ var Mapper = (function () {
         var minVal = Math.max(0, Math.floor(Math.min.apply(null, values)))
         var maxVal = Math.floor(Math.max.apply(null, values))
         var margin = {top: 30, right: 30, bottom: 30, left: 30},
-            width = $("#scattercanvas").width() - margin.left - margin.right,
-            height = $("#scattercanvas").height() - margin.top - margin.bottom;
+            width = $("#barcanvas").width() - margin.left - margin.right,
+            height = $("#barcanvas").height() - margin.top - margin.bottom - 100;
         var x = d3.scale.linear()
             .domain([minVal, maxVal])
             .range([0, width]);
@@ -308,7 +308,7 @@ var Mapper = (function () {
             .scale(x)
             .orient("bottom");
 
-        var svg = d3.select("#scattercanvas").append("svg")
+        var svg = d3.select("#barcanvas").append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
           .append("g")
@@ -319,9 +319,6 @@ var Mapper = (function () {
           .enter().append("g")
             .attr("class", "bar")
             .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
-
-        console.log(width);
-        console.log(x(data[0].dx));
 
         bar.append("rect")
             .attr("x", 1)
@@ -696,12 +693,12 @@ var Mapper = (function () {
         return svg;
     }
 
-    var stateHover = function(d, stateName, hovered) {
+    var stateHover = function(d, stateValue, hovered) {
         if (centered == null) {
             var barcanvas = d3.select("#barcanvas");
             if (hovered == true) {
                 barcanvas.append("p").text(fipsState[d.id]).style("color", "black");
-                barcanvas.append("p").text(stateName).style("color", "black");
+                barcanvas.append("p").text(displayval + ":" + stateValue).style("color", "black");
                 barcanvas.append("p").text("Click state for more information.").style("color", "black");
             } else {
                 barcanvas.selectAll("p").remove();
@@ -730,6 +727,7 @@ var Mapper = (function () {
             y = height / 2;
             k = 1;
             highlightState(d, true, centered)
+            $("#barcanvas svg").remove();
             centered = null;
         }
         // g.selectAll("path")
