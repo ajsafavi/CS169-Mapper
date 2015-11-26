@@ -54,6 +54,7 @@ body {
 
 p {
     color: #aaa;
+    font-family: 'Raleway', sans-serif;
 }
 
 h1,
@@ -87,14 +88,14 @@ a:hover {
 
 #barcanvas {
 	background-color: #8EA86C;
-	min-height: 250px;
+	min-height: 350px;
 	border-bottom: thick solid #000;
 
 }
 
 #scattercanvas {
 	background-color: #4D642D;
-	min-height: 250px;
+	min-height: 150px;
 
 }
 

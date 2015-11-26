@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
 
-  resources :user_input_data
   devise_for :users
   
   get 'users/:id' => 'users#show'
