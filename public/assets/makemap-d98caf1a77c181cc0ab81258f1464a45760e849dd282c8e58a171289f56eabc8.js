@@ -594,7 +594,7 @@ var Mapper = (function () {
 		ans["display_val"] = displayval
 		ans["filter_val"] = filterval
 		ans["dataset_id"] = datasetId
-		ans["num_points"] = 50000
+		ans["num_points"] = 20000
 		return ans
 	}
 
