@@ -670,7 +670,7 @@ var Mapper = (function () {
                     .attr("d", path)
                     .on("mouseover", function(d) { stateHover(d, rateById.get(d.id), true) })
                     .on("mouseout", function(d) { stateHover(d, rateById.get(d.id), false) })
-                    .on("click", function(d) { zoomMap(d, width, height, path) })
+                    .on("click", function(d) { zoomMap(d, width, height, path, rateById.get(d.id)) })
                     .attr("state",function(d) { return d.id })
                     // .call(d3.helper.tooltip(
                     //     function(d, i){
@@ -706,13 +706,17 @@ var Mapper = (function () {
         }
     }
 
-    var zoomMap = function (d, width, height, path) {
+    var zoomMap = function (d, width, height, path, stateValue) {
         if (d) {
+            var barcanvas = d3.select("#barcanvas");
+            barcanvas.selectAll("p").remove();
+            barcanvas.append("p").text(fipsState[d.id]).style("color", "black");
+            barcanvas.append("p").text(displayval + ":" + stateValue).style("color", "black");
+            barcanvas.append("p").text("Click state for more information.").style("color", "black");
             stateClickHandler(d)
         }
         var x, y, k;
         var g = d3.select("g");
-        var changed = false;
         if (centered != null) {
             highlightState(d, true, centered)
         }
@@ -722,7 +726,6 @@ var Mapper = (function () {
             y = centroid[1];
             k = 4;
             centered = d;
-            changed = true;
             highlightState(d, false, centered);
         } else {
             x = width / 2;
