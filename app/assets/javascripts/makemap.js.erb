@@ -10,6 +10,60 @@ var Mapper = (function () {
     var datasetList = null
     var datasets = null
 
+    var fipsState = {
+       "01": "Alabama",
+       "02": "Alaska",
+       "04": "Arizona",
+       "05": "Arkansas",
+       "06": "California",
+       "08": "Colorado",
+       "09": "Connecticut",
+       "10": "Delaware",
+       "11": "District of Columbia",
+       "12": "Florida",
+       "13": "Geogia",
+       "15": "Hawaii",
+       "16": "Idaho",
+       "17": "Illinois",
+       "18": "Indiana",
+       "19": "Iowa",
+       "20": "Kansas",
+       "21": "Kentucky",
+       "22": "Louisiana",
+       "23": "Maine",
+       "24": "Maryland",
+       "25": "Massachusetts",
+       "26": "Michigan",
+       "27": "Minnesota",
+       "28": "Mississippi",
+       "29": "Missouri",
+       "30": "Montana",
+       "31": "Nebraska",
+       "32": "Nevada",
+       "33": "New Hampshire",
+       "34": "New Jersey",
+       "35": "New Mexico",
+       "36": "New York",
+       "37": "North Carolina",
+       "38": "North Dakota",
+       "39": "Ohio",
+       "40": "Oklahoma",
+       "41": "Oregon",
+       "42": "Pennsylvania",
+       "44": "Rhode Island",
+       "45": "South Carolina",
+       "46": "South Dakota",
+       "47": "Tennessee",
+       "48": "Texas",
+       "49": "Utah",
+       "50": "Vermont",
+       "51": "Virginia",
+       "53": "Washington",
+       "54": "West Virginia",
+       "55": "Wisconsin",
+       "56": "Wyoming"
+    }
+
     var geoList = ["USA", "Alabama", 
                                     "Alaska", 
                                     "Arizona",
@@ -419,19 +473,19 @@ var Mapper = (function () {
     //add the legend to the plot
     var addLegend = function (svg, data_quantize) 
     {
-    $("#legend").html("");
+        $("#legend").html("");
         //improve this 
         //legend should show each color and what range its for
         // heres an example http://bl.ocks.org/ZJONSSON/3918369
         var data_buckets = data_quantize.range()
 
         var colors = d3.scale.quantize()
-            .range(MapperBack.hexColorDivs(currColor,11));
+            .range(MapperBack.hexColorDivs(currColor,10));
         var legend = d3.select('#legend')
             .append('ul')
                 .attr('class', 'list-inline');
         // debugger
-        colors.range().pop();
+        // colors.range().pop();
 
         var keys = legend.selectAll('li.key').data(colors.range());
         var bucket_i = 0
@@ -507,7 +561,7 @@ var Mapper = (function () {
       .style('border-top-color', String)
 
 
-    var legendColors = MapperBack.hexColorDivs(currColor,11);
+    var legendColors = MapperBack.hexColorDivs(currColor,10);
     $('li.key').each(function(i) {
       $(this).css('border-top-color', legendColors[i]);
     });
@@ -626,10 +680,10 @@ var Mapper = (function () {
                     // ));
 
 
-            svg.select("g").append("path")
-                    .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
-                    .attr("class", "states")
-                    .attr("d", path)
+            // svg.select("g").append("path")
+            //         .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a == b || a !== b; }))
+            //         .attr("class", "states")
+            //         .attr("d", path)
 
             
             applyColors(null,currColor, 10);
@@ -643,16 +697,23 @@ var Mapper = (function () {
         stateClickHandler(d)
         var x, y, k;
         var g = d3.select("g");
+        var changed = false;
         if (d && centered !== d) {
             var centroid = path.centroid(d);
             x = centroid[0];
             y = centroid[1];
             k = 4;
+            if (centered !== null) {
+                highlightState(d, true, centered)
+            }
             centered = d;
+            changed = true;
+            highlightState(d, false, centered);
         } else {
             x = width / 2;
             y = height / 2;
             k = 1;
+            highlightState(d, true, centered)
             centered = null;
         }
         // g.selectAll("path")
@@ -661,7 +722,28 @@ var Mapper = (function () {
         g.transition()
             .duration(750)
             .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-            .style("stroke-width", 1.5 / k + "px");
+            .style("stroke-width", 1 / k + "px");
+
+    }
+
+    var highlightState = function(d, isZoomed, centered) {
+        if (isZoomed) {
+            d3.select("path[state=\"" + centered.id + "\"]")
+                .style("stroke-width", 1 + "px")
+                .style("stroke", null);
+        } else {
+            d3.select("path[state=\"" + centered.id + "\"]")
+                .style("stroke-width", 3 + "px")
+                .style("stroke", "black");
+
+            d3.select("svg").selectAll("path").sort(function(a, b) {
+                if (a.id != d.id) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            })
+        }
     }
 
     var initialize = function(display_variable, filter_variable, user_id, dataset_id) {
@@ -765,29 +847,8 @@ var Mapper = (function () {
     }
 
     var saveMap = function() {
-        var onSuccess = function(data) {
-            // TODO: Do something?
-
-            if (data.id) {
-                mapId = data["id"]
-            }
-        }
-
-        var onFailure = function(data) {
-            // TODO: Do something?
-            console.error("Failed to save map")
-        }
-
-        params = gatherMapVariables()
-
-        var saveUrl
-        if (mapId != null) {
-            saveUrl = apiUrl + "maps/" + mapId + "/"
-            makePutRequest(saveUrl, params, onSuccess, onFailure)
-        } else {
-            saveUrl = apiUrl + "maps/"
-            makePostRequest(saveUrl, params, onSuccess, onFailure)
-        }
+        var url = window.location.href;
+        window.prompt("Copy to clipboard to share:", url);
     }
 
     d3.select(window).on('resize', resize);
