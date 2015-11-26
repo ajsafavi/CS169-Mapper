@@ -29,7 +29,6 @@ class Dataset < ActiveRecord::Base
             self.filepath = self.generate_filepath
         end
         outpath = self.filepath
-        logger.debug "Writing Dataset File To: #{outpath}"
 
 
         File.open(outpath, 'wb') do |f|
@@ -189,9 +188,6 @@ class Dataset < ActiveRecord::Base
                 state_name = row[state_col.name]
                 county_name = row[county_partial_col.name]
 
-                # logger.debug "STATE_NUMERIC: #{state_name}, #{state_name.class}"
-                # logger.debug "COUNTY: #{county_name}, #{county_name.class}"
-
                 state_name = state_name.upcase
                 county_name = county_name.upcase
                 
@@ -257,7 +253,6 @@ class Dataset < ActiveRecord::Base
 
         filepath = self.filepath
         # Iterate through the file raw
-        logger.debug "Corrent filepath: #{filepath}"
         CSV.foreach(filepath, :headers => true) do |row|
 
             row = row.to_hash
@@ -280,7 +275,6 @@ class Dataset < ActiveRecord::Base
             end
             
             loc = self.get_row_location(row, detail_level)
-            # logger.error "SHOULD BE FIPS #{loc}"
 
             if not is_fips?(loc)
                 # TODO: ERROR
@@ -330,8 +324,6 @@ class Dataset < ActiveRecord::Base
     # detail_level - The level of location detail to return. Can be "STATE" or "COUNTY".
     def generate_points(num_points_wanted, display_val_name, filter_val_name, detail_level)
         # TODO: add error checking
-        logger.debug("dislay_val : #{display_val_name}")
-        logger.debug("filter_val : #{filter_val_name}")
 
         all_points = self.generate_raw_points(display_val_name, filter_val_name, detail_level)[:by_location]
         
@@ -417,7 +409,7 @@ class Dataset < ActiveRecord::Base
         num_points = 0
 
         by_location.each do |loc, points|
-            target = [1, points.length / condense_factor].max
+            target = [1, points.length * condense_factor].max
 
             while (points.length > target)
                 to_merge = self.shrink_points(points)
@@ -450,7 +442,7 @@ class Dataset < ActiveRecord::Base
     # The two points must have the same location.
     def merge_points(p1, p2)
         # TODO: handle actually averaging them?
-        display_val = p1[:display_val]
+        display_val = (p1[:display_val].to_f*p1[:weight] + p2[:display_val].to_f*p2[:weight]) / (p1[:weight] + p2[:weight])
         filter_val = p1[:filter_val]
         location = p1[:location]
         weight = p1[:weight] + p2[:weight]

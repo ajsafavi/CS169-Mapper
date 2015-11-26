@@ -8,11 +8,26 @@ class DatasetsController < ApplicationController
   # GET /datasets
   # GET /datasets.json
   def index
-    @datasets = Dataset.all
-    respond_to do |format|
-      format.html { }
-      format.json { render json: @datasets }
+    ans = Set.new
+
+    public_datasets = Dataset.where(is_public: true)
+    public_datasets.each do |dataset|
+      to_add = dataset.as_json
+      to_add[:columns] = dataset.columns
+      ans.add(to_add)
     end
+    if current_user
+      others = current_user.datasets
+      others.each do |dataset|
+        to_add = dataset.as_json
+        to_add[:columns] = dataset.columns
+        ans.add(to_add)
+      end
+    end
+
+    @ans = ans
+
+    render json: ans
   end
 
   # GET /datasets/1
@@ -41,16 +56,18 @@ class DatasetsController < ApplicationController
 
     params = dataset_params
 
-    params[:owner] = params[:owner].to_i
-    if (current_user.nil? or current_user.id != params[:owner])
+    
+    if (current_user.nil?)
       # logger.debug "CURRENTLY_LOGGED_IN: #{current_user.id.class}, OWNER: #{params[:owner].class}"
       render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
     else
+
       create_params = Hash.new
       create_params[:name] = params[:name]
       create_params[:num_rows] = 1000
       create_params[:user_id] = params[:owner]
       create_params[:filepath] = params[:filepath]
+      create_params[:user_id] = current_user.id
 
       @dataset = Dataset.new(create_params)
 
@@ -60,18 +77,27 @@ class DatasetsController < ApplicationController
         render json: @dataset.errors, status: :unprocessable_entity
       end
 
-      ajax_upload = params[:datafile].is_a?(String)
       filedata = nil
-      if ajax_upload
-        filedata =  request.body.read
+      logger.debug params
+      if (params[:datafile_raw].nil?)
+        ajax_upload = params[:datafile].is_a?(String)
+        if ajax_upload
+          filedata =  request.body.read
+        else
+          logger.debug "DATAFILE: #{params[:datafile]}"
+          filedata = params[:datafile].read
+        end
       else
-        logger.debug "DATAFILE: #{params[:datafile]}"
-        filedata = params[:datafile].read
-      end   
+        filedata = params[:datafile_raw]
+      end
 
       # Create columns
       columns = params[:columns]
+      logger.debug "COLUMNS"
+      logger.debug columns
       columns.each do |column_params|
+        logger.debug column_params
+        logger.debug column_params.class
         column_params[:dataset_id] = @dataset.id
         column = Column.new(column_params)
         if not column.save
@@ -86,27 +112,6 @@ class DatasetsController < ApplicationController
 
   end
 
-
-  # def update
-
-  #   if (current_user.nil? or current_user.id != @dataset.user_id)
-  #     render json: {"errors" => ["Not authorized!"]}, status: :unauthorized
-  #   else
-
-  #     params = dataset_edit_params.except!(:id)
-
-  #     @dataset.update(params)
-  #     @okay = @dataset.valid?
-
-  #     if @okay
-  #       redirect_to @dataset, format: :json
-  #     else
-  #       render json: @dataset.errors, status: :unprocessable_entity
-  #     end
-  #   end
-
-  # end
-
   # DELETE /datasets/1
   # DELETE /datasets/1.json
   def destroy
@@ -120,7 +125,6 @@ class DatasetsController < ApplicationController
     @dataset.destroy
     head :no_content
   end
-
 
   def points
     if !@dataset.is_public? and (current_user.nil? or current_user.id != @dataset.user_id)
@@ -162,7 +166,7 @@ class DatasetsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def dataset_params
       column_params = [:name, :detail_level, :column_type, :location_type, :description, :friendly_name, :null_value]
-      params.permit(:id, :name, :owner, :datafile, {columns: column_params})
+      params.permit(:id, :name, :owner, :datafile, :datafile_raw, {columns: column_params})
     end
 
     def dataset_edit_params

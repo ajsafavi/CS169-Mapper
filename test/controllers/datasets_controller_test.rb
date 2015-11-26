@@ -12,7 +12,7 @@ class DatasetsControllerTest < ActionController::TestCase
   test "should get index" do
     get :index
     assert_response :success
-    assert_not_nil assigns(:datasets)
+    assert_not_nil assigns(:ans)
   end
 
   test "should get new" do

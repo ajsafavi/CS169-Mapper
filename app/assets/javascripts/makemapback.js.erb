@@ -52,21 +52,24 @@ var MapperBack = (function () {
     * @param  {json} data data in json format,
     * @param  {number} filtermin  
     * @param  {number} filtermax
+    * @param  {number} state
     * @return {list} data processed into a list
     */
-  var filterPoints = function(data, filtermin, filtermax)
+  var filterPoints = function(data, filtermin, filtermax, state)
   {
     var points = data.points;
     var newPoints = [];
     for (var i=0;i<points.length;i++) {
       var point = points[i];
-      if (point.filter_val >= filtermin && point.filter_val <= filtermax) {
+      if (point.filter_val >= filtermin && point.filter_val <= filtermax
+            && (state == 0 || parseInt(point.location)/1000 == state)) {
         newPoints.push(point);
       }
     }
 
-    return processPoints({points: newPoints});
-  } 
+    return {points: newPoints};
+  }
+
 
   /**
     * process points
@@ -103,21 +106,31 @@ var MapperBack = (function () {
   {
     return '<%=Rails.env%>';
   }
+
   var getapiUrl = function()
   {
-    var env = getEnvironment();
+    // var env = getEnvironment();
 
-    if(env === 'production')
-    {
-      apiUrl = 'https://mappr169.herokuapp.com/';
-    }
+    // if(env === 'production')
+    // {
+    //   apiUrl = 'https://mappr169.herokuapp.com/';
+    // }
 
-    else if(env === 'development')
-    {
-      apiUrl = 'http://localhost:3000/';
+    // else if(env === 'development')
+    // {
+    //   apiUrl = 'http://localhost:3000/';
+    // }
+    // return apiUrl
+
+    if (typeof location.origin === 'undefined') {
+      location.origin = location.protocol + '//' + location.host;
     }
-    return apiUrl
+    console.log("Hello")
+    console.log(location.origin)
+    return location.origin + "/"
   }
+
+
     // PUBLIC METHODS
     // any private methods returned in the hash are accessible via Smile.key_name, e.g. Smile.start()
   return {

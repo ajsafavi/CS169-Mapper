@@ -28,7 +28,7 @@
 <script type="text/javascript">
 
     $(function() {
-    	Mapper.initialize('<%= @display_variable.to_s %>', '<%= @filter_variable.to_s %>')
+    	Mapper.initialize('<%= @display_variable.to_s %>', '<%= @filter_variable.to_s %>', '<%= @user_id.to_s %>', '<%= @dataset_id.to_s %>')
         Mapper.startAutocomplete();
     });
     $(function() {
@@ -36,7 +36,7 @@
     });
 
     $(function () {
-    	$(document).tooltip();
+    	//$(document).tooltip();
     });
 
     $(document).ready(function() {
@@ -66,14 +66,22 @@
 			<h2 id='mapOfText' class="titleColText">Map of</h2>
 		</div>
 		<div class='col-2 titleCol'>
-			<input type="text" placeholder="Variable" id="idvar" class="titleInput">
+			<select placeholder="Variable" id="idvar" class="titleInput">
+			</select>
 		</div>
 		<div class='col-2'>
 			<h2 id='inText' class="titleColText">, Filter By </h2>
 		</div>
 		<div class='col-2 titleCol'>
-			<input type="text" class="titleInput" placeholder="Filtering Variable" id="idfilteringvar">
+			<select class="titleInput" placeholder="Filtering Variable" id="idfilteringvar">
+			</select>
 		</div>
+
+		<div class='col-2 titleCol'>
+			<select class="titleInput" placeholder="Dataset" id="iddataset">
+			</select>	
+		</div>
+
 		<div class='col-2 titleCol'>
 			<button type="submit" class="btn btn-default titleInput" id="idsubmit">
 				Submit
@@ -100,9 +108,7 @@
 					<br>
 					<button id="select-range">Select range</button>
 				</div>
-			</div>
 
-			<div id="scattercanvas" class="col-3">
 				<div class="row">
 					<input type="text" class="col-xs-offset-4 col-xs-4" placeholder="Color" id="colorvar">
 					<script>
@@ -112,6 +118,10 @@
 						})
 					</script>
 				</div>
+			</div>
+
+			<div id="scattercanvas" class="col-3">
+				
 
 			</div>
 

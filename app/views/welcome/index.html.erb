@@ -28,9 +28,14 @@
     // This is a jQuery convention to say that once all the files
     // load, the function Smile.start() should run.
     // This function is defined in the smiles.js
+
+    $(function() {
+    	Mapper.initialize('<%= @display_variable.to_s %>', '<%= @filter_variable.to_s %>', null, 1)
+        Mapper.startAutocomplete();
+    });
+
     $(function() {
         Mapper.startAutocomplete();
-
     });
     $(function() {
         Mapper.submitHomeClickHandler();
@@ -55,19 +60,23 @@
 <div class="container firstContainer">
 
 	<div class="row">
-		<input type="text" class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Variable" id="idvar">
+		<select class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Variable" id="idvar">
+		</select>
 	</div>
 
 	<div class="row">
-		<input type="text" class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Filtering Variable" id="idfilteringvar">
+		<!-- <h2 class="col-xs-offset-4 col-xs-4 blockDisplay"> Filtering by </h2>
+		<select class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Filtering Variable" id="idfilteringvar">
+		</select> -->
 	</div>
-
-<!-- 	<div class="row">
-		<input type="text" class="col-xs-offset-4 col-xs-4 blockDisplay" placeholder="Geography" id="idgeo">
-	</div> -->
 		
 	<div class="row">
-		<button type="submit" class="col-xs-offset-4 btn btn-default blockDisplay" id="idsubmit" >Submit</button>
+		<button type="submit" class="col-xs-offset-4 btn btn-info blockDisplay" id="idsubmit" >Submit</button>
+	</div>
+
+	<div class="row">
+		<!-- TO DO: Make this link to a new dataset -->
+		<a href="#" class="btn btn-default col-xs-offset-4 col-xs-4 blockDisplay" role="button">Add Custom Data</a>
 	</div>
 
 </div>
