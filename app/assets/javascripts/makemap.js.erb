@@ -280,6 +280,7 @@ var Mapper = (function () {
         startAutocomplete()
     }
 
+    /* makes histogram in scattercanvas */
     var stateClickHandler = function(d) {
         $("#scattercanvas svg").remove();
         var filtermin = $("#slider-range").slider("values",0);
@@ -324,13 +325,13 @@ var Mapper = (function () {
 
         bar.append("rect")
             .attr("x", 1)
-            .attr("width", 25 - 1)
+            .attr("width", 20 - 1)
             .attr("height", function(d) { return height - y(d.y); });
 
         bar.append("text")
             .attr("dy", ".75em")
             .attr("y", 6)
-            .attr("x", 25 / 2)
+            .attr("x", 20 / 2)
             .attr("text-anchor", "middle")
             //.text(function(d) { return formatCount(d.y); });
 
