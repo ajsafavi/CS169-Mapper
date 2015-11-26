@@ -723,29 +723,8 @@ var Mapper = (function () {
     }
 
     var saveMap = function() {
-        var onSuccess = function(data) {
-            // TODO: Do something?
-
-            if (data.id) {
-                mapId = data["id"]
-            }
-        }
-
-        var onFailure = function(data) {
-            // TODO: Do something?
-            console.error("Failed to save map")
-        }
-
-        params = gatherMapVariables()
-
-        var saveUrl
-        if (mapId != null) {
-            saveUrl = apiUrl + "maps/" + mapId + "/"
-            makePutRequest(saveUrl, params, onSuccess, onFailure)
-        } else {
-            saveUrl = apiUrl + "maps/"
-            makePostRequest(saveUrl, params, onSuccess, onFailure)
-        }
+        var url = window.location.href;
+        window.prompt("Copy to clipboard to share:", url);
     }
 
     d3.select(window).on('resize', resize);

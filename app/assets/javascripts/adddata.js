@@ -1,17 +1,53 @@
 var AddData = (function () {
 
+  var varTemplate;
   //wait for change and determine if valid file
   var file = [];
+  varTemplate = $(".variableSelectors .varrow")[0].outerHTML;
+  $(".variableSelectors .varrow").html('');
+
   $(".fileSelect").change(function(e) 
   { 
     console.log(e.target.files[0]);
-    file = e.target.files[0];
+    console.log(validFile($(".fileSelect").val()));
+    if(validFile($(".fileSelect").val()))
+    {
+      clearHeads();
+      file = e.target.files[0];
+      addHeads();
+    }
+    else
+    {
+      window.alert("please select a valid csv file");
+    }
 
   });
+  var clearHeads = function()
+  {
+    $(".variableSelectors .varrow").html('');
+  }
   $(".uploadbutton").click(function(){
     createDataSet();
   });
+  var addHeads = function()
+  {
+    var read = new FileReader();
+    var rawText = "";
+    read.readAsBinaryString(file)
+    read.onloadend = function() 
+    {
+      rawText = read.result;
+      vars = textToVars(rawText);
+      console.log(vars);
+      for(var i = 0; i < vars.length; i++)
+      {
+        var newElem = $(varTemplate);
+        newElem.find('.variable').text(vars[i]);
 
+        $(".variableSelectors").append(newElem);
+      }
+    }
+  } 
   var validFile = function(path) 
   {
     if (path.split('.').pop() != 'csv')
@@ -47,17 +83,24 @@ var AddData = (function () {
       //console.log(toSend);
       for(var i = 0; i < vars.length; i++)
       {
-        //change this
-        if(i == 0)
+
+        var varName = vars[i];
+        var classType = $($(".varrow")[i+1])
+          .find("#classification").val();
+        classType = classType.toUpperCase();
+        var locSelect = $($(".varrow")[i+1])
+          .find("#locSelect").val();
+
+        if(classType == "LOCATION")
         {
-          columns.push({name: vars[i],
-                        column_type:"LOCATION",
-                        detail_level:"countyfull"});
+          columns.push({name: varName,
+                        column_type:classType,
+                        detail_level:locSelect});
         }
         else
         {
-          columns.push({name:vars[i],
-                        column_type:"VARIABLE"});
+          columns.push({name:varName,
+                        column_type:classType});
         }
       }
       //console.log(columns);
