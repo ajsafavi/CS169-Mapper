@@ -671,6 +671,8 @@ var Mapper = (function () {
                 .enter().append("path")
                     .attr("class", function(d) { return quantize(rateById.get(d.id)); })
                     .attr("d", path)
+                    .on("mouseover", function(d) { stateHover(d, rateById.get(d.id), true) })
+                    .on("mouseout", function(d) { stateHover(d, rateById.get(d.id), false) })
                     .on("click", function(d) { zoomMap(d, width, height, path) })
                     .attr("state",function(d) { return d.id })
                     // .call(d3.helper.tooltip(
@@ -692,6 +694,19 @@ var Mapper = (function () {
 
         d3.select(self.frameElement).style("height", height + "px");
         return svg;
+    }
+
+    var stateHover = function(d, stateName, hovered) {
+        if (centered == null) {
+            var barcanvas = d3.select("#barcanvas");
+            if (hovered == true) {
+                barcanvas.append("p").text(fipsState[d.id]).style("color", "black");
+                barcanvas.append("p").text(stateName).style("color", "black");
+                barcanvas.append("p").text("Click state for more information.").style("color", "black");
+            } else {
+                barcanvas.selectAll("p").remove();
+            }
+        }
     }
 
     var zoomMap = function (d, width, height, path) {
