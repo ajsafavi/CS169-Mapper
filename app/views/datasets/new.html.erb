@@ -47,12 +47,21 @@
 			</div>
 			<div class="col-md-4">
 				<span class="extras variableExtras">
-					<button type="button" class="btn btn-default btn-sm" id="null">Null?</button>
+					<fieldset>
+						<select name="nullSelect" id="nullSelect">
+							<option selected="selected">Not Null</option>
+							<option>Null</option>
+						</select>
+					</fieldset>
 				</span>
 				<span class="extras locExtras">
-					<button type="button" class="btn btn-default btn-sm" id="state">State</button>
-					<button type="button" class="btn btn-default btn-sm" id="countypartial">County Partial</button>
-					<button type="button" class="btn btn-default btn-sm" id="countyfull">County Full</button>
+					<fieldset>
+						<select name="locSelect" id="locSelect">
+							<option selected="selected">countyfull</option>
+							<option>countypartial</option>
+							<option>state</option>
+						</select>
+					</fieldset>
 				</span>
 			</div>
       	</div>
