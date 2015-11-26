@@ -14,7 +14,7 @@ private:
   num_rows: 114487
 
 farm:
-  is_public: false
+  is_public: true
   user: aryan
   name: Farm Dataset
   filepath: <%= Rails.root.join('datasets','farm.csv').to_s %>
