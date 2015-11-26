@@ -11,13 +11,13 @@ var Mapper = (function () {
     var datasets = null
 
     var fipsState = {
-       "01": "Alabama",
-       "02": "Alaska",
-       "04": "Arizona",
-       "05": "Arkansas",
-       "06": "California",
-       "08": "Colorado",
-       "09": "Connecticut",
+       "1": "Alabama",
+       "2": "Alaska",
+       "4": "Arizona",
+       "5": "Arkansas",
+       "6": "California",
+       "8": "Colorado",
+       "9": "Connecticut",
        "10": "Delaware",
        "11": "District of Columbia",
        "12": "Florida",
@@ -707,18 +707,20 @@ var Mapper = (function () {
     }
 
     var zoomMap = function (d, width, height, path) {
-        stateClickHandler(d)
+        if (d) {
+            stateClickHandler(d)
+        }
         var x, y, k;
         var g = d3.select("g");
         var changed = false;
+        if (centered != null) {
+            highlightState(d, true, centered)
+        }
         if (d && centered !== d) {
             var centroid = path.centroid(d);
             x = centroid[0];
             y = centroid[1];
             k = 4;
-            if (centered !== null) {
-                highlightState(d, true, centered)
-            }
             centered = d;
             changed = true;
             highlightState(d, false, centered);
@@ -726,7 +728,6 @@ var Mapper = (function () {
             x = width / 2;
             y = height / 2;
             k = 1;
-            highlightState(d, true, centered)
             $("#barcanvas svg").remove();
             centered = null;
         }
