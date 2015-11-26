@@ -205,7 +205,7 @@ var Mapper = (function () {
         var filtermax = $( "#slider-range" ).slider( "values", 1);
 
 
-        var dataPoints = MapperBack.processPoints(MapperBack.filterPoints(allPoints, filtermin, filtermax, null));
+        var dataPoints = MapperBack.processPoints(MapperBack.filterPoints(allPoints, filtermin, filtermax, 0));
         currPoints = dataPoints; //in makeslider
         drawMap(dataPoints);
       });
@@ -280,9 +280,13 @@ var Mapper = (function () {
         startAutocomplete()
     }
 
+    var clearHist = function() {
+        $("#barcanvas svg").remove();
+    }
+
     /* makes histogram in barcanvas */
     var stateClickHandler = function(d) {
-        $("#barcanvas svg").remove();
+        clearHist();
         var filtermin = $("#slider-range").slider("values",0);
         var filtermax = $( "#slider-range" ).slider( "values", 1);
         var statePoints = MapperBack.filterPoints(allPoints, filtermin, filtermax, d.id);
@@ -377,6 +381,7 @@ var Mapper = (function () {
 
     var submitClickHandler = function() {
         $( "body" ).on( "click", "#idsubmit", function() {
+            clearHist();
             //set values
             apiUrl = MapperBack.getapiUrl();
             displayval = $("#idvar").val();
@@ -635,6 +640,7 @@ var Mapper = (function () {
 
     var drawUSA = function(res, canvas, quantize, rateById)
     {   
+        clearHist();
         var background = $(canvas);
         var width = background.width();
         var height = background.height();
