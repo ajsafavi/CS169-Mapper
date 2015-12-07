@@ -504,8 +504,8 @@ var Mapper = (function () {
                 bucket_i += 1
                 var r = colors.invertExtent(d);
                 var curr_range = data_quantize.invertExtent(bucket)
-                var first = (Math.round(curr_range[0]*100)/100).toFixed();
-                var second = (Math.round(curr_range[1]*100)/100).toFixed();
+                var first = (Math.round(curr_range[0]*100)/100).toFixed(2);
+                var second = (Math.round(curr_range[1]*100)/100).toFixed(2);
                 return first + " - " + second;
             });
         d3.selectAll('li.key')
@@ -720,9 +720,9 @@ var Mapper = (function () {
         if (d) {
             var barcanvas = d3.select("#barcanvas");
             barcanvas.selectAll("p").remove();
-            barcanvas.append("p").text(fipsState[d.id]);
-            barcanvas.append("p").text(displayval + ":" + stateValue);
-            barcanvas.append("p").text("Click state to unzoom, or click another state to change state.");
+            barcanvas.append("p").text(fipsState[d.id]).style("color", "black");;
+            barcanvas.append("p").text(displayval + ":" + stateValue).style("color", "black");;
+            barcanvas.append("p").text("Click state to unzoom, or click another state to change state.").style("color", "black");;
             stateClickHandler(d)
         }
         var x, y, k;
