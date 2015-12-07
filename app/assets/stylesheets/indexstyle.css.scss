@@ -90,13 +90,20 @@ a:hover {
 	background-color: #8EA86C;
 	height: 350px;
 	border-bottom: thick solid #000;
+	padding-left: 10px;
+    padding-top: 10px;
 
 }
 
 #scattercanvas {
 	background-color: #4D642D;
 	height: 150px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
 
+#scattercanvas input {
+	text-align: center;
 }
 
 
@@ -160,6 +167,7 @@ li {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	text-align: center;
+	padding-left: 10px;
 }
 
 .titleColText {
@@ -186,6 +194,8 @@ li {
 	width: 100px;
 	height: 3em;
 }
+
+
 
 #leftContainer{
 	text-align: left;
