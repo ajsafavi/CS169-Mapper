@@ -185,8 +185,10 @@ var Mapper = (function () {
     var maxVal = Math.floor(Math.max.apply(null, displayPoints))
     if (filterval == "" || filterval == undefined || filterval == "None") {
       $("#slider").addClass("hidden");
+      $("#slider-none").removeClass("hidden");
     } else {
       $("#slider").removeClass("hidden");
+      $("#slider-none").addClass("hidden");
     }
     $( "#slider-range" ).slider({
       range: true,
@@ -718,9 +720,9 @@ var Mapper = (function () {
         if (d) {
             var barcanvas = d3.select("#barcanvas");
             barcanvas.selectAll("p").remove();
-            barcanvas.append("p").text(fipsState[d.id]).style("color", "black");
-            barcanvas.append("p").text(displayval + ":" + stateValue).style("color", "black");
-            barcanvas.append("p").text("Click state for more information.").style("color", "black");
+            barcanvas.append("p").text(fipsState[d.id]);
+            barcanvas.append("p").text(displayval + ":" + stateValue);
+            barcanvas.append("p").text("Click state to unzoom, or click another state to change state.");
             stateClickHandler(d)
         }
         var x, y, k;
