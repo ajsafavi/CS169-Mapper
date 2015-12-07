@@ -183,33 +183,35 @@ var Mapper = (function () {
     var displayPoints = (allPoints.points).map(function(point) { return point.filter_val })
     var minVal = Math.max(0, Math.floor(Math.min.apply(null, displayPoints)))
     var maxVal = Math.floor(Math.max.apply(null, displayPoints))
-
-
-    $( "#slider-range" ).slider({
-        range: true,
-        min: minVal,
-        max: maxVal,
-        values: [ minVal, maxVal ],
-        slide: function( event, ui ) {
-          $( "#range-display" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
-        }
-      });
-      $( "#range-display" ).val($( "#slider-range" ).slider( "values", 0 ) +
-        " - " + $( "#slider-range" ).slider( "values", 1 ) );
-
-      $('#select-range').on("click", function() {
-      });
-      
-      $('#select-range').on("click", function() {
-        var filtermin = $("#slider-range").slider("values",0);
-        var filtermax = $( "#slider-range" ).slider( "values", 1);
-
-
-        var dataPoints = MapperBack.processPoints(MapperBack.filterPoints(allPoints, filtermin, filtermax, 0));
-        currPoints = dataPoints; //in makeslider
-        drawMap(dataPoints);
-      });
+    if (filterval == "" || filterval == undefined || filterval == "None") {
+      $("#slider").addClass("hidden");
+    } else {
+      $("#slider").removeClass("hidden");
     }
+    $( "#slider-range" ).slider({
+      range: true,
+      min: minVal,
+      max: maxVal,
+      values: [ minVal, maxVal ],
+      slide: function( event, ui ) {
+        $( "#range-display" ).val(ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+      }
+    });
+    $( "#range-display" ).val($( "#slider-range" ).slider( "values", 0 ) +
+      " - " + $( "#slider-range" ).slider( "values", 1 ) );
+
+    $('#select-range').on("click", function() {
+    });
+    
+    $('#select-range').on("click", function() {
+      var filtermin = $("#slider-range").slider("values",0);
+      var filtermax = $( "#slider-range" ).slider( "values", 1);
+
+      var dataPoints = MapperBack.processPoints(MapperBack.filterPoints(allPoints, filtermin, filtermax, 0));
+      currPoints = dataPoints; //in makeslider
+      drawMap(dataPoints);
+    });
+  }
 
 
     var loadDatasets = function() {
@@ -500,8 +502,8 @@ var Mapper = (function () {
                 bucket_i += 1
                 var r = colors.invertExtent(d);
                 var curr_range = data_quantize.invertExtent(bucket)
-                var first = Math.round(curr_range[0]*100)/100;
-                var second = Math.round(curr_range[1]*100)/100;
+                var first = (Math.round(curr_range[0]*100)/100).toFixed();
+                var second = (Math.round(curr_range[1]*100)/100).toFixed();
                 return first + " - " + second;
             });
         d3.selectAll('li.key')
