@@ -706,12 +706,13 @@ var Mapper = (function () {
     var stateHover = function(d, stateValue, hovered) {
         if (centered == null) {
             var barcanvas = d3.select("#barcanvas");
+            barcanvas.selectAll("p").remove();
             if (hovered == true) {
-                barcanvas.append("p").text(fipsState[d.id]).style("color", "black");
-                barcanvas.append("p").text(displayval + ":" + stateValue).style("color", "black");
-                barcanvas.append("p").text("Click state for more information.").style("color", "black");
+                barcanvas.append("p").text(fipsState[d.id]);
+                barcanvas.append("p").text(displayval + ":" + stateValue.toFixed(2));
+                barcanvas.append("p").text("Click state for more information.");
             } else {
-                barcanvas.selectAll("p").remove();
+                barcanvas.append("p").text("Hover over state for basic information.");
             }
         }
     }
@@ -720,9 +721,9 @@ var Mapper = (function () {
         if (d) {
             var barcanvas = d3.select("#barcanvas");
             barcanvas.selectAll("p").remove();
-            barcanvas.append("p").text(fipsState[d.id]).style("color", "black");;
-            barcanvas.append("p").text(displayval + ":" + stateValue).style("color", "black");;
-            barcanvas.append("p").text("Click state to unzoom, or click another state to change state.").style("color", "black");;
+            barcanvas.append("p").text(fipsState[d.id]);
+            barcanvas.append("p").text(displayval + ":" + stateValue.toFixed(2));
+            barcanvas.append("p").text("Click state to unzoom, or click another state to change state.");
             stateClickHandler(d)
         }
         var x, y, k;
