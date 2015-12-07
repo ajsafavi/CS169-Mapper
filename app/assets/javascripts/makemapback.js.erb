@@ -67,7 +67,8 @@ var MapperBack = (function () {
       var point = points[i];
       if (point.filter_val >= filtermin && point.filter_val <= filtermax
             && (state == 0 || parseInt(point.location)/1000 == state)) {
-        newPoints.push(point);
+        if (state == 0 || x==1 || point.display_val == 0 || point.display_val == 1)
+          newPoints.push(point);
       }
 
       if (state!=0) {
