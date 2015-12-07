@@ -304,8 +304,11 @@ var Mapper = (function () {
         var x = d3.scale.linear()
             .domain([minVal, maxVal])
             .range([0, width]);
+        
+        var twobars = (displayval == "SEX" || displayval == "EMPLOYMENT" || displayval == "LABOR_PARTICIPATION");
+
         var data = d3.layout.histogram()
-            .bins(x.ticks(9))
+            .bins(x.ticks(twobars ? 7 : 9))
             (values);
 
         var y = d3.scale.linear()
@@ -330,7 +333,7 @@ var Mapper = (function () {
 
         bar.append("rect")
             .attr("x", 1)
-            .attr("width", 20 - 1)
+            .attr("width", twobars ? 40 : 20)
             .attr("height", function(d) { return height - y(d.y); });
 
         bar.append("text")
@@ -344,6 +347,44 @@ var Mapper = (function () {
             .attr("class", "x axis")
             .attr("transform", "translate(0," + height + ")")
             .call(xAxis);
+
+        if (displayval == "INCOME") {
+          $('.tick > text').text(function(index) {
+            //return $(this).text();
+            var oldstr = $(this).text();
+            var newstr = (index == 0) ? '0' : oldstr.slice(0,oldstr.indexOf(',')) + 'K';
+            console.log(newstr);
+            return newstr;
+          });
+
+          $(".tick > text").css({
+            fontSize: 10
+          });
+        }
+
+        if (twobars) {
+          $('.tick > text').text(function(index) {
+            //return $(this).text();
+            var zero = 'Male';
+            var one = 'Female';
+            if (displayval == "EMPLOYMENT") {
+              zero = "Unemployed"
+              one = "Employed"
+            }
+            if (displayval == "LABOR_PARTICIPATION") {
+              zero = "Inactive"
+              one = "Active"
+            }
+            if (index == 1) return zero;
+            if (index == 9) return one;
+            return '';
+          });
+
+          $('.tick').each(function(index) {
+            if (!(index == 1 || index == 9) ) $(this).remove();
+          });
+        }
+
     }
 
     var startAutocomplete = function() {
